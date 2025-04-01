@@ -11,7 +11,7 @@
 <body class="bg-background text-dark ">
 
     {{-- Navbar User --}}
-    <x-navbar isHome="true" />
+    <x-user.navbar isHome="true" />
 
     {{-- Konten Halaman --}}
     <div class="container mx-auto p-6">
@@ -19,8 +19,11 @@
     </div>
 
     {{-- Footer User --}}
-    {{-- <x-user.footer /> --}}
+    <x-user.footer />
 
+
+    {{-- Script --}}
+    @yield('script')
 </body>
 
 </html>
