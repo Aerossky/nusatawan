@@ -15,6 +15,11 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors:{
+                primary: "#2D9CDB", // Biru utama
+                secondary: "#0C43BA", // Biru sekunder
+                background: "#F2F2F2", // Background utama
+            }
         },
     },
     plugins: [
