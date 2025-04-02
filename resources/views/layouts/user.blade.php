@@ -14,7 +14,7 @@
     <x-user.navbar isHome="true" />
 
     {{-- Konten Halaman --}}
-    <div class="container mx-auto p-6">
+    <div class="mx-auto">
         @yield('content')
     </div>
 
