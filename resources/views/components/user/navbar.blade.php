@@ -49,51 +49,50 @@
     </div>
 </nav>
 
-@section('script')
-    <script>
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            const brandText = document.getElementById('brand-text');
-            const navLinks = document.querySelectorAll('[id^="nav-link-"]');
-            const hamburgerMenu = document.getElementById('hamburger-menu');
 
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-white', 'shadow-md');
-                navbar.classList.remove('bg-transparent');
-                brandText.classList.remove('text-white');
-                brandText.classList.add('text-gray-900');
-                hamburgerMenu.classList.remove('text-white');
-                hamburgerMenu.classList.add('text-gray-900');
+<script>
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        const brandText = document.getElementById('brand-text');
+        const navLinks = document.querySelectorAll('[id^="nav-link-"]');
+        const hamburgerMenu = document.getElementById('hamburger-menu');
 
-                navLinks.forEach(link => {
-                    const page = link.getAttribute('data-page');
+        if (window.scrollY > 50) {
+            navbar.classList.add('bg-white', 'shadow-md');
+            navbar.classList.remove('bg-transparent');
+            brandText.classList.remove('text-white');
+            brandText.classList.add('text-gray-900');
+            hamburgerMenu.classList.remove('text-white');
+            hamburgerMenu.classList.add('text-gray-900');
 
-                    if (page === "{{ $currentPage }}") {
-                        link.classList.add('bg-blue-600', 'text-white');
-                    } else {
-                        link.classList.remove('text-white', 'bg-blue-600');
-                        link.classList.add('text-gray-900');
-                    }
-                });
-            } else {
-                navbar.classList.add('bg-transparent');
-                navbar.classList.remove('bg-white', 'shadow-md');
-                brandText.classList.remove('text-gray-900');
-                brandText.classList.add('text-white');
-                hamburgerMenu.classList.remove('text-gray-900');
-                hamburgerMenu.classList.add('text-white');
+            navLinks.forEach(link => {
+                const page = link.getAttribute('data-page');
 
-                navLinks.forEach(link => {
-                    const page = link.getAttribute('data-page');
+                if (page === "{{ $currentPage }}") {
+                    link.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    link.classList.remove('text-white', 'bg-blue-600');
+                    link.classList.add('text-gray-900');
+                }
+            });
+        } else {
+            navbar.classList.add('bg-transparent');
+            navbar.classList.remove('bg-white', 'shadow-md');
+            brandText.classList.remove('text-gray-900');
+            brandText.classList.add('text-white');
+            hamburgerMenu.classList.remove('text-gray-900');
+            hamburgerMenu.classList.add('text-white');
 
-                    if (page === "{{ $currentPage }}") {
-                        link.classList.add('bg-blue-600', 'text-white');
-                    } else {
-                        link.classList.remove('text-gray-900', 'bg-blue-600');
-                        link.classList.add('text-white');
-                    }
-                });
-            }
-        });
-    </script>
-@endsection
+            navLinks.forEach(link => {
+                const page = link.getAttribute('data-page');
+
+                if (page === "{{ $currentPage }}") {
+                    link.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    link.classList.remove('text-gray-900', 'bg-blue-600');
+                    link.classList.add('text-white');
+                }
+            });
+        }
+    });
+</script>

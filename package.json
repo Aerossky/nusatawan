@@ -15,6 +15,7 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "flowbite": "^3.1.2"
+        "flowbite": "^3.1.2",
+        "swiper": "^11.2.6"
     }
 }
