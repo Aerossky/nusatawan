@@ -1,6 +1,7 @@
-@props(['currentPage' => 'home'])
+@props(['currentPage' => ''])
 
-<nav id="navbar" class="fixed w-full z-20 top-0 start-0 transition-all duration-300 bg-transparent">
+<nav id="navbar" data-page="{{ $currentPage }}"
+    class="fixed w-full z-20 top-0 start-0 transition-all duration-300 bg-transparent">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-white transition-colors duration-300"
@@ -38,7 +39,7 @@
                     <li class="my-auto">
                         <a href="#"
                             class="block py-2 px-3 rounded-md transition md:px-6 md:py-2 md:rounded-full
-                                {{ $currentPage == $page ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }}"
+                                {{ $currentPage == $page ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }} "
                             id="nav-link-{{ $page }}" data-page="{{ $page }}">
                             {{ $label }}
                         </a>
@@ -49,15 +50,16 @@
     </div>
 </nav>
 
-
 <script>
-    window.addEventListener('scroll', function() {
+    document.addEventListener("DOMContentLoaded", function() {
         const navbar = document.getElementById('navbar');
         const brandText = document.getElementById('brand-text');
         const navLinks = document.querySelectorAll('[id^="nav-link-"]');
         const hamburgerMenu = document.getElementById('hamburger-menu');
+        const currentPage = navbar.getAttribute('data-page');
 
-        if (window.scrollY > 50) {
+        // Jika di halaman "about", langsung atur navbar tetap putih
+        if (currentPage === "about") {
             navbar.classList.add('bg-white', 'shadow-md');
             navbar.classList.remove('bg-transparent');
             brandText.classList.remove('text-white');
@@ -67,8 +69,7 @@
 
             navLinks.forEach(link => {
                 const page = link.getAttribute('data-page');
-
-                if (page === "{{ $currentPage }}") {
+                if (page === "about") {
                     link.classList.add('bg-blue-600', 'text-white');
                 } else {
                     link.classList.remove('text-white', 'bg-blue-600');
@@ -76,21 +77,42 @@
                 }
             });
         } else {
-            navbar.classList.add('bg-transparent');
-            navbar.classList.remove('bg-white', 'shadow-md');
-            brandText.classList.remove('text-gray-900');
-            brandText.classList.add('text-white');
-            hamburgerMenu.classList.remove('text-gray-900');
-            hamburgerMenu.classList.add('text-white');
+            // Scroll event untuk halaman lain
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-white', 'shadow-md');
+                    navbar.classList.remove('bg-transparent');
+                    brandText.classList.remove('text-white');
+                    brandText.classList.add('text-gray-900');
+                    hamburgerMenu.classList.remove('text-white');
+                    hamburgerMenu.classList.add('text-gray-900');
 
-            navLinks.forEach(link => {
-                const page = link.getAttribute('data-page');
-
-                if (page === "{{ $currentPage }}") {
-                    link.classList.add('bg-blue-600', 'text-white');
+                    navLinks.forEach(link => {
+                        const page = link.getAttribute('data-page');
+                        if (page === currentPage) {
+                            link.classList.add('bg-blue-600', 'text-white');
+                        } else {
+                            link.classList.remove('text-white', 'bg-blue-600');
+                            link.classList.add('text-gray-900');
+                        }
+                    });
                 } else {
-                    link.classList.remove('text-gray-900', 'bg-blue-600');
-                    link.classList.add('text-white');
+                    navbar.classList.add('bg-transparent');
+                    navbar.classList.remove('bg-white', 'shadow-md');
+                    brandText.classList.remove('text-gray-900');
+                    brandText.classList.add('text-white');
+                    hamburgerMenu.classList.remove('text-gray-900');
+                    hamburgerMenu.classList.add('text-white');
+
+                    navLinks.forEach(link => {
+                        const page = link.getAttribute('data-page');
+                        if (page === currentPage) {
+                            link.classList.add('bg-blue-600', 'text-white');
+                        } else {
+                            link.classList.remove('text-gray-900', 'bg-blue-600');
+                            link.classList.add('text-white');
+                        }
+                    });
                 }
             });
         }
