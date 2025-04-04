@@ -13,7 +13,7 @@
 <body class="bg-background text-dark ">
 
     {{-- Navbar User --}}
-    <x-user.navbar isHome="true" />
+    <x-user.navbar currentPage="" />
 
     {{-- Konten Halaman --}}
     <div class="mx-auto">
