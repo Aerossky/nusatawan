@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('category_id')->constrained('categories');
             $table->string('place_name');
+            $table->string('slug')->unique();
             $table->text('description');
             $table->string('city');
             $table->decimal('rating', 3, 2)->default(0);
