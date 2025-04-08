@@ -45,4 +45,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi dengan Destinations
+    public function likedDestinations()
+    {
+        return $this->hasMany(LikedDestination::class);
+    }
+
+    // Relasi dengan Reviews
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    // Relasi dengan Itineraries
+    public function itineraries()
+    {
+        return $this->hasMany(Itinerary::class);
+    }
+
+    // Relasi dengan Destination Submissions
+    public function destinationSubmissions()
+    {
+        return $this->hasMany(DestinationSubmission::class);
+    }
 }
