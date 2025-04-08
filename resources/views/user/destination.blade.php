@@ -56,94 +56,36 @@
             <div class="mt-12"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Kartu Pantai Kuta -->
-                <div class="bg-white rounded-md overflow-hidden shadow-md">
-                    <div class="relative">
-                        <img src="{{ asset('images/pantai-kuta.jpg') }}" alt="Pantai Kuta" class="w-full h-32 object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-semibold">Pantai Kuta</h3>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-700 mr-2">123</span>
-                                <button class="text-gray-400 hover:text-red-500 focus:outline-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                @foreach ($destinations as $data)
+                    <div class="bg-white rounded-md overflow-hidden shadow-md">
+                        <div class="relative">
+                            <img src="{{ asset('images/pantai-kuta.jpg') }}" alt="Pantai Kuta"
+                                class="w-full h-32 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h3 class="font-semibold">{{ $data->place_name }}</h3>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-700 mr-2">123</span>
+                                    <button class="text-gray-400 hover:text-red-500 focus:outline-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-2">Bali</p>
-                        <div class="mb-3">
-                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">Pantai</span>
-                        </div>
-                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
-                            Detail</button>
-                    </div>
-                </div>
-
-                <!-- Kartu Gunung Bromo -->
-                <div class="bg-white rounded-md overflow-hidden shadow-md">
-                    <div class="relative">
-                        <img src="{{ asset('images/gunung-bromo.jpg') }}" alt="Gunung Bromo"
-                            class="w-full h-32 object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-semibold">Gunung Bromo</h3>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-700 mr-2">80</span>
-                                <button class="text-gray-400 hover:text-red-500 focus:outline-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                            <p class="text-gray-600 text-sm mb-2">Bali</p>
+                            <div class="mb-3">
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">Pantai</span>
                             </div>
+                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
+                                Detail</button>
                         </div>
-                        <p class="text-gray-600 text-sm mb-2">Malang, Jawa Timur</p>
-                        <div class="mb-3">
-                            <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Gunung</span>
-                        </div>
-                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
-                            Detail</button>
                     </div>
-                </div>
-
-                <!-- Kartu Candi Borobudur -->
-                <div class="bg-white rounded-md overflow-hidden shadow-md">
-                    <div class="relative">
-                        <img src="{{ asset('images/candi-borobudur.jpg') }}" alt="Candi Borobudur"
-                            class="w-full h-32 object-cover">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-semibold">Candi Borobudur</h3>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-700 mr-2">75</span>
-                                <button class="text-gray-400 hover:text-red-500 focus:outline-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-2">Magelang, Jawa Tengah</p>
-                        <div class="mb-3">
-                            <span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full">Candi</span>
-                        </div>
-                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
-                            Detail</button>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </x-section>
