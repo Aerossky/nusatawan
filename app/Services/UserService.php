@@ -87,9 +87,9 @@ class UserService
     {
         // Generate nama gambar unik & random
         $imageName = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $image->extension();
-        $path = $image->storeAs('public/users', $imageName);
+        $path = $image->storeAs('users', $imageName);
 
         // Return path yang dapat diakses oleh public
-        return str_replace('public/', 'storage/', $path);
+        return str_replace('', '', $path);
     }
 }
