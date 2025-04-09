@@ -29,7 +29,7 @@
 
     {{-- Konten Halaman --}}
     <main class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 rounded-lg mt-14">
+        <div class="p-4 border-2 border-gray-200 rounded-lg mt-14 bg-white">
             @yield('content')
         </div>
     </main>

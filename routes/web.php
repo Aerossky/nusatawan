@@ -16,3 +16,4 @@ Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 // user route
 Route::get('/pengguna', [UserController::class, 'index'])->name('admin.users.index');
+Route::get('/pengguna/{user}', [UserController::class, 'show'])->name('admin.users.show');

@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container mx-auto px-4 py-6">
-        <div class="bg-white shadow-md rounded-lg">
+    <div class="container mx-auto">
+        <div class="">
             <div class="flex justify-between items-center p-6 border-b">
                 <h2 class="text-2xl font-semibold text-gray-800">Manajemen Pengguna</h2>
                 <a href="" class="btn btn-primary">
@@ -88,7 +88,8 @@
                                     </td>
                                     <td class="p-3">
                                         <div class="flex space-x-2">
-                                            <a href="" class="text-blue-600 hover:text-blue-800">
+                                            <a href="{{ route('admin.users.show', $user) }}"
+                                                class="text-blue-600 hover:text-blue-800">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="" class="text-yellow-600 hover:text-yellow-800">

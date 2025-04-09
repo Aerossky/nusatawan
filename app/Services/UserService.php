@@ -33,4 +33,15 @@ class UserService
         // Ambil data pengguna dengan pagination
         return $query->paginate($filters['per_page'] ?? 10);
     }
+
+    /**
+     * Mendapatkan detail pengguna beserta relasi
+     */
+    public function getUserDetails(User $user)
+    {
+        return $user->load([
+            'reviews.destination',
+            'itineraries'
+        ]);
+    }
 }
