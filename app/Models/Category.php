@@ -11,7 +11,6 @@ class Category extends Model
 
     protected $fillable = [
         'name',
-        'is_admin'
     ];
 
     // Relasi dengan Destinations

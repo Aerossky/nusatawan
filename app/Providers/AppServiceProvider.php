@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\DashboardService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,6 +13,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->bind(DashboardService::class, function ($app) {
+            return new DashboardService();
+        });
     }
 
     /**
