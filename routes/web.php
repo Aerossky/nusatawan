@@ -24,3 +24,6 @@ Route::prefix('pengguna')->name('admin.users.')->group(function () {
     Route::patch('/{user}', [UserController::class, 'update'])->name('update');  // Update Data
     Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');          // Hapus User
 });
+
+// destination route
+Route::resource('destination', DestinationController::class)->names('admin.destinations');
