@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Destination;
 use App\Services\DashboardService;
+use App\Services\DestinationService;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $services = [
             DashboardService::class,
             UserService::class,
+            DestinationService::class,
         ];
 
         foreach ($services as $service) {
