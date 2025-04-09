@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -43,5 +45,51 @@ class UserService
             'reviews.destination',
             'itineraries'
         ]);
+    }
+
+    /**
+     * Membuat pengguna baru
+     */
+
+    public function createUser(array $data)
+    {
+        // Handle image upload jika ada
+        if (isset($data['image']) && $data['image']) {
+            $imagePath = $this->uploadImage($data['image']);
+            $data['image'] = $imagePath;
+        }
+
+        // Hash password
+        $data['password'] = Hash::make($data['password']);
+
+        // Set default status jika tidak diberikan
+        if (!isset($data['status'])) {
+            $data['status'] = 'active';
+        }
+
+        // Set default isAdmin jika tidak diberikan
+        if (!isset($data['isAdmin'])) {
+            $data['isAdmin'] = false;
+        }
+
+        // Buat user baru
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'image' => $data['image'] ?? null,
+            'status' => $data['status'],
+            'isAdmin' => $data['isAdmin']
+        ]);
+    }
+
+    private function uploadImage($image)
+    {
+        // Generate nama gambar unik & random
+        $imageName = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $image->extension();
+        $path = $image->storeAs('public/users', $imageName);
+
+        // Return path yang dapat diakses oleh public
+        return str_replace('public/', 'storage/', $path);
     }
 }

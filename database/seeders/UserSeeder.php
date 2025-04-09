@@ -72,6 +72,6 @@ class UserSeeder extends Seeder
         }
 
         // Generate 30 user random dari factory
-        User::factory()->count(30)->create();
+        // User::factory()->count(30)->create();
     }
 }

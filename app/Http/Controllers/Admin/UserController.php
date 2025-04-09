@@ -49,6 +49,44 @@ class UserController extends Controller
         ]);
     }
 
+
+    /**
+     * Menampilkan form untuk membuat pengguna baru
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create()
+    {
+        // Kembalikan view untuk membuat pengguna baru
+        return view('admin.users.create');
+    }
+
+    /**
+     * Menyimpan pengguna baru ke dalam database
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        // Validasi data pengguna
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+
+        // Buat pengguna baru menggunakan service
+        $this->userService->createUser($validatedData);
+
+        // Redirect ke halaman daftar pengguna dengan pesan sukses
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
+    }
+
+
+
     /**
      * Menampilkan detail pengguna
      *

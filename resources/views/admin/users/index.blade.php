@@ -10,6 +10,14 @@
                 </x-button>
             </div>
 
+            {{-- Alert --}}
+            @if (session('success'))
+                <x-ui.alert type="success" :message="session('success')" />
+            @elseif (session('error'))
+                <x-ui.alert type="error" :message="session('error')" />
+            @endif
+
+
             <div class="p-6">
                 {{-- Filter dan Pencarian --}}
                 <form method="GET" action="{{ route('admin.users.index') }}" class="mb-6">

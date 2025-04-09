@@ -15,5 +15,12 @@ Route::resource('destinasi', DestinationController::class);
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 // user route
-Route::get('/pengguna', [UserController::class, 'index'])->name('admin.users.index');
-Route::get('/pengguna/{user}', [UserController::class, 'show'])->name('admin.users.show');
+Route::prefix('pengguna')->name('admin.users.')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('index');          // List User
+    Route::get('/create', [UserController::class, 'create'])->name('create');  // Form Tambah
+    Route::post('/', [UserController::class, 'store'])->name('store');         // Simpan Data
+    Route::get('/{user}', [UserController::class, 'show'])->name('show');      // Detail User
+    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit'); // Form Edit
+    Route::put('/{user}', [UserController::class, 'update'])->name('update');  // Update Data
+    Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');          // Hapus User
+});
