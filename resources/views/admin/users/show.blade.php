@@ -13,6 +13,12 @@
         <div class="space-y-6">
             {{-- Detail User --}}
             <div class="bg-white p-6 rounded-xl shadow">
+                @if ($user->image)
+                    <div class="my-2">
+                        <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}"
+                            class="w-24 h-24 object-cover rounded">
+                    </div>
+                @endif
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div><span class="font-medium">Nama:</span> {{ $user->name }}</div>
                     <div><span class="font-medium">Email:</span> {{ $user->email }}</div>

@@ -21,6 +21,6 @@ Route::prefix('pengguna')->name('admin.users.')->group(function () {
     Route::post('/', [UserController::class, 'store'])->name('store');         // Simpan Data
     Route::get('/{user}', [UserController::class, 'show'])->name('show');      // Detail User
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit'); // Form Edit
-    Route::put('/{user}', [UserController::class, 'update'])->name('update');  // Update Data
+    Route::patch('/{user}', [UserController::class, 'update'])->name('update');  // Update Data
     Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');          // Hapus User
 });

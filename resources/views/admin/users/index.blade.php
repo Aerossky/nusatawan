@@ -100,7 +100,8 @@
                                                 class="text-blue-600 hover:text-blue-800">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="" class="text-yellow-600 hover:text-yellow-800">
+                                            <a href="{{ route('admin.users.edit', $user) }}"
+                                                class="text-yellow-600 hover:text-yellow-800">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <button class="text-red-600 hover:text-red-800 btn-delete"

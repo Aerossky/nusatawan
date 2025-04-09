@@ -85,8 +85,6 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
-
-
     /**
      * Menampilkan detail pengguna
      *
@@ -102,5 +100,52 @@ class UserController extends Controller
         return view('admin.users.show', [
             'user' => $userDetails,
         ]);
+    }
+
+    /**
+     * Menampilkan form untuk mengedit pengguna
+     *
+     * @param User $user pengguna yang akan diedit
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(User $user)
+    {
+        // Ambil detail pengguna menggunakan service
+        $userDetails = $this->userService->getUserDetails($user);
+
+        // Kembalikan view dengan data pengguna
+        return view('admin.users.edit', [
+            'user' => $userDetails,
+        ]);
+    }
+
+    /**
+     * Mengupdate pengguna yang sudah ada
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, User $user)
+    {
+        // Validasi data input
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'image' => 'nullable|image|max:2048',
+            'status' => 'nullable|in:active,inactive,banned',
+            'isAdmin' => 'nullable|boolean'
+        ]);
+
+        // Buat data yang mau diupdate aja (auto skip null / kosong)
+        $dataToUpdate = array_filter($validatedData, function ($value) {
+            return $value !== null;
+        });
+
+        // Jalankan update lewat service
+        $this->userService->updateUser($user, $dataToUpdate);
+
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diperbarui.');
     }
 }

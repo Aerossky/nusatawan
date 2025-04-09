@@ -83,6 +83,41 @@ class UserService
         ]);
     }
 
+
+    /**
+     * Mengupdate pengguna
+     */
+    public function updateUser(User $user, array $data)
+    {
+        // Handle image upload jika ada
+        if (isset($data['image']) && $data['image']) {
+            // Hapus gambar lama jika ada
+            if ($user->image) {
+                $oldImagePath = public_path('storage/' . $user->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            // Upload gambar baru
+            $imagePath = $this->uploadImage($data['image']);
+            $data['image'] = $imagePath;
+        } else {
+            unset($data['image']); // Kalau nggak upload image, hapus key-nya biar nggak null-in image di DB
+        }
+
+        // Hash password jika ada
+        if (isset($data['password']) && $data['password']) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']); // Kalau nggak isi password, jangan update password
+        }
+
+        // Update user hanya field yang ada
+        return $user->update($data);
+    }
+
+
     private function uploadImage($image)
     {
         // Generate nama gambar unik & random
