@@ -5,9 +5,9 @@
         <div class="">
             <div class="flex justify-between items-center p-6 border-b">
                 <h2 class="text-2xl font-semibold text-gray-800">Manajemen Pengguna</h2>
-                <a href="" class="btn btn-primary">
-                    <i class="fas fa-plus mr-2"></i>Tambah Pengguna
-                </a>
+                <x-button href="{{ route('admin.users.create') }}" variant="primary">
+                    Tambah Pengguna
+                </x-button>
             </div>
 
             <div class="p-6">
