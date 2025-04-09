@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Destination extends Model
 {
 
+    use HasFactory;
     // Nama tabel (opsional, jika nama tabel berbeda dari jamak model)
     protected $table = 'destinations';
 
