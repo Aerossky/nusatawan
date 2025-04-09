@@ -11,6 +11,10 @@
 
     <link rel="icon" type="image/png" href="/path/to/favicon.png">
 
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
@@ -25,7 +29,7 @@
 
     {{-- Konten Halaman --}}
     <main class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 rounded-lg mt-14">
+        <div class="p-4 border-2 border-gray-200 rounded-lg mt-14 bg-white">
             @yield('content')
         </div>
     </main>
