@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -69,5 +70,8 @@ class UserSeeder extends Seeder
             $user['updated_at'] = Carbon::now();
             DB::table('users')->insert($user);
         }
+
+        // Generate 30 user random dari factory
+        User::factory()->count(30)->create();
     }
 }
