@@ -148,4 +148,24 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diperbarui.');
     }
+
+    /**
+     * Menghapus pengguna
+     *
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(User $user)
+    {
+        try {
+            // Hapus pengguna menggunakan service
+            $this->userService->deleteUser($user);
+
+            // Redirect ke halaman daftar pengguna dengan pesan sukses
+            return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Redirect kembali dengan pesan error
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 }

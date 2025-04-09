@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -117,6 +119,44 @@ class UserService
         return $user->update($data);
     }
 
+    /**
+     * Menghapus pengguna
+     */
+
+    public function deleteUser(User $user)
+    {
+        try {
+            // Mulai transaksi database
+            DB::beginTransaction();
+
+            // Hapus gambar pengguna jika ada
+            if ($user->image) {
+                $oldImagePath = public_path('storage/' . $user->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            // Hapus pengguna
+            $user->delete();
+
+            // Commit transaksi
+            DB::commit();
+
+            return true;
+        } catch (QueryException $e) {
+            // Rollback transaksi jika ada error relasi
+            DB::rollBack();
+
+            // Periksa apakah error disebabkan oleh foreign key constraint
+            if ($e->getCode() == '23000') {
+                throw new \Exception('Pengguna tidak dapat dihapus karena memiliki data terkait.');
+            }
+
+            // Lempar kembali exception lainnya
+            throw $e;
+        }
+    }
 
     private function uploadImage($image)
     {
