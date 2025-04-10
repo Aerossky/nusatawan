@@ -3,16 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Services\DestinationService;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
+
+    protected $destinationService;
+
+    public function __construct(DestinationService $destinationService)
+    {
+        $this->destinationService = $destinationService;
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // @dd($request->all());
+        $filters = [
+            'search' => $request->query('search'),
+            'category_id' => $request->query('category_id'),
+            'sort_by' => $request->query('sort_by'),
+            'per_page' => $request->query('per_page', 10)
+        ];
+
+        $destinations = $this->destinationService->getDestinationsList($filters);
+        $categories = Category::all();
+
+        return view('admin.destinations.index', compact('destinations', 'categories', 'filters'));
     }
 
     /**
