@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\Destination;
+use App\Models\DestinationImage;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DestinationService
 {
@@ -66,5 +69,61 @@ class DestinationService
 
         // Kembalikan hasil dengan pagination (default 10 data per halaman)
         return $query->paginate($filters['per_page'] ?? 10);
+    }
+
+    /**
+     * Menyimpan destinasi baru ke dalam database
+     *
+     * @param  array  $data  Data destinasi yang akan disimpan
+     * @return \App\Models\Destination
+     */
+    public function createDestination(array $data)
+    {
+        // Create destination
+        $destination = Destination::create([
+            'place_name' => $data['place_name'],
+            'description' => $data['description'],
+            'category_id' => $data['category_id'],
+            'created_by' => 1,
+            // 'created_by' => auth()->id(),
+            'city' => $data['city'],
+            'rating' => 0,
+            'rating_count' => 0,
+            'time_minutes' => $data['time_minutes'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
+        ]);
+
+        // Memanggil fungsi untuk mengupload gambar
+        if (isset($data['image']) && is_array($data['image'])) {
+            $this->handleImageUploads($destination, $data['image'], $data['primary_image_index'] ?? 0);
+        }
+
+        return $destination;
+    }
+
+    private function handleImageUploads(Destination $destination, array $images, ?int $primaryIndex = 0, bool $makePrimary = true)
+    {
+        foreach ($images as $index => $imageFile) {
+            $imageName = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $imageFile->extension();
+            $path = $imageFile->storeAs('destinations', $imageName);
+            $url = str_replace('', '', $path);
+
+            // cek jika ini adalah gambar utama
+            $isPrimary = $makePrimary && $primaryIndex !== null && $index == $primaryIndex;
+
+            // kalau ini adalah gambar utama, set semua gambar lain menjadi bukan utama
+            if ($isPrimary) {
+                DestinationImage::where('destination_id', $destination->id)
+                    ->update(['is_primary' => false]);
+            }
+
+            // Save image
+            DestinationImage::create([
+                'destination_id' => $destination->id,
+                'url' => $url,
+                'is_primary' => $isPrimary,
+            ]);
+        }
     }
 }

@@ -3,12 +3,15 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\User\DestinationController;
 use Illuminate\Support\Facades\Route;
 
 
 
 // resource route
-// Route::resource('destinasi', DestinationController::class);
+Route::get('/home', function () {
+    return view('user.home');
+});
 
 // admin route
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -26,3 +29,4 @@ Route::prefix('pengguna')->name('admin.users.')->group(function () {
 
 // destination route
 Route::resource('destinasi', AdminDestinationController::class)->names('admin.destinations');
+

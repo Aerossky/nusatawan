@@ -21,7 +21,6 @@ class DestinationController extends Controller
      */
     public function index(Request $request)
     {
-        // @dd($request->all());
         $filters = [
             'search' => $request->query('search'),
             'category_id' => $request->query('category_id'),
@@ -41,6 +40,10 @@ class DestinationController extends Controller
     public function create()
     {
         //
+        // kategori
+        $categories = Category::all();
+
+        return view('admin.destinations.create', compact('categories'));
     }
 
     /**
@@ -48,7 +51,30 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // validasi
+        $validated = $request->validate([
+            'place_name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'time_minutes' => 'required|integer|min:0',
+            'city' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'description' => 'required|string',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'primary_image_index' => 'required|integer|min:0',
+        ]);
+
+        // simpan data
+        $destination = $this->destinationService->createDestination($validated);
+
+        if ($destination) {
+            // jika berhasil
+            return redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.');
+        } else {
+            // jika gagal
+            return redirect()->back()->with('error', 'Gagal membuat destinasi.');
+        }
     }
 
     /**

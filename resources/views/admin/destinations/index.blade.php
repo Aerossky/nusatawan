@@ -5,7 +5,7 @@
         <div class="">
             <div class="flex justify-between items-center p-6 border-b">
                 <h2 class="text-2xl font-semibold text-gray-800">Manajemen Destinasi</h2>
-                <x-button href="{{ route('admin.users.create') }}" variant="primary">
+                <x-button href="{{ route('admin.destinations.create') }}" variant="primary">
                     Tambah Destinasi
                 </x-button>
             </div>
@@ -98,11 +98,12 @@
                         @forelse($destinations as $destination)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $destination->id }}
+                                    {{ $loop->iteration + ($destinations->currentPage() - 1) * $destinations->perPage() }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($destination->images->isNotEmpty())
-                                        <img src="{{ asset('storage/' . $destination->images->first()->url) }}"
+                                        {{-- Display the first image --}}
+                                        <img src="{{ asset('storage/' . $destination->primaryImage['url']) }}"
                                             alt="{{ $destination->place_name }}" class="h-12 w-16 object-cover rounded">
                                     @else
                                         <div class="h-12 w-16 bg-gray-200 rounded flex items-center justify-center">
