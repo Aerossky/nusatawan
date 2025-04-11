@@ -95,14 +95,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($destinations as $destination)
+                        @foreach ($destinations as $destination)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $loop->iteration + ($destinations->currentPage() - 1) * $destinations->perPage() }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($destination->images->isNotEmpty())
-                                        {{-- Display the first image --}}
                                         <img src="{{ asset('storage/' . $destination->primaryImage['url']) }}"
                                             alt="{{ $destination->place_name }}" class="h-12 w-16 object-cover rounded">
                                     @else
@@ -158,13 +157,16 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        @endforeach
+
+                        @if ($destinations->isEmpty())
                             <tr>
                                 <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">
                                     No destinations found.
                                 </td>
                             </tr>
-                        @endforelse
+                        @endif
+
                     </tbody>
                 </table>
             </div>

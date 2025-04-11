@@ -22,7 +22,7 @@
         @endif
 
         <form action="{{ route('admin.destinations.store') }}" method="POST" enctype="multipart/form-data"
-            class="p-6 space-y-6">
+            class="p-6 space-y-6" x-data="imageUploader">
             @csrf
 
             <!-- Nama Tempat -->
@@ -111,27 +111,89 @@
                 <div id="content-preview" class="prose prose-sm lg:prose-lg max-w-none"></div>
             </div>
 
-            <!-- Gambar -->
-            <div>
-                <label for="image" class="block text-sm font-medium text-gray-700">Gambar Destinasi</label>
-                <input type="file" name="image[]" id="image" multiple class="mt-1 block w-full" accept="image/*">
-                @foreach ($errors->get('image.*') as $messages)
-                    @foreach ($messages as $message)
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @endforeach
-                @endforeach
+            {{-- GAMBAR START --}}
+            <!-- Input untuk menyimpan index gambar primary -->
+            <input type="hidden" name="primary_image_index" :value="primaryIndex">
 
+            <!-- Area Upload -->
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors mb-4"
+                @dragover.prevent="dragOver = true" @dragleave.prevent="dragOver = false" @drop.prevent="handleDrop($event)"
+                :class="{ 'border-blue-500 bg-blue-50': dragOver }">
 
-                <!-- Hidden Primary Image Index -->
-                <input type="hidden" name="primary_image_index" id="primaryImage">
+                <div class="flex flex-col items-center justify-center space-y-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+
+                    <h3 class="text-lg font-medium text-gray-700">Unggah Foto</h3>
+                    <p class="text-sm text-gray-500">Tarik dan lepas gambar atau</p>
+
+                    <label
+                        class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                        Pilih File
+                        <input type="file" name="image[]" multiple accept="image/*" @change="handleFiles($event)"
+                            class="hidden">
+                    </label>
+
+                    <p class="text-xs text-gray-500">Format: JPG, PNG, GIF (Maks. 2MB)</p>
+                </div>
             </div>
 
-            <!-- Preview Gambar -->
-            <div class="mt-6">
-                <h3 class="text-lg font-semibold mb-4">Preview Gambar</h3>
-                <div id="image-preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            <!-- Pesan Error -->
+            <div x-show="error" x-transition class="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-md">
+                <p x-text="error"></p>
             </div>
 
+            <!-- Area Preview -->
+            <div x-show="images.length > 0" class="mt-6">
+                <h4 class="text-md font-medium text-gray-700 mb-3">Preview Gambar</h4>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <template x-for="(image, index) in images" :key="index">
+                        <div class="relative group rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                            <!-- Gambar -->
+                            <div class="aspect-square overflow-hidden bg-gray-100">
+                                <img :src="image.url" class="w-full h-full object-cover"
+                                    :class="{ 'ring-4 ring-blue-500': primaryIndex === index }">
+                            </div>
+
+                            <!-- Overlay saat hover -->
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                                <div
+                                    class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="flex justify-between items-center">
+                                        <!-- Tombol Primary -->
+                                        <button type="button" @click="setPrimary(index)"
+                                            class="text-xs font-medium px-2 py-1 rounded"
+                                            :class="primaryIndex === index ? 'bg-green-500 text-white' :
+                                                'bg-white/80 text-gray-800 hover:bg-blue-500 hover:text-white'">
+                                            <span x-text="primaryIndex === index ? 'Utama' : 'Set Utama'"></span>
+                                        </button>
+
+                                        <!-- Tombol Hapus -->
+                                        <button type="button" @click="removeImage(index)"
+                                            class="bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nama file -->
+                            <div class="px-2 py-1 text-xs truncate bg-white border-t border-gray-200"
+                                x-text="image.file.name"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            {{-- GAMBAR END --}}
 
             <!-- Submit -->
             <div>
@@ -210,4 +272,5 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     @vite('resources/js/pages/create-destination/editor.js')
     @vite('resources/js/pages/create-destination/image-preview.js')
+    <script src="https://unpkg.com/alpinejs" defer></script>
 @endpush
