@@ -56,7 +56,7 @@
                 <label for="time_minutes" class="block text-sm font-medium text-gray-700"> Perkiraan Lama Berwisata
                     (Menit)</label>
                 <input type="number" name="time_minutes" id="time_minutes" value="{{ old('time_minutes') }}"
-                    class="mt-1 block w-full border-gray-300 rounded">
+                    min="0" class="mt-1 block w-full border-gray-300 rounded">
                 @error('time_minutes')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -76,8 +76,8 @@
                 <!-- Latitude -->
                 <div>
                     <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
-                    <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
-                        class="mt-1 block w-full border-gray-300 rounded">
+                    <input type="number" name="latitude" id="latitude" value="{{ old('latitude') }}" step="0.000001"
+                        min="-90" max="90" class="mt-1 block w-full border-gray-300 rounded">
                     @error('latitude')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -86,8 +86,8 @@
                 <!-- Longitude -->
                 <div>
                     <label for="longitude" class="block text-sm font-medium text-gray-700">Longitude</label>
-                    <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
-                        class="mt-1 block w-full border-gray-300 rounded">
+                    <input type="number" name="longitude" id="longitude" value="{{ old('longitude') }}" step="0.000001"
+                        min="-180" max="180" class="mt-1 block w-full border-gray-300 rounded">
                     @error('longitude')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
