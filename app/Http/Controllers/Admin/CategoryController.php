@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
     /**
-     * Constructor
+     * Service untuk mengelola kategori
+     *
+     * @var CategoryService
+     */
+    protected $categoryService;
+
+    /**
+     * Inisialisasi controller dengan dependency injection
      *
      * @param CategoryService $categoryService
      */
@@ -20,13 +27,16 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar kategori
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
         $filters = [
-            'search'      => $request->query('search'),
-            'per_page'    => $request->query('per_page', 10),
+            'search'   => $request->query('search'),
+            'per_page' => $request->query('per_page', 10),
         ];
 
         return view('admin.categories.index', [
@@ -35,50 +45,99 @@ class CategoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form untuk membuat kategori baru
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        //
+        return view('admin.categories.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan kategori baru ke database
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+
+        try {
+            $category = $this->categoryService->createCategory($validated);
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Kategori berhasil dibuat.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Gagal membuat kategori: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan form untuk mengedit kategori
+     *
+     * @param Category $category
+     * @return \Illuminate\View\View
      */
-    public function show(string $id)
+    public function edit(Category $category)
     {
-        //
+        return view('admin.categories.edit', [
+            'category' => $category
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Memperbarui data kategori yang sudah ada
+     *
+     * @param Category $category
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function edit(string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+        ]);
+
+        try {
+            $updatedCategory = $this->categoryService->updateCategory($category, $validated);
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Kategori berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Gagal memperbarui kategori: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Menghapus kategori dari database
+     *
+     * @param Category $category
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $id)
+    public function destroy(Category $category)
     {
-        //
-    }
+        try {
+            $this->categoryService->deleteCategory($category);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Kategori berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', $e->getMessage());
+        }
     }
 }
