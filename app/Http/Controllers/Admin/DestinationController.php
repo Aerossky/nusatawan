@@ -4,28 +4,38 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Destination;
+use App\Models\DestinationImage;
 use App\Services\DestinationService;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
-
     protected $destinationService;
 
+    /**
+     * Konstruktor controller destinasi.
+     *
+     * @param DestinationService $destinationService
+     */
     public function __construct(DestinationService $destinationService)
     {
         $this->destinationService = $destinationService;
     }
+
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar destinasi berdasarkan filter pencarian.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
         $filters = [
-            'search' => $request->query('search'),
+            'search'      => $request->query('search'),
             'category_id' => $request->query('category_id'),
-            'sort_by' => $request->query('sort_by'),
-            'per_page' => $request->query('per_page', 10)
+            'sort_by'     => $request->query('sort_by'),
+            'per_page'    => $request->query('per_page', 10),
         ];
 
         $destinations = $this->destinationService->getDestinationsList($filters);
@@ -35,77 +45,113 @@ class DestinationController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan halaman form tambah destinasi.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        //
-        // kategori
         $categories = Category::all();
-
         return view('admin.destinations.create', compact('categories'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data destinasi baru ke database.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
+        $validated = $this->validateDestination($request);
 
-        // validasi
-        $validated = $request->validate([
-            'place_name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'time_minutes' => 'required|integer|min:0',
-            'city' => 'required|string|max:255',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'description' => 'required|string',
-            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'primary_image_index' => 'required|integer|min:0',
-        ]);
-
-        // simpan data
         $destination = $this->destinationService->createDestination($validated);
 
-        if ($destination) {
-            // jika berhasil
-            return redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.');
-        } else {
-            // jika gagal
-            return redirect()->back()->with('error', 'Gagal membuat destinasi.');
+        return $destination
+            ? redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.')
+            : redirect()->back()->with('error', 'Gagal membuat destinasi.');
+    }
+
+    /**
+     * Menampilkan halaman edit destinasi.
+     *
+     * @param Destination $destination
+     * @return \Illuminate\View\View
+     */
+    public function edit(Destination $destination)
+    {
+        return view('admin.destinations.edit', [
+            'destination' => $this->destinationService->getDestinationDetails($destination),
+            'categories'  => Category::all(),
+        ]);
+    }
+
+    /**
+     * Memperbarui data destinasi yang sudah ada.
+     *
+     * @param Request $request
+     * @param Destination $destination
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, Destination $destination)
+    {
+        $validated = $this->validateDestination($request);
+
+        try {
+            $this->destinationService->updateDestination($destination, $validated);
+            return redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['image' => $e->getMessage()])->withInput();
         }
     }
 
     /**
-     * Display the specified resource.
+     * Menghapus destinasi (belum diimplementasikan).
+     *
+     * @param string $id
      */
-    public function show(string $id)
+    public function destroy(Destination $destination)
     {
-        //
+        $this->destinationService->deleteDestination($destination);
+        return redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dihapus.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menghapus gambar tertentu dari destinasi.
+     *
+     * @param Destination $destination
+     * @param DestinationImage $image
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function edit(string $id)
+    public function destroyImage(Destination $destination, DestinationImage $image)
     {
-        //
+        $deleted = $this->destinationService->deleteImage($destination, $image);
+
+        if (!$deleted) {
+            return back()->with('error', 'Gagal menghapus gambar.');
+        }
+
+        return back()->with('success', 'Gambar berhasil dihapus.');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Validasi data destinasi dari form.
+     *
+     * @param Request $request
+     * @return array
      */
-    public function update(Request $request, string $id)
+    protected function validateDestination(Request $request): array
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $request->validate([
+            'place_name'          => 'required|string|max:255',
+            'category_id'         => 'required|exists:categories,id',
+            'time_minutes'        => 'required|integer|min:0',
+            'city'                => 'required|string|max:255',
+            'latitude'            => 'required|numeric|between:-90,90',
+            'longitude'           => 'required|numeric|between:-180,180',
+            'description'         => 'required|string',
+            'image.*'             => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'primary_image_index' => 'required|integer|min:0',
+        ]);
     }
 }

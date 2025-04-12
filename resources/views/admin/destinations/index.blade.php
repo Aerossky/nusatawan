@@ -6,7 +6,7 @@
             <div class="flex justify-between items-center p-6 border-b">
                 <h2 class="text-2xl font-semibold text-gray-800">Manajemen Destinasi</h2>
                 <x-button href="{{ route('admin.destinations.create') }}" variant="primary">
-                    Tambah Destinasi
+                    Tambah
                 </x-button>
             </div>
 
@@ -21,7 +21,7 @@
         <div class="p-6">
             {{-- Filter dan Pencarian --}}
             <form method="GET" action="{{ route('admin.destinations.index') }}" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {{-- Pencarian --}}
                     <div class="relative">
                         <input type="text" name="search" placeholder="Cari nama tempat atau kota"
@@ -150,7 +150,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-800"
-                                                onclick="return confirm('Are you sure you want to delete this destination?')">
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus destinasi ini?')">
                                                 Delete
                                             </button>
                                         </form>

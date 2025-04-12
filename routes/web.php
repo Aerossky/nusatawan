@@ -14,19 +14,28 @@ Route::get('/home', function () {
 });
 
 // admin route
-Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::prefix('admin')->name('admin.')->group(function () {
 
-// user route
-Route::prefix('pengguna')->name('admin.users.')->group(function () {
-    Route::get('/', [UserController::class, 'index'])->name('index');          // List User
-    Route::get('/create', [UserController::class, 'create'])->name('create');  // Form Tambah
-    Route::post('/', [UserController::class, 'store'])->name('store');         // Simpan Data
-    Route::get('/{user}', [UserController::class, 'show'])->name('show');      // Detail User
-    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit'); // Form Edit
-    Route::patch('/{user}', [UserController::class, 'update'])->name('update');  // Update Data
-    Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');          // Hapus User
+    // admin dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // user route
+    Route::prefix('pengguna')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::patch('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+    // destination route
+    Route::resource('destinasi', AdminDestinationController::class)
+        ->parameters(['destinasi' => 'destination'])
+        ->names('destinations');
+
+    // hapus foto Destinasi
+    Route::delete('destinasi/{destination}/image/{image}', [AdminDestinationController::class, 'destroyImage'])->name('destinations.image.destroy');
 });
-
-// destination route
-Route::resource('destinasi', AdminDestinationController::class)->names('admin.destinations');
 
