@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
 use App\Http\Controllers\Admin\UserController;
@@ -37,5 +38,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // hapus foto Destinasi
     Route::delete('destinasi/{destination}/image/{image}', [AdminDestinationController::class, 'destroyImage'])->name('destinations.image.destroy');
-});
 
+    // kategori route
+    Route::resource('kategori', CategoryController::class)
+        ->parameters(['kategori' => 'category'])
+        ->names('categories');
+});
