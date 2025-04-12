@@ -20,7 +20,11 @@
             <div class="p-6">
                 {{-- Filter dan Pencarian --}}
                 <form method="GET" action="{{ route('admin.categories.index') }}" class="mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    @php
+                        $hasFilters = request()->has('search') || request()->has('per_page');
+                    @endphp
+
+                    <div class="grid grid-cols-1 md:grid-cols-{{ $hasFilters ? '3' : '2' }} gap-4 items-start">
                         {{-- Pencarian --}}
                         <div class="relative">
                             <input type="text" name="search" placeholder="Cari nama kategori"
@@ -43,11 +47,13 @@
                         </select>
 
                         {{-- Reset Filter --}}
-                        @if (request('search'))
-                            <a href="{{ route('admin.categories.index') }}"
-                                class="inline-flex items-center gap-2 rounded-lg bg-gray-500 px-4 py-2 text-white text-sm hover:bg-gray-600 transition mx-auto">
-                                Reset Filter
-                            </a>
+                        @if ($hasFilters)
+                            <div class="text-center">
+                                <a href="{{ route('admin.categories.index') }}"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-gray-500 px-4 py-2 text-white text-sm hover:bg-gray-600 transition">
+                                    Reset Filter
+                                </a>
+                            </div>
                         @endif
                     </div>
                 </form>
@@ -65,19 +71,22 @@
                         <tbody>
                             @foreach ($categories as $index => $category)
                                 <tr class="border-b hover:bg-gray-50 transition-colors">
-                                    <td class="p-3">{{ $categories->firstItem() + $index }}</td>
+                                    <td class="p-3">{{ $loop->iteration }}</td>
                                     <td class="p-3">{{ $category->name }}</td>
                                     <td class="p-3">
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('admin.categories.edit', $category) }}"
-                                                class="text-yellow-600 hover:text-yellow-800">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button class="text-red-600 hover:text-red-800 btn-delete"
-                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
-                                                <i class="fas fa-trash"></i>
+                                        <a href="{{ route('admin.categories.edit', $category) }}"
+                                            class="text-indigo-600 hover:text-indigo-800">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST"
+                                            class="inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus destinasi ini?')">
+                                                Delete
                                             </button>
-                                        </div>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
