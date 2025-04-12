@@ -12,7 +12,8 @@ class DestinationImage extends Model
 
     protected $fillable = [
         'destination_id',
-        'url'
+        'url',
+        'is_primary',
     ];
 
     // Relasi dengan Destination

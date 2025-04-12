@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
             $table->string('url');
+            $table->boolean('is_primary')->default(false);
             $table->timestamps();
         });
     }

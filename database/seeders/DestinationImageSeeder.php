@@ -19,12 +19,14 @@ class DestinationImageSeeder extends Seeder
             [
                 'destination_id' => 1,
                 'url' => 'destinations/kuta_1.jpg',
+                'is_primary' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'destination_id' => 1,
                 'url' => 'destinations/kuta_2.jpg',
+                'is_primary' => false,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -32,12 +34,14 @@ class DestinationImageSeeder extends Seeder
             [
                 'destination_id' => 2,
                 'url' => 'destinations/bromo_1.jpg',
+                'is_primary' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'destination_id' => 2,
                 'url' => 'destinations/bromo_2.jpg',
+                'is_primary' => false,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -45,6 +49,7 @@ class DestinationImageSeeder extends Seeder
             [
                 'destination_id' => 3,
                 'url' => 'destinations/borobudur_1.jpg',
+                'is_primary' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -52,6 +57,7 @@ class DestinationImageSeeder extends Seeder
             [
                 'destination_id' => 4,
                 'url' => 'destinations/tumpaksewu_1.jpg',
+                'is_primary' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -59,6 +65,7 @@ class DestinationImageSeeder extends Seeder
             [
                 'destination_id' => 5,
                 'url' => 'destinations/dufan_1.jpg',
+                'is_primary' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
