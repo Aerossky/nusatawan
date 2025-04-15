@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 
 // resource route
-Route::get('/home', function () {
-    return view('user.home');
+Route::get('/tentang', function () {
+    return view('user.about');
 });
 // user route
 

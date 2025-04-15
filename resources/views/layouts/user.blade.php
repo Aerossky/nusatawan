@@ -16,7 +16,7 @@
 <body class="bg-background text-dark ">
 
     {{-- Navbar User --}}
-    <x-user.navbar currentPage="" />
+    <x-user.navbar currentPage="about" />
 
     {{-- Konten Halaman --}}
     <div class="mx-auto">
