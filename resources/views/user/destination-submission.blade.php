@@ -47,9 +47,31 @@
         }
 
         /* CSS untuk dropdown autocomplete */
+        /* Ganti ini */
         #map-search {
             position: relative;
-            z-index: 1000;
+            z-index: -50 !important;
+        }
+
+        /* Dengan ini */
+        #map-search {
+            position: relative;
+            z-index: 2 !important;
+        }
+
+        /* Tambahkan ini */
+        #map {
+            height: 400px;
+            width: 100%;
+            position: relative;
+            z-index: 0;
+            /* Pastikan peta berada di bawah pencarian */
+        }
+
+        /* Jika dropdown autocomplete perlu z-index lebih tinggi */
+        .absolute.z-10.w-full.bg-white.border {
+            z-index: 2;
+            /* Pastikan dropdown muncul di atas peta */
         }
 
         /* Custom scrollbar untuk dropdown autocomplete */
@@ -74,7 +96,7 @@
 @endpush
 
 @section('content')
-    <div class="bg-white">
+    <div class="bg-white mt-14">
         <x-section>
             <div class="">
                 <div class="mb-6">

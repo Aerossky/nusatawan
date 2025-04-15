@@ -16,7 +16,7 @@
 <body class="bg-background text-dark ">
 
     {{-- Navbar User --}}
-    <x-user.navbar currentPage="about" />
+    <x-user.navbar currentPage="{{ $currentPath = request()->path() }}" />
 
     {{-- Konten Halaman --}}
     <div class="mx-auto">

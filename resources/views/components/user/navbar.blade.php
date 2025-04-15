@@ -1,7 +1,7 @@
 @props(['currentPage' => ''])
 
 <nav id="navbar" data-page="{{ $currentPage }}"
-    class="fixed w-full z-20 top-0 start-0 transition-all duration-300 bg-transparent">
+    class="fixed w-full z-50 top-0 start-0 transition-all duration-300 bg-transparent">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-white transition-colors duration-300"
@@ -15,7 +15,7 @@
             <button data-collapse-toggle="navbar-sticky" type="button"
                 class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-300"
                 id="hamburger-menu" aria-controls="navbar-sticky" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
+                <span class="sr-only">Buka menu utama</span>
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 17 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -28,10 +28,10 @@
                 class="flex flex-col p-4 md:p-0 mt-4 font-medium border md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 my-auto">
                 @php
                     $menus = [
-                        'home' => 'Beranda',
-                        'destinations' => 'Destinasi',
-                        'plans' => 'Rencana Perjalanan',
-                        'about' => 'Tentang Kami',
+                        '/' => 'Beranda',
+                        'destinasi' => 'Destinasi',
+                        'rencana' => 'Rencana Perjalanan',
+                        'tentang' => 'Tentang Kami',
                     ];
                 @endphp
 
@@ -58,8 +58,7 @@
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const currentPage = navbar.getAttribute('data-page');
 
-        // Jika di halaman "about", langsung atur navbar tetap putih
-        if (currentPage === "about") {
+        if (currentPage !== "/" && currentPage !== "destinasi") {
             navbar.classList.add('bg-white', 'shadow-md');
             navbar.classList.remove('bg-transparent');
             brandText.classList.remove('text-white');
@@ -69,7 +68,7 @@
 
             navLinks.forEach(link => {
                 const page = link.getAttribute('data-page');
-                if (page === "about") {
+                if (page === currentPage) {
                     link.classList.add('bg-blue-600', 'text-white');
                 } else {
                     link.classList.remove('text-white', 'bg-blue-600');
@@ -77,7 +76,6 @@
                 }
             });
         } else {
-            // Scroll event untuk halaman lain
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 50) {
                     navbar.classList.add('bg-white', 'shadow-md');
