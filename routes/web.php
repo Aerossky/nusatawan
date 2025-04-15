@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
+use App\Http\Controllers\User\DestinationSubmissionController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,6 +14,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/home', function () {
     return view('user.home');
 });
+// user route
+
+// user dashboard
+Route::get('/', function () {
+    return view('user.home');
+})->name('home');
+
+// destination route
+Route::resource('destinasi', DestinationController::class)
+    ->parameters(['destinasi' => 'destination'])
+    ->names('destinations');
+
+// destination submission route
+Route::get('/pengajuan-destinasi', [DestinationSubmissionController::class, 'index'])->name('destination-submission.index');
+Route::post('/pengajuan-destinasi', [DestinationSubmissionController::class, 'store'])->name('destination-submission.store');
+
 
 // admin route
 Route::prefix('admin')->name('admin.')->group(function () {
