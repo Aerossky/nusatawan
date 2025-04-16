@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('place_name');
             $table->string('slug')->unique();
             $table->text('description');
-            $table->string('city');
+            $table->string('administrative_area'); //Kota/Kabupaten/Kecamatan
+            $table->string('province'); //Provinsi
             $table->decimal('rating', 3, 2)->default(0);
             $table->decimal('rating_count')->default(0);
             $table->integer('time_minutes');
+            $table->string('best_visit_time')->nullable(); // Waktu terbaik dalam sehari (pagi/siang/sore/malam)
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
             $table->timestamps();
