@@ -135,7 +135,14 @@ function reverseGeocode(lat, lng) {
 
             // Isi field kota/kabupaten jika ditemukan
             if (administrativeArea) {
-                document.getElementById('city').value = administrativeArea;
+                document.getElementById('administrative_area').value = administrativeArea;
+            }
+
+            //  isi field provinsi jika ditemukan
+            const province = data.address.state || data.address.province;
+            
+            if (province) {
+                document.getElementById('province').value = province;
             }
         })
         .catch(error => {

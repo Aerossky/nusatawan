@@ -1,0 +1,31 @@
+#map {
+    height: 500px;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Autocomplete styles */
+#autocomplete-results {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-height: 240px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: 2px;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.autocomplete-item:hover {
+    background-color: #f3f4f6;
+}

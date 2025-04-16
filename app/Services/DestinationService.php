@@ -51,10 +51,12 @@ class DestinationService
             'description' => $data['description'],
             'category_id' => $data['category_id'],
             'created_by' => 1, // 'created_by' => auth()->id(),
-            'city' => $data['city'],
+            'administrative_area' => $data['administrative_area'],
+            'province' => $data['province'],
             'rating' => 0,
             'rating_count' => 0,
             'time_minutes' => $data['time_minutes'],
+            'best_visit_time' => $data['best_visit_time'],
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
         ]);
@@ -128,12 +130,14 @@ class DestinationService
 
         $destination->update([
             'place_name' => $data['place_name'],
+            'description' => $data['description'],
             'category_id' => $data['category_id'],
+            'administrative_area' => $data['administrative_area'],
+            'province' => $data['province'],
             'time_minutes' => $data['time_minutes'],
-            'city' => $data['city'],
+            'best_visit_time' => $data['best_visit_time'],
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
-            'description' => $data['description'],
         ]);
 
         $this->processImages($destination, $data, false);
