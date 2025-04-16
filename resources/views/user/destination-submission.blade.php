@@ -143,13 +143,6 @@
                                 </div>
 
                                 <div>
-                                    <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                                    <input type="text" name="city" id="city" value="{{ old('city') }}"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        required>
-                                </div>
-
-                                <div>
                                     <label for="time_minutes" class="block text-sm font-medium text-gray-700 mb-1">Waktu
                                         Kunjungan
                                         (Menit)</label>
@@ -228,26 +221,35 @@
                                                 readonly required>
                                         </div>
                                     </div>
+
+                                    <!-- Tambahkan field kota di bawah lat/long -->
+                                    <div class="mt-4">
+                                        <label for="city"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten</label>
+                                        <input type="text" name="city" id="city" value="{{ old('city') }}"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="pt-5">
-                            <div class="flex justify-end">
-                                <button type="button" onclick="window.history.back()"
-                                    class="bg-white py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Batal
-                                </button>
-                                <button type="submit"
-                                    class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Ajukan Destinasi
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
+
+                <div class="pt-5">
+                    <div class="flex justify-end">
+                        <button type="button" onclick="window.history.back()"
+                            class="bg-white py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Ajukan Destinasi
+                        </button>
+                    </div>
+                </div>
+                </form>
             </div>
-        </x-section>
+    </div>
+    </x-section>
     </div>
 @endsection
 
