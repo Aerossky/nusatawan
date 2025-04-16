@@ -15,7 +15,7 @@ function initMap() {
     // Batas wilayah Indonesia
     const indonesiaBounds = L.latLngBounds(
         L.latLng(-11.0, 95.0), // Southwest
-        L.latLng(6.1, 141.0) // Northeast
+        L.latLng(6.1, 141.0)   // Northeast
     );
 
     // Inisialisasi peta dengan batas
@@ -41,25 +41,41 @@ function initMap() {
     });
 
     // Dapatkan lokasi pengguna
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+    getUserLocation(indonesiaBounds);
+
+    // Setup pencarian dengan autocomplete
+    setupSearchWithAutocomplete();
+}
+
+// Fungsi untuk mendapatkan lokasi pengguna
+function getUserLocation(bounds) {
+    if (!navigator.geolocation) {
+        console.log("Geolocation tidak didukung browser ini.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             const latlng = L.latLng(lat, lng);
 
-            if (indonesiaBounds.contains(latlng)) {
+            if (bounds.contains(latlng)) {
                 mapObj.setView(latlng, 10);
                 addMarker(lat, lng);
             } else {
                 console.log("Lokasi pengguna di luar Indonesia.");
             }
-        }, function() {
-            console.log("Tidak bisa mendapatkan lokasi pengguna.");
-        });
-    }
-
-    // Setup pencarian dengan autocomplete
-    setupSearchWithAutocomplete();
+        },
+        function(error) {
+            console.log("Tidak bisa mendapatkan lokasi pengguna:", error.message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        }
+    );
 }
 
 // Fungsi untuk menambahkan marker
@@ -80,9 +96,21 @@ function addMarker(lat, lng) {
     reverseGeocode(lat, lng);
 }
 
+// Fungsi untuk membersihkan teks dari karakter non-latin
+function cleanText(text) {
+    if (!text) return '';
+
+    // Hapus semua karakter non-latin dan non-spasi
+    // Regex ini hanya menyimpan karakter latin (A-Z, a-z), angka, spasi dan beberapa tanda baca umum
+    return text.replace(/[^\w\s.,;:!?"'()\-]/g, '').trim();
+}
+
 // Fungsi untuk mengubah format lokasi ke bahasa Indonesia
 function translateLocationName(name) {
     if (!name) return '';
+
+    // Bersihkan karakter non-latin terlebih dahulu
+    name = cleanText(name);
 
     // Daftar kata bahasa Inggris yang umum dan terjemahannya
     const translations = {
@@ -109,52 +137,88 @@ function translateLocationName(name) {
     return result;
 }
 
-// Fungsi untuk reverse geocoding
+// Cache untuk menyimpan hasil reverse geocoding
+const geocodeCache = new Map();
+
+// Fungsi untuk reverse geocoding dengan cache
 function reverseGeocode(lat, lng) {
+    // Round koordinat untuk efisiensi cache (6 desimal ≈ akurasi 10cm)
+    const roundedLat = parseFloat(lat.toFixed(6));
+    const roundedLng = parseFloat(lng.toFixed(6));
+    const cacheKey = `${roundedLat},${roundedLng}`;
+
+    // Periksa cache terlebih dahulu
+    if (geocodeCache.has(cacheKey)) {
+        const cachedData = geocodeCache.get(cacheKey);
+        fillLocationFields(cachedData);
+        return;
+    }
+
     // Set parameter untuk prefer bahasa Indonesia
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&accept-language=id`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log("Reverse geocode result:", data);
 
-            // Coba ekstrak wilayah administratif dari hasil reverse geocoding
-            let administrativeArea = '';
+            // Simpan di cache
+            geocodeCache.set(cacheKey, data);
 
-            // Coba beberapa kemungkinan lokasi dalam data
-            if (data.address) {
-                // Prioritas pencarian: city, town, county, municipality, state
-                administrativeArea = data.address.city ||
-                       data.address.town ||
-                       data.address.county ||
-                       data.address.municipality ||
-                       data.address.state;
-
-                // Terjemahkan nama lokasi ke bahasa Indonesia jika masih ada istilah Inggris
-                administrativeArea = translateLocationName(administrativeArea);
-            }
-
-            // Isi field kota/kabupaten jika ditemukan
-            if (administrativeArea) {
-                document.getElementById('administrative_area').value = administrativeArea;
-            }
-
-            //  isi field provinsi jika ditemukan
-            const province = data.address.state || data.address.province;
-            
-            if (province) {
-                document.getElementById('province').value = province;
-            }
+            // Isi field lokasi
+            fillLocationFields(data);
         })
         .catch(error => {
             console.error("Error saat reverse geocoding:", error);
         });
 }
 
+// Fungsi untuk mengisi field lokasi
+function fillLocationFields(data) {
+    if (!data || !data.address) return;
+
+    // Coba ekstrak wilayah administratif dari hasil reverse geocoding
+    const administrativeArea = cleanText(
+        data.address.city ||
+        data.address.town ||
+        data.address.county ||
+        data.address.municipality ||
+        data.address.state ||
+        ''
+    );
+
+    // Isi field kota/kabupaten jika ditemukan
+    if (administrativeArea) {
+        const translatedArea = translateLocationName(administrativeArea);
+        document.getElementById('administrative_area').value = translatedArea;
+    }
+
+    // Isi field provinsi jika ditemukan
+    const province = cleanText(data.address.state || data.address.province || '');
+
+    if (province) {
+        document.getElementById('province').value = translateLocationName(province);
+    }
+}
+
+// Debounce function untuk mengurangi API calls
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
 // Fungsi untuk setup pencarian dengan autocomplete
 function setupSearchWithAutocomplete() {
     const searchInput = document.getElementById('map-search');
 
-    // Buat container untuk hasil autocomplete dan pastikan ditambahkan ke DOM
+    // Buat container untuk hasil autocomplete
     const autocompleteResults = document.createElement('div');
     autocompleteResults.id = 'autocomplete-results';
     autocompleteResults.style.position = 'absolute';
@@ -171,14 +235,114 @@ function setupSearchWithAutocomplete() {
     // Tambahkan elemen ke DOM
     searchInput.parentNode.appendChild(autocompleteResults);
 
-    let debounceTimer;
+    // Cache untuk hasil pencarian
+    const searchCache = new Map();
 
-    // Menangani perubahan input untuk memicu autocomplete
+    // Fungsi pencarian dengan debounce
+    const performSearch = debounce(function(query) {
+        console.log("Mencari:", query);
+
+        // Periksa cache terlebih dahulu
+        if (searchCache.has(query)) {
+            displayResults(searchCache.get(query));
+            return;
+        }
+
+        // Ambil hasil dari Nominatim dengan parameter bahasa Indonesia
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=id&q=${encodeURIComponent(query)}&limit=5&accept-language=id`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Hasil pencarian:", data);
+
+                // Simpan di cache
+                searchCache.set(query, data);
+
+                // Tampilkan hasil
+                displayResults(data);
+            })
+            .catch(error => {
+                console.error("Error pencarian:", error);
+                showError("Terjadi kesalahan saat mencari lokasi");
+            });
+    }, 300);
+
+    // Fungsi untuk menampilkan hasil pencarian
+    function displayResults(data) {
+        // Bersihkan hasil sebelumnya
+        autocompleteResults.innerHTML = '';
+
+        if (data && data.length > 0) {
+            // Tampilkan container hasil
+            autocompleteResults.style.display = 'block';
+
+            // Tambahkan setiap hasil ke dropdown
+            data.forEach(result => {
+                const item = document.createElement('div');
+                item.style.padding = '8px';
+                item.style.cursor = 'pointer';
+
+                // Bersihkan nama lokasi dari karakter non-latin dan terjemahkan
+                const cleanDisplayName = cleanText(result.display_name);
+                item.textContent = translateLocationName(cleanDisplayName);
+
+                // Efek hover
+                item.onmouseenter = () => item.style.backgroundColor = '#f3f4f6';
+                item.onmouseleave = () => item.style.backgroundColor = 'white';
+
+                // Tangani klik pada hasil
+                item.addEventListener('click', function() {
+                    const lat = parseFloat(result.lat);
+                    const lng = parseFloat(result.lon);
+
+                    // Update input dengan lokasi terpilih yang sudah dibersihkan dan diterjemahkan
+                    searchInput.value = translateLocationName(cleanText(result.display_name));
+
+                    // Pindahkan peta ke lokasi dan tambahkan marker
+                    mapObj.setView([lat, lng], 15);
+                    addMarker(lat, lng);
+
+                    // Sembunyikan hasil
+                    autocompleteResults.style.display = 'none';
+                });
+
+                autocompleteResults.appendChild(item);
+            });
+        } else {
+            // Tidak ada hasil ditemukan
+            showNoResults();
+        }
+    }
+
+    // Fungsi untuk menampilkan pesan tidak ada hasil
+    function showNoResults() {
+        autocompleteResults.innerHTML = '';
+        const noResults = document.createElement('div');
+        noResults.style.padding = '8px';
+        noResults.style.color = '#6b7280';
+        noResults.textContent = 'Tidak ada lokasi ditemukan';
+        autocompleteResults.appendChild(noResults);
+        autocompleteResults.style.display = 'block';
+    }
+
+    // Fungsi untuk menampilkan pesan error
+    function showError(message) {
+        autocompleteResults.innerHTML = '';
+        const errorEl = document.createElement('div');
+        errorEl.style.padding = '8px';
+        errorEl.style.color = '#dc2626';
+        errorEl.textContent = message;
+        autocompleteResults.appendChild(errorEl);
+        autocompleteResults.style.display = 'block';
+    }
+
+    // Handle input event with debounce
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
-
-        // Hapus timer sebelumnya
-        clearTimeout(debounceTimer);
 
         // Sembunyikan hasil jika input terlalu pendek
         if (query.length < 3) {
@@ -186,100 +350,7 @@ function setupSearchWithAutocomplete() {
             return;
         }
 
-        // Tunda API call untuk menghindari terlalu banyak request (debounce)
-        debounceTimer = setTimeout(() => {
-            console.log("Mencari:", query); // Debug log
-
-            // Ambil hasil dari Nominatim dengan parameter bahasa Indonesia
-            fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&countrycodes=id&q=${encodeURIComponent(query)}&limit=5&accept-language=id`
-                )
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Hasil pencarian:", data); // Debug log
-
-                    // Bersihkan hasil sebelumnya
-                    autocompleteResults.innerHTML = '';
-
-                    if (data && data.length > 0) {
-                        // Tampilkan container hasil
-                        autocompleteResults.style.display = 'block';
-
-                        // Tambahkan setiap hasil ke dropdown
-                        data.forEach(result => {
-                            const item = document.createElement('div');
-                            item.style.padding = '8px';
-                            item.style.cursor = 'pointer';
-                            // Terjemahkan nama lokasi yang masih dalam bahasa Inggris
-                            item.textContent = translateLocationName(result.display_name);
-
-                            // Efek hover
-                            item.onmouseenter = function() {
-                                this.style.backgroundColor = '#f3f4f6';
-                            };
-                            item.onmouseleave = function() {
-                                this.style.backgroundColor = 'white';
-                            };
-
-                            // Tangani klik pada hasil
-                            item.addEventListener('click', function() {
-                                const lat = parseFloat(result.lat);
-                                const lng = parseFloat(result.lon);
-
-                                // Update input dengan lokasi terpilih yang sudah diterjemahkan
-                                searchInput.value = translateLocationName(result.display_name);
-
-                                // Pindahkan peta ke lokasi dan tambahkan marker
-                                mapObj.setView([lat, lng], 15);
-                                addMarker(lat, lng);
-
-                                // Ekstrak dan isi data wilayah administratif dari hasil
-                                let administrativeArea = '';
-
-                                if (result.address) {
-                                    // Prioritas pencarian: city, town, county, municipality, state
-                                    administrativeArea = result.address.city ||
-                                                       result.address.town ||
-                                                       result.address.county ||
-                                                       result.address.municipality ||
-                                                       result.address.state;
-
-                                    // Terjemahkan nama lokasi ke bahasa Indonesia
-                                    administrativeArea = translateLocationName(administrativeArea);
-
-                                    if (administrativeArea) {
-                                        document.getElementById('city').value = administrativeArea;
-                                    }
-                                }
-
-                                // Sembunyikan hasil
-                                autocompleteResults.style.display = 'none';
-                            });
-
-                            autocompleteResults.appendChild(item);
-                        });
-                    } else {
-                        // Tidak ada hasil ditemukan
-                        const noResults = document.createElement('div');
-                        noResults.style.padding = '8px';
-                        noResults.style.color = '#6b7280';
-                        noResults.textContent = 'Tidak ada lokasi ditemukan';
-                        autocompleteResults.appendChild(noResults);
-                        autocompleteResults.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error("Error pencarian:", error);
-                    // Tampilkan error di dalam dropdown
-                    autocompleteResults.innerHTML = '';
-                    const errorEl = document.createElement('div');
-                    errorEl.style.padding = '8px';
-                    errorEl.style.color = '#dc2626';
-                    errorEl.textContent = 'Terjadi kesalahan saat mencari lokasi';
-                    autocompleteResults.appendChild(errorEl);
-                    autocompleteResults.style.display = 'block';
-                });
-        }, 300); // Delay 300ms untuk debounce input
+        performSearch(query);
     });
 
     // Sembunyikan hasil ketika klik di luar
@@ -289,44 +360,32 @@ function setupSearchWithAutocomplete() {
         }
     });
 
-    // Pertahankan fungsi tombol Enter yang sudah ada
+    // Handle tombol Enter
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             const query = this.value.trim();
 
             if (query.length > 2) {
-                fetch(
-                        `https://nominatim.openstreetmap.org/search?format=json&countrycodes=id&q=${encodeURIComponent(query)}&limit=1&accept-language=id`
-                    )
-                    .then(response => response.json())
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=id&q=${encodeURIComponent(query)}&limit=1&accept-language=id`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data && data.length > 0) {
                             const result = data[0];
                             const lat = parseFloat(result.lat);
                             const lng = parseFloat(result.lon);
 
+                            // Update input dengan lokasi terpilih yang sudah dibersihkan
+                            searchInput.value = translateLocationName(cleanText(result.display_name));
+
+                            // Pindahkan peta dan tambahkan marker
                             mapObj.setView([lat, lng], 15);
                             addMarker(lat, lng);
-
-                            // Ekstrak dan isi data wilayah administratif dari hasil
-                            let administrativeArea = '';
-
-                            if (result.address) {
-                                // Prioritas pencarian: city, town, county, municipality, state
-                                administrativeArea = result.address.city ||
-                                                   result.address.town ||
-                                                   result.address.county ||
-                                                   result.address.municipality ||
-                                                   result.address.state;
-
-                                // Terjemahkan nama lokasi ke bahasa Indonesia
-                                administrativeArea = translateLocationName(administrativeArea);
-
-                                if (administrativeArea) {
-                                    document.getElementById('city').value = administrativeArea;
-                                }
-                            }
 
                             // Sembunyikan hasil
                             autocompleteResults.style.display = 'none';
