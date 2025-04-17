@@ -31,6 +31,9 @@ function initMap() {
         minZoom: 4
     }).addTo(mapObj);
 
+    // Buat tombol kembali ke pin point
+    createReturnToMarkerButton();
+
     // Tambahkan event click pada peta
     mapObj.on('click', function(e) {
         if (indonesiaBounds.contains(e.latlng)) {
@@ -45,6 +48,93 @@ function initMap() {
 
     // Setup pencarian dengan autocomplete
     setupSearchWithAutocomplete();
+
+    // Cek apakah sudah ada koordinat yang disimpan (tambahan baru)
+    checkExistingCoordinates();
+}
+
+// Fungsi untuk mengecek dan menampilkan koordinat yang sudah ada (fungsi baru)
+function checkExistingCoordinates() {
+    // Ambil nilai latitude dan longitude dari input fields
+    const latField = document.getElementById('latitude');
+    const lngField = document.getElementById('longitude');
+
+    if (latField && lngField) {
+        const lat = parseFloat(latField.value);
+        const lng = parseFloat(lngField.value);
+
+        // Jika kedua nilai valid dan tidak kosong
+        if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+            // Set view dan tambahkan marker
+            mapObj.setView([lat, lng], 15);
+            addMarker(lat, lng);
+
+            console.log("Marker ditambahkan dari koordinat yang ada:", lat, lng);
+
+            // Juga lakukan reverse geocoding untuk mengisi field lokasi
+            reverseGeocode(lat, lng);
+        }
+    }
+}
+
+// Fungsi untuk membuat tombol kembali ke marker
+function createReturnToMarkerButton() {
+    // Buat control button kustom
+    L.Control.ReturnToMarker = L.Control.extend({
+        options: {
+            position: 'topright'
+        },
+
+        onAdd: function(map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+            // Buat tombol
+            const button = L.DomUtil.create('a', 'return-to-marker-btn', container);
+            button.href = '#';
+            button.title = 'Kembali ke Pin Point';
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
+
+            // Styling tombol
+            button.style.width = '30px';
+            button.style.height = '30px';
+            button.style.lineHeight = '30px';
+            button.style.textAlign = 'center';
+            button.style.backgroundColor = '#fff';
+            button.style.color = '#666';
+            button.style.display = 'flex';
+            button.style.alignItems = 'center';
+            button.style.justifyContent = 'center';
+
+            // Sembunyikan tombol di awal (karena belum ada marker)
+            container.style.display = 'none';
+
+            // Tambahkan event listener
+            L.DomEvent.on(button, 'click', L.DomEvent.stop)
+            .on(button, 'click', function() {
+                goToMarker();
+            });
+
+            return container;
+        }
+    });
+
+    // Tambahkan kontrol ke peta
+    const returnToMarkerButton = new L.Control.ReturnToMarker();
+    mapObj.addControl(returnToMarkerButton);
+
+    // Simpan referensi tombol untuk digunakan nanti
+    window.returnToMarkerControl = returnToMarkerButton;
+}
+
+// Fungsi untuk pergi ke marker yang sudah ditambahkan
+function goToMarker() {
+    if (markerObj) {
+        const markerPosition = markerObj.getLatLng();
+        mapObj.setView(markerPosition, 15, {
+            animate: true,
+            duration: 1 // Durasi animasi dalam detik
+        });
+    }
 }
 
 // Fungsi untuk mendapatkan lokasi pengguna
@@ -94,6 +184,14 @@ function addMarker(lat, lng) {
 
     // Tambahkan reverse geocoding untuk mendapatkan informasi kota
     reverseGeocode(lat, lng);
+
+    // Tampilkan tombol kembali ke marker
+    if (window.returnToMarkerControl) {
+        const controlContainer = window.returnToMarkerControl.getContainer();
+        if (controlContainer) {
+            controlContainer.style.display = 'block';
+        }
+    }
 }
 
 // Fungsi untuk membersihkan teks dari karakter non-latin
@@ -194,13 +292,23 @@ function fillLocationFields(data) {
     if (administrativeArea) {
         const translatedArea = translateLocationName(administrativeArea);
         document.getElementById('administrative_area').value = translatedArea;
+
+        // Juga isi field city jika tersedia
+        if (document.getElementById('city')) {
+            document.getElementById('city').value = translatedArea;
+        }
     }
 
     // Isi field provinsi jika ditemukan
     const province = cleanText(data.address.state || data.address.province || '');
 
     if (province) {
-        document.getElementById('province').value = translateLocationName(province);
+        const translatedProvince = translateLocationName(province);
+
+        // Isi field province jika tersedia
+        if (document.getElementById('province')) {
+            document.getElementById('province').value = translatedProvince;
+        }
     }
 }
 
