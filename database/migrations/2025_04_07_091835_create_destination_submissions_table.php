@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('destination_submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('category_id')->constrained('categories');
             $table->string('place_name');
             $table->text('description');
-            $table->string('city');
+            $table->string('administrative_area'); //Kota/Kabupaten/Kecamatan
+            $table->string('province'); //Provinsi
             $table->integer('time_minutes');
+            $table->string('best_visit_time')->nullable(); // Waktu terbaik dalam sehari (pagi/siang/sore/malam)
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
