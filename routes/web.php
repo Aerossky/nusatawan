@@ -27,9 +27,8 @@ Route::resource('destinasi', DestinationController::class)
     ->names('destinations');
 
 // destination submission route
-Route::get('/pengajuan-destinasi', [DestinationSubmissionController::class, 'index'])->name('destination-submission.index');
+Route::get('/pengajuan-destinasi', [DestinationSubmissionController::class, 'create'])->name('destination-submission.create');
 Route::post('/pengajuan-destinasi', [DestinationSubmissionController::class, 'store'])->name('destination-submission.store');
-
 
 // admin route
 Route::prefix('admin')->name('admin.')->group(function () {

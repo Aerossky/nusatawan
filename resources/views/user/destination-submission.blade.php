@@ -104,10 +104,18 @@
                     <p class="text-gray-600 mt-2">Ajukan destinasi wisata baru untuk dikunjungi oleh wisatawan lainnya</p>
                 </div>
 
+                <!-- Error messages -->
+                @if (session('success'))
+                    <x-ui.alert type="success" :message="session('success')" />
+                @elseif (session('error'))
+                    <x-ui.alert type="error" :message="session('error')" />
+                @endif
+
                 <div class="">
                     <form action="{{ route('destination-submission.store') }}" method="POST" enctype="multipart/form-data"
                         class="space-y-6" id="destinationForm">
                         @csrf
+                        @method('POST')
 
                         @if ($errors->any())
                             <div class="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
@@ -127,7 +135,7 @@
                                         Tempat</label>
                                     <input type="text" name="place_name" id="place_name" value="{{ old('place_name') }}"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        required>
+                                        placeholder="Contoh: Pantai Kuta Bali">
                                 </div>
 
                                 <div>
@@ -137,17 +145,31 @@
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         required>
                                         <option value="">Pilih Kategori</option>
-                                        <option value="1">Pantai</option>
-                                        {{-- Kategori akan diisi dari data yang diambil dari database --}}
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label for="time_minutes" class="block text-sm font-medium text-gray-700 mb-1">Waktu
-                                        Kunjungan
-                                        (Menit)</label>
+                                    <label for="time_minutes" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Durasi Kunjungan (dalam Menit)
+                                    </label>
                                     <input type="number" name="time_minutes" id="time_minutes"
-                                        value="{{ old('time_minutes') }}"
+                                        value="{{ old('time_minutes') }}" placeholder="Contoh: 60"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                        min="0" required>
+                                </div>
+
+                                <div>
+                                    <label for="best_visit_time" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Waktu Paling Disarankan untuk Berkunjung (dalam Menit)
+                                    </label>
+                                    <input type="text" name="best_visit_time" id="best_visit_time"
+                                        value="{{ old('best_visit_time') }}" placeholder="Contoh: Pagi 06:00 - 09:00"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         required>
                                 </div>
