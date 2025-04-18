@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Destination;
+use App\Models\DestinationImage;
 use App\Models\DestinationSubmission;
 use App\Models\DestinationSubmissionImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DestinationSubmissionService
 {
@@ -139,5 +142,104 @@ class DestinationSubmissionService
 
         $image->delete();
         return true;
+    }
+
+    public function approveSubmission(int $id, array $data)
+    {
+        $submission = DestinationSubmission::with('images')->findOrFail($id);
+
+        // Only allow approval if submission is pending
+        if ($submission->status !== 'pending') {
+            throw new \Exception('Pengajuan yang sudah diproses tidak dapat disetujui');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create new destination
+            $destination = Destination::create([
+                'created_by' => $submission->created_by,
+                'category_id' => $data['category_id'] ?? $submission->category_id,
+                'place_name' => $submission->place_name,
+                'description' => $data['description'] ?? $submission->description,
+                'administrative_area' => $submission->administrative_area,
+                'province' => $submission->province,
+                'latitude' => $submission->latitude,
+                'longitude' => $submission->longitude,
+                'time_minutes' => $submission->time_minutes,
+                'best_visit_time' => $submission->best_visit_time,
+                'rating' => 0,
+                'rating_count' => 0,
+            ]);
+
+            // Transfer images
+            $primaryIndex = $data['primary_image_index'] ?? 0;
+            $this->transferSubmissionImages($submission, $destination, $primaryIndex);
+
+            // Update submission status
+            $submission->update([
+                'status' => 'approved',
+                'admin_note' => $data['admin_note'] ?? null
+            ]);
+
+            DB::commit();
+
+            return $destination;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function rejectSubmission(int $id, array $data)
+    {
+        $submission = DestinationSubmission::findOrFail($id);
+
+        // Only allow rejection if submission is pending
+        if ($submission->status !== 'pending') {
+            throw new \Exception('Pengajuan yang sudah diproses tidak dapat ditolak');
+        }
+
+        $submission->update([
+            'status' => 'rejected',
+            'admin_note' => $data['admin_note'] ?? null
+        ]);
+
+        return $submission;
+    }
+
+    /**
+     * Transfer images from submission to destination
+     *
+     * @param DestinationSubmission $submission
+     * @param Destination $destination
+     * @param int $primaryIndex
+     * @return void
+     */
+    private function transferSubmissionImages(DestinationSubmission $submission, Destination $destination, int $primaryIndex): void
+    {
+        foreach ($submission->images as $index => $image) {
+            $isPrimary = ($index == $primaryIndex);
+
+            // Cek apakah file ada di storage
+            if (Storage::exists($image->url)) {
+                // Mendapatkan ekstensi file dari path yang ada
+                $extension = pathinfo($image->url, PATHINFO_EXTENSION);
+
+                // Generate nama file baru
+                $filename = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $extension;
+                $newPath = 'destinations/' . $filename;
+
+                // Salin file ke lokasi baru dalam storage
+                if (Storage::copy($image->url, $newPath)) {
+                    // Buat record gambar destinasi baru
+                    DestinationImage::create([
+                        'destination_id' => $destination->id,
+                        'url' => $newPath,
+                        'is_primary' => $isPrimary,
+                    ]);
+                }
+            }
+        }
     }
 }

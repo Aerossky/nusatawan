@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
+use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinationSubmissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
@@ -59,4 +60,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('kategori', CategoryController::class)
         ->parameters(['kategori' => 'category'])
         ->names('categories');
+
+    // Pengajuan destinasi
+    Route::get('/pengajuan-destinasi', [AdminDestinationSubmissionController::class, 'index'])->name('destination-submission.index');
+    Route::get('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'show'])->name('destination-submission.show');
+    Route::delete('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'destroy'])->name('destination-submission.destroy');
+
+    // approve pengajuan destinasi
+    Route::post('/pengajuan-destinasi/{destinationSubmission}/approve', [AdminDestinationSubmissionController::class, 'approve'])->name('destination-submission.approve');
+    // tolak pengajuan destinasi
+    Route::post('/pengajuan-destinasi/{destinationSubmission}/reject', [AdminDestinationSubmissionController::class, 'reject'])->name('destination-submission.reject');
 });

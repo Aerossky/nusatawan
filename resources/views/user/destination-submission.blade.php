@@ -243,7 +243,8 @@
                                     <div class="relative mb-4">
                                         <input type="text" id="map-search"
                                             placeholder="Cari lokasi (cth: Jembatan Barelang Batam, Pantai Kuta Bali)..."
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                            value="{{ old('map-search') }}">
                                     </div>
 
                                     <div id="map" class="rounded-lg border border-gray-300"></div>
