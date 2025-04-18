@@ -63,13 +63,21 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $this->validateDestination($request);
+        try {
+            // Validasi input
+            $validated = $this->validateDestination($request);
 
-        $destination = $this->destinationService->createDestination($validated);
+            // Simpan data destinasi
+            $destination = $this->destinationService->createDestination($validated);
 
-        return $destination
-            ? redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.')
-            : redirect()->back()->with('error', 'Gagal membuat destinasi.');
+            // Redirect jika berhasil atau gagal
+            return $destination
+                ? redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.')
+                : redirect()->back()->with('error', 'Gagal membuat destinasi.');
+        } catch (\Exception $e) {
+            // Tangkap error umum lainnya
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
