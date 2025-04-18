@@ -47,19 +47,11 @@
         }
 
         /* CSS untuk dropdown autocomplete */
-        /* Ganti ini */
-        #map-search {
-            position: relative;
-            z-index: -50 !important;
-        }
-
-        /* Dengan ini */
         #map-search {
             position: relative;
             z-index: 2 !important;
         }
 
-        /* Tambahkan ini */
         #map {
             height: 400px;
             width: 100%;
@@ -132,10 +124,13 @@
                             <div class="space-y-6">
                                 <div>
                                     <label for="place_name" class="block text-sm font-medium text-gray-700 mb-1">Nama
-                                        Tempat</label>
+                                        Destinasi</label>
                                     <input type="text" name="place_name" id="place_name" value="{{ old('place_name') }}"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="Contoh: Pantai Kuta Bali">
+                                    @error('place_name')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -152,6 +147,9 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('category_id')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -162,16 +160,22 @@
                                         value="{{ old('time_minutes') }}" placeholder="Contoh: 60"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         min="0" required>
+                                    @error('time_minutes')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
                                     <label for="best_visit_time" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Waktu Paling Disarankan untuk Berkunjung (dalam Menit)
+                                        Waktu Paling Disarankan untuk Berkunjung
                                     </label>
                                     <input type="text" name="best_visit_time" id="best_visit_time"
                                         value="{{ old('best_visit_time') }}" placeholder="Contoh: Pagi 06:00 - 09:00"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         required>
+                                    @error('best_visit_time')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -179,12 +183,14 @@
                                         class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                                     <textarea name="description" id="description" rows="4"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="images">Foto
-                                        Destinasi (Maksimal 5
-                                        foto)</label>
+                                        Destinasi (Maksimal 5 foto)</label>
                                     <div
                                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                                         <div class="space-y-1 text-center">
@@ -199,7 +205,8 @@
                                                     class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                                     <span>Upload file</span>
                                                     <input id="images" name="images[]" type="file" multiple
-                                                        accept="image/*" class="sr-only" required>
+                                                        accept="image/*" class="sr-only"
+                                                        {{ old('images') ? '' : 'required' }}>
                                                 </label>
                                                 <p class="pl-1">atau drag and drop</p>
                                             </div>
@@ -209,7 +216,21 @@
                                     <div id="error-images" class="error-message hidden">Tidak boleh lebih dari 5 foto</div>
                                     <div id="images-counter" class="text-sm text-gray-600 mt-2">0/5 foto dipilih</div>
                                     <div id="image-preview" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2"></div>
+
+                                    {{-- Hidden inputs untuk old images --}}
+                                    @if (old('temp_images'))
+                                        @foreach (old('temp_images') as $index => $image)
+                                            <input type="hidden" name="old_images[]" value="{{ $image }}"
+                                                data-id="{{ $index }}">
+                                        @endforeach
+                                    @endif
                                 </div>
+                                @error('images')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                                @error('images.*')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Kolom Kanan -->
@@ -235,6 +256,9 @@
                                                 value="{{ old('latitude') }}"
                                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                                 readonly required>
+                                            @error('latitude')
+                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div>
                                             <label for="longitude"
@@ -243,6 +267,9 @@
                                                 value="{{ old('longitude') }}"
                                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                                 readonly required>
+                                            @error('longitude')
+                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
                                         </div>
 
                                         {{-- Kota Kabupaten --}}
@@ -252,6 +279,9 @@
                                             <input type="text" name="administrative_area" id="administrative_area"
                                                 value="{{ old('administrative_area') }}"
                                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                            @error('administrative_area')
+                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         {{-- provinsi --}}
                                         <div class="">
@@ -260,9 +290,11 @@
                                             <input type="text" name="province" id="province"
                                                 value="{{ old('province') }}"
                                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                            @error('province')
+                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
