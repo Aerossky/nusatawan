@@ -116,53 +116,10 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center space-x-3">
                                         <!-- View Button -->
-                                        <a href=""
+                                        <a href="{{ route('admin.destination-submission.edit', $submission) }}"
                                             class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
                                             View
                                         </a>
-
-                                        @if ($submission->status === 'pending')
-                                            <!-- Approve Button -->
-                                            <form action="{{ route('admin.destination-submission.approve', $submission) }}"
-                                                method="POST" class="inline-block"
-                                                onsubmit="return confirm('Setujui pengajuan ini?')">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="inline-flex items-center text-green-600 hover:text-green-800 transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                    Approve
-                                                </button>
-                                            </form>
-
-                                            <!-- Reject Button -->
-                                            <form action="{{ route('admin.destination-submission.reject', $submission) }}"
-                                                method="POST" class="inline-block"
-                                                onsubmit="return confirm('Tolak pengajuan ini?')">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="inline-flex items-center text-yellow-600 hover:text-yellow-800 transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        @endif
 
                                         <!-- Delete Button -->
                                         <form action="" method="POST" class="inline-block"
@@ -171,12 +128,6 @@
                                             @method('DELETE')
                                             <button type="submit"
                                                 class="inline-flex items-center text-red-600 hover:text-red-800 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
                                                 Delete
                                             </button>
                                         </form>

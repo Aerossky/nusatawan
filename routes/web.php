@@ -63,7 +63,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Pengajuan destinasi
     Route::get('/pengajuan-destinasi', [AdminDestinationSubmissionController::class, 'index'])->name('destination-submission.index');
-    Route::get('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'show'])->name('destination-submission.show');
+    Route::get('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'edit'])->name('destination-submission.edit');
     Route::delete('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'destroy'])->name('destination-submission.destroy');
 
     // approve pengajuan destinasi

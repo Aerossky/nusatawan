@@ -35,6 +35,11 @@ class DestinationSubmissionService
             ->paginate(10);
     }
 
+    public function getUserSubmissionDetail(DestinationSubmission $destinationSubmission): DestinationSubmission
+    {
+        return $destinationSubmission->load('images');
+    }
+
     public function createSubmission($data, $images = [])
     {
         DB::beginTransaction();
@@ -172,9 +177,8 @@ class DestinationSubmissionService
                 'rating_count' => 0,
             ]);
 
-            // Transfer images
-            $primaryIndex = $data['primary_image_index'] ?? 0;
-            $this->transferSubmissionImages($submission, $destination, $primaryIndex);
+            // Transfer selected images
+            $this->transferSelectedSubmissionImages($submission, $destination, $data['selected_images'] ?? [], $data['primary_image_id']);
 
             // Update submission status
             $submission->update([
@@ -216,26 +220,47 @@ class DestinationSubmissionService
      * @param int $primaryIndex
      * @return void
      */
-    private function transferSubmissionImages(DestinationSubmission $submission, Destination $destination, int $primaryIndex): void
+    /**
+     * Transfer selected images from submission to destination
+     *
+     * @param DestinationSubmission $submission
+     * @param Destination $destination
+     * @param array $selectedImageIds
+     * @param int $primaryImageId
+     * @return void
+     */
+    private function transferSelectedSubmissionImages(DestinationSubmission $submission, Destination $destination, array $selectedImageIds, int $primaryImageId): void
     {
-        foreach ($submission->images as $index => $image) {
-            $isPrimary = ($index == $primaryIndex);
+        // If no images selected, use all images
+        if (empty($selectedImageIds)) {
+            $selectedImageIds = $submission->images->pluck('id')->toArray();
+        }
 
-            // Cek apakah file ada di storage
+        // Process only selected images
+        foreach ($submission->images as $image) {
+            // Skip if not selected
+            if (!in_array($image->id, $selectedImageIds)) {
+                continue;
+            }
+
+            $isPrimary = ($image->id == $primaryImageId);
+
+            // Check if file exists in storage
             if (Storage::exists($image->url)) {
-                // Mendapatkan ekstensi file dari path yang ada
+                // Get file extension from existing path
                 $extension = pathinfo($image->url, PATHINFO_EXTENSION);
 
-                // Generate nama file baru
+                // Generate new filename
                 $filename = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $extension;
                 $newPath = 'destinations/' . $filename;
 
-                // Salin file ke lokasi baru dalam storage
+                // Copy file to new location in storage
                 if (Storage::copy($image->url, $newPath)) {
-                    // Buat record gambar destinasi baru
+                    // Create new destination image record
                     DestinationImage::create([
                         'destination_id' => $destination->id,
                         'url' => $newPath,
+                        'name' => $image->name ?? basename($image->url),
                         'is_primary' => $isPrimary,
                     ]);
                 }
