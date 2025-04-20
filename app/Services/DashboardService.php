@@ -21,10 +21,12 @@ class DashboardService
         return Destination::count();
     }
 
+
     public function getTotalCategories()
     {
         return Category::count();
     }
+
 
     public function getTotalReviews()
     {
@@ -50,12 +52,14 @@ class DashboardService
             });
     }
 
+
     public function getDestinationByCategory()
     {
         return Category::withCount('destinations')
             ->orderBy('destinations_count', 'desc')
             ->get();
     }
+
 
     public function getPopularDestinations($limit = 5)
     {
@@ -65,11 +69,12 @@ class DashboardService
             ->get();
     }
 
+
     public function getSystemNotifications()
     {
         return [
             'pendingDestinations' => DestinationSubmission::where('status', 'pending')->count(),
-            'inactiveUsers' => User::where('status', 'inactive')->count()
+            'inactiveUsers' => User::where('status', 'inactive')->count(),
         ];
     }
 }
