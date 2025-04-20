@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Inisialisasi peta
-    initMap();
+    // Tunda inisialisasi peta untuk memastikan DOM benar-benar siap
+    setTimeout(initMap, 300);
 });
 
 // Variabel untuk menyimpan data
@@ -8,6 +8,32 @@ let mapObj, markerObj;
 
 // Fungsi untuk inisialisasi peta
 function initMap() {
+    // Pastikan container map ada dan memiliki dimensi yang tepat
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+        console.error("Container peta tidak ditemukan!");
+        return;
+    }
+
+    // Set dimensi eksplisit untuk container peta
+    mapContainer.style.height = '500px';
+    mapContainer.style.width = '100%';
+
+    // Inisialisasi peta dengan batas Indonesia
+    initializeMap(mapContainer);
+
+    // Force update ukuran peta setelah inisialisasi
+    setTimeout(() => mapObj.invalidateSize(true), 200);
+
+    // Setup fitur peta
+    setupMapFeatures();
+
+    // Cek apakah sudah ada koordinat yang disimpan
+    checkExistingCoordinates();
+}
+
+// Fungsi untuk inisialisasi objek peta dengan batas Indonesia
+function initializeMap(mapContainer) {
     // Koordinat default (Indonesia)
     const defaultLat = -6.200000;
     const defaultLng = 106.816666;
@@ -31,11 +57,41 @@ function initMap() {
         minZoom: 4
     }).addTo(mapObj);
 
+    // Setup monitoring ukuran peta
+    setupMapSizeObserver(mapContainer);
+}
+
+// Fungsi untuk memonitor ukuran peta
+function setupMapSizeObserver(mapContainer) {
+    // Tambahkan observer untuk memantau perubahan ukuran container
+    if (typeof ResizeObserver !== 'undefined') {
+        const resizeObserver = new ResizeObserver(entries => {
+            if (mapObj) mapObj.invalidateSize(true);
+        });
+        resizeObserver.observe(mapContainer);
+    } else {
+        // Fallback untuk browser yang tidak mendukung ResizeObserver
+        setInterval(() => {
+            if (mapObj) mapObj.invalidateSize(true);
+        }, 2000);
+    }
+
+    // Tambahkan event listener untuk resize window
+    window.addEventListener('resize', () => {
+        if (mapObj) mapObj.invalidateSize(true);
+    });
+}
+
+// Fungsi untuk setup fitur peta
+function setupMapFeatures() {
     // Buat tombol kembali ke pin point
     createReturnToMarkerButton();
 
+    // Batas wilayah Indonesia untuk validasi lokasi
+    const indonesiaBounds = mapObj.options.maxBounds;
+
     // Tambahkan event click pada peta
-    mapObj.on('click', function(e) {
+    mapObj.on('click', e => {
         if (indonesiaBounds.contains(e.latlng)) {
             addMarker(e.latlng.lat, e.latlng.lng);
         } else {
@@ -48,12 +104,9 @@ function initMap() {
 
     // Setup pencarian dengan autocomplete
     setupSearchWithAutocomplete();
-
-    // Cek apakah sudah ada koordinat yang disimpan (tambahan baru)
-    checkExistingCoordinates();
 }
 
-// Fungsi untuk mengecek dan menampilkan koordinat yang sudah ada (fungsi baru)
+// Fungsi untuk mengecek dan menampilkan koordinat yang sudah ada
 function checkExistingCoordinates() {
     // Ambil nilai latitude dan longitude dari input fields
     const latField = document.getElementById('latitude');
@@ -68,10 +121,9 @@ function checkExistingCoordinates() {
             // Set view dan tambahkan marker
             mapObj.setView([lat, lng], 15);
             addMarker(lat, lng);
-
             console.log("Marker ditambahkan dari koordinat yang ada:", lat, lng);
 
-            // Juga lakukan reverse geocoding untuk mengisi field lokasi
+            // Lakukan reverse geocoding untuk mengisi field lokasi
             reverseGeocode(lat, lng);
         }
     }
@@ -87,32 +139,22 @@ function createReturnToMarkerButton() {
 
         onAdd: function(map) {
             const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-
-            // Buat tombol
             const button = L.DomUtil.create('a', 'return-to-marker-btn', container);
+
+            // Setup tombol
             button.href = '#';
             button.title = 'Kembali ke Pin Point';
             button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
 
             // Styling tombol
-            button.style.width = '30px';
-            button.style.height = '30px';
-            button.style.lineHeight = '30px';
-            button.style.textAlign = 'center';
-            button.style.backgroundColor = '#fff';
-            button.style.color = '#666';
-            button.style.display = 'flex';
-            button.style.alignItems = 'center';
-            button.style.justifyContent = 'center';
+            applyButtonStyles(button);
 
             // Sembunyikan tombol di awal (karena belum ada marker)
             container.style.display = 'none';
 
             // Tambahkan event listener
             L.DomEvent.on(button, 'click', L.DomEvent.stop)
-            .on(button, 'click', function() {
-                goToMarker();
-            });
+            .on(button, 'click', goToMarker);
 
             return container;
         }
@@ -124,6 +166,19 @@ function createReturnToMarkerButton() {
 
     // Simpan referensi tombol untuk digunakan nanti
     window.returnToMarkerControl = returnToMarkerButton;
+}
+
+// Fungsi untuk styling tombol
+function applyButtonStyles(button) {
+    button.style.width = '30px';
+    button.style.height = '30px';
+    button.style.lineHeight = '30px';
+    button.style.textAlign = 'center';
+    button.style.backgroundColor = '#fff';
+    button.style.color = '#666';
+    button.style.display = 'flex';
+    button.style.alignItems = 'center';
+    button.style.justifyContent = 'center';
 }
 
 // Fungsi untuk pergi ke marker yang sudah ditambahkan
@@ -197,9 +252,7 @@ function addMarker(lat, lng) {
 // Fungsi untuk membersihkan teks dari karakter non-latin
 function cleanText(text) {
     if (!text) return '';
-
     // Hapus semua karakter non-latin dan non-spasi
-    // Regex ini hanya menyimpan karakter latin (A-Z, a-z), angka, spasi dan beberapa tanda baca umum
     return text.replace(/[^\w\s.,;:!?"'()\-]/g, '').trim();
 }
 
@@ -262,10 +315,8 @@ function reverseGeocode(lat, lng) {
         })
         .then(data => {
             console.log("Reverse geocode result:", data);
-
             // Simpan di cache
             geocodeCache.set(cacheKey, data);
-
             // Isi field lokasi
             fillLocationFields(data);
         })
@@ -301,10 +352,8 @@ function fillLocationFields(data) {
 
     // Isi field provinsi jika ditemukan
     const province = cleanText(data.address.state || data.address.province || '');
-
     if (province) {
         const translatedProvince = translateLocationName(province);
-
         // Isi field province jika tersedia
         if (document.getElementById('province')) {
             document.getElementById('province').value = translatedProvince;
@@ -325,22 +374,10 @@ function debounce(func, wait) {
 // Fungsi untuk setup pencarian dengan autocomplete
 function setupSearchWithAutocomplete() {
     const searchInput = document.getElementById('map-search');
+    if (!searchInput) return;
 
     // Buat container untuk hasil autocomplete
-    const autocompleteResults = document.createElement('div');
-    autocompleteResults.id = 'autocomplete-results';
-    autocompleteResults.style.position = 'absolute';
-    autocompleteResults.style.zIndex = '1000';
-    autocompleteResults.style.width = '100%';
-    autocompleteResults.style.maxHeight = '240px';
-    autocompleteResults.style.overflowY = 'auto';
-    autocompleteResults.style.backgroundColor = 'white';
-    autocompleteResults.style.border = '1px solid #ccc';
-    autocompleteResults.style.borderRadius = '0.375rem';
-    autocompleteResults.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-    autocompleteResults.style.display = 'none'; // Sembunyikan di awal
-
-    // Tambahkan elemen ke DOM
+    const autocompleteResults = createAutocompleteContainer();
     searchInput.parentNode.appendChild(autocompleteResults);
 
     // Cache untuk hasil pencarian
@@ -352,7 +389,7 @@ function setupSearchWithAutocomplete() {
 
         // Periksa cache terlebih dahulu
         if (searchCache.has(query)) {
-            displayResults(searchCache.get(query));
+            displayResults(searchCache.get(query), autocompleteResults, searchInput);
             return;
         }
 
@@ -366,98 +403,25 @@ function setupSearchWithAutocomplete() {
             })
             .then(data => {
                 console.log("Hasil pencarian:", data);
-
                 // Simpan di cache
                 searchCache.set(query, data);
-
                 // Tampilkan hasil
-                displayResults(data);
+                displayResults(data, autocompleteResults, searchInput);
             })
             .catch(error => {
                 console.error("Error pencarian:", error);
-                showError("Terjadi kesalahan saat mencari lokasi");
+                showError("Terjadi kesalahan saat mencari lokasi", autocompleteResults);
             });
     }, 300);
-
-    // Fungsi untuk menampilkan hasil pencarian
-    function displayResults(data) {
-        // Bersihkan hasil sebelumnya
-        autocompleteResults.innerHTML = '';
-
-        if (data && data.length > 0) {
-            // Tampilkan container hasil
-            autocompleteResults.style.display = 'block';
-
-            // Tambahkan setiap hasil ke dropdown
-            data.forEach(result => {
-                const item = document.createElement('div');
-                item.style.padding = '8px';
-                item.style.cursor = 'pointer';
-
-                // Bersihkan nama lokasi dari karakter non-latin dan terjemahkan
-                const cleanDisplayName = cleanText(result.display_name);
-                item.textContent = translateLocationName(cleanDisplayName);
-
-                // Efek hover
-                item.onmouseenter = () => item.style.backgroundColor = '#f3f4f6';
-                item.onmouseleave = () => item.style.backgroundColor = 'white';
-
-                // Tangani klik pada hasil
-                item.addEventListener('click', function() {
-                    const lat = parseFloat(result.lat);
-                    const lng = parseFloat(result.lon);
-
-                    // Update input dengan lokasi terpilih yang sudah dibersihkan dan diterjemahkan
-                    searchInput.value = translateLocationName(cleanText(result.display_name));
-
-                    // Pindahkan peta ke lokasi dan tambahkan marker
-                    mapObj.setView([lat, lng], 15);
-                    addMarker(lat, lng);
-
-                    // Sembunyikan hasil
-                    autocompleteResults.style.display = 'none';
-                });
-
-                autocompleteResults.appendChild(item);
-            });
-        } else {
-            // Tidak ada hasil ditemukan
-            showNoResults();
-        }
-    }
-
-    // Fungsi untuk menampilkan pesan tidak ada hasil
-    function showNoResults() {
-        autocompleteResults.innerHTML = '';
-        const noResults = document.createElement('div');
-        noResults.style.padding = '8px';
-        noResults.style.color = '#6b7280';
-        noResults.textContent = 'Tidak ada lokasi ditemukan';
-        autocompleteResults.appendChild(noResults);
-        autocompleteResults.style.display = 'block';
-    }
-
-    // Fungsi untuk menampilkan pesan error
-    function showError(message) {
-        autocompleteResults.innerHTML = '';
-        const errorEl = document.createElement('div');
-        errorEl.style.padding = '8px';
-        errorEl.style.color = '#dc2626';
-        errorEl.textContent = message;
-        autocompleteResults.appendChild(errorEl);
-        autocompleteResults.style.display = 'block';
-    }
 
     // Handle input event with debounce
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
-
         // Sembunyikan hasil jika input terlalu pendek
         if (query.length < 3) {
             autocompleteResults.style.display = 'none';
             return;
         }
-
         performSearch(query);
     });
 
@@ -469,6 +433,97 @@ function setupSearchWithAutocomplete() {
     });
 
     // Handle tombol Enter
+    setupEnterKeySearch(searchInput, autocompleteResults);
+}
+
+// Fungsi untuk membuat container autocomplete
+function createAutocompleteContainer() {
+    const autocompleteResults = document.createElement('div');
+    autocompleteResults.id = 'autocomplete-results';
+    autocompleteResults.style.position = 'absolute';
+    autocompleteResults.style.zIndex = '1000';
+    autocompleteResults.style.width = '100%';
+    autocompleteResults.style.maxHeight = '240px';
+    autocompleteResults.style.overflowY = 'auto';
+    autocompleteResults.style.backgroundColor = 'white';
+    autocompleteResults.style.border = '1px solid #ccc';
+    autocompleteResults.style.borderRadius = '0.375rem';
+    autocompleteResults.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+    autocompleteResults.style.display = 'none'; // Sembunyikan di awal
+    return autocompleteResults;
+}
+
+// Fungsi untuk menampilkan hasil pencarian
+function displayResults(data, resultsContainer, searchInput) {
+    // Bersihkan hasil sebelumnya
+    resultsContainer.innerHTML = '';
+
+    if (data && data.length > 0) {
+        // Tampilkan container hasil
+        resultsContainer.style.display = 'block';
+
+        // Tambahkan setiap hasil ke dropdown
+        data.forEach(result => {
+            const item = document.createElement('div');
+            item.style.padding = '8px';
+            item.style.cursor = 'pointer';
+
+            // Bersihkan nama lokasi dari karakter non-latin dan terjemahkan
+            const cleanDisplayName = cleanText(result.display_name);
+            item.textContent = translateLocationName(cleanDisplayName);
+
+            // Efek hover
+            item.onmouseenter = () => item.style.backgroundColor = '#f3f4f6';
+            item.onmouseleave = () => item.style.backgroundColor = 'white';
+
+            // Tangani klik pada hasil
+            item.addEventListener('click', function() {
+                const lat = parseFloat(result.lat);
+                const lng = parseFloat(result.lon);
+
+                // Update input dengan lokasi terpilih yang sudah dibersihkan dan diterjemahkan
+                searchInput.value = translateLocationName(cleanText(result.display_name));
+
+                // Pindahkan peta ke lokasi dan tambahkan marker
+                mapObj.setView([lat, lng], 15);
+                addMarker(lat, lng);
+
+                // Sembunyikan hasil
+                resultsContainer.style.display = 'none';
+            });
+
+            resultsContainer.appendChild(item);
+        });
+    } else {
+        // Tidak ada hasil ditemukan
+        showNoResults(resultsContainer);
+    }
+}
+
+// Fungsi untuk menampilkan pesan tidak ada hasil
+function showNoResults(resultsContainer) {
+    resultsContainer.innerHTML = '';
+    const noResults = document.createElement('div');
+    noResults.style.padding = '8px';
+    noResults.style.color = '#6b7280';
+    noResults.textContent = 'Tidak ada lokasi ditemukan';
+    resultsContainer.appendChild(noResults);
+    resultsContainer.style.display = 'block';
+}
+
+// Fungsi untuk menampilkan pesan error
+function showError(message, resultsContainer) {
+    resultsContainer.innerHTML = '';
+    const errorEl = document.createElement('div');
+    errorEl.style.padding = '8px';
+    errorEl.style.color = '#dc2626';
+    errorEl.textContent = message;
+    resultsContainer.appendChild(errorEl);
+    resultsContainer.style.display = 'block';
+}
+
+// Fungsi untuk setup pencarian dengan Enter key
+function setupEnterKeySearch(searchInput, resultsContainer) {
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -496,7 +551,7 @@ function setupSearchWithAutocomplete() {
                             addMarker(lat, lng);
 
                             // Sembunyikan hasil
-                            autocompleteResults.style.display = 'none';
+                            resultsContainer.style.display = 'none';
                         } else {
                             alert('Lokasi tidak ditemukan. Silakan coba kata kunci lain.');
                         }
@@ -508,4 +563,17 @@ function setupSearchWithAutocomplete() {
             }
         }
     });
+}
+
+// Fungsi untuk memastikan peta ter-render dengan benar
+function refreshMap() {
+    if (mapObj) {
+        console.log("Merefresh peta...");
+        mapObj.invalidateSize(true);
+
+        // Jika ada marker, pastikan terlihat
+        if (markerObj) {
+            mapObj.setView(markerObj.getLatLng(), 15);
+        }
+    }
 }
