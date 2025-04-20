@@ -26,10 +26,14 @@
         <div class="mb-16 text-center">
             <h2 class="text-3xl font-bold mb-6">Perjalanan <span class="text-primary">Kami</span></h2>
             <p class="text-gray-700 max-w-3xl mx-auto">
-                Platform ini lahir dari kesadaran akan kebutuhan informasi yang akurat dan lengkap tentang destinasi wisata
-                di Indonesia. Kami memulai perjalanan ini pada tahun 2023 dengan visi untuk membantu wisatawan merencanakan
-                perjalanan mereka dengan lebih baik, terutama dengan pertimbangan prakiraan cuaca yang menjadi faktor
-                penting dalam pengalaman berwisata.
+                Platform ini lahir dari kesadaran akan pentingnya informasi akurat tentang destinasi wisata Indonesia.
+                Dikembangkan pertama kali pada 2023 sebagai bagian program Studi Independen Bersertifikat Dicoding Batch 6
+                bersama Aufaa Husniati dan Adriansyah.
+            </p>
+            <p class="text-gray-700 max-w-3xl mx-auto">
+                Awalnya, platform ini hanya menyajikan informasi destinasi wisata secara umum. Kini, sebagai proyek skripsi,
+                saya mengembangkannya dengan menambahkan fitur prakiraan cuaca untuk setiap destinasi, membantu wisatawan
+                merencanakan perjalanan lebih aman dan nyaman dengan informasi cuaca real-time.
             </p>
         </div>
 
@@ -76,7 +80,7 @@
                 </ul>
             </div>
             <div class="order-1 md:order-2">
-                <img src="{{ asset('images/destination.jpg') }}" alt="Destinasi Wisata"
+                <img src="{{ asset('images/destinations/IMG_20250402_182511.jpg') }}" alt="Nusa Dua Bali"
                     class="rounded-lg shadow-lg w-full h-96 object-cover">
             </div>
         </div>
@@ -151,28 +155,33 @@
             <h2 class="text-3xl font-bold text-center mb-10">Tentang <span class="text-primary">Pengembang</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                 <div class="col-span-1">
-                    <img src="{{ asset('images/developer.jpg') }}" alt="Pengembang"
-                        class="rounded-lg shadow-md w-64 h-64 object-cover mx-auto">
+                    <img src="{{ asset('images/team/developer.png') }}" alt="Pengembang"
+                        class="rounded-lg shadow-md w-80 h-80 object-cover mx-auto object-top">
                 </div>
                 <div class="col-span-2">
                     <h3 class="text-2xl font-bold text-gray-900">Risky</h3>
                     <p class="text-primary font-medium">Web Developer & Travel Enthusiast</p>
                     <div class="w-16 h-1 bg-primary my-4"></div>
                     <p class="text-gray-700 mb-4">
-                        Halo! Saya, pengembang di balik platform ini. Dengan latar belakang dalam pengembangan web
-                        dan passion untuk menjelajahi Indonesia, saya berkomitmen untuk membangun solusi digital yang
-                        membantu wisatawan dalam merencanakan perjalanan mereka dengan lebih baik.
+                        Halo! Saya adalah pengembang di balik platform ini. Dengan latar belakang di bidang pengembangan web
+                        dan semangat untuk menjelajahi keindahan Indonesia, saya berkomitmen membangun solusi digital yang
+                        membantu wisatawan merencanakan perjalanan dengan lebih mudah dan informatif.
+                    </p>
+                    <p class="text-gray-700 mb-4">
+                        Saya sangat tertarik dengan dunia teknologi yang terus berkembang, dan saat ini fokus mengasah
+                        kemampuan di bidang pengembangan web dan aplikasi, khususnya menggunakan PHP dan JavaScript. Saya
+                        juga aktif mengikuti tren serta inovasi terbaru dalam industri teknologi, dan selalu bersemangat
+                        untuk terus belajar dan memperluas keahlian.
                     </p>
                     <p class="text-gray-700 mb-6">
-                        Dengan pengalaman lebih dari 5 tahun di bidang web development dan
-                        having visited over 100 tourist destinations across Indonesia, I combine my technical expertise
-                        with my love for travel to create this comprehensive platform.
-                        Saya berharap platform ini dapat menjadi sumber informasi yang bermanfaat dan
-                        terus berkembang dengan kontribusi dari para pengguna.
+                        Dengan pengalaman lebih dari 2 tahun di bidang web development, saya memadukan keahlian teknis
+                        dengan kecintaan terhadap dunia pariwisata untuk menciptakan platform yang bermanfaat ini. Saya
+                        berharap platform ini dapat menjadi sumber informasi yang akurat dan terus berkembang melalui
+                        kontribusi dari para pengguna.
                     </p>
                     <div class="flex space-x-4">
                         <!-- GitHub -->
-                        <a href="https://github.com/username" target="_blank"
+                        <a href="https://github.com/Aerossky" target="_blank"
                             class="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
                                 <path fill="currentColor"
@@ -182,7 +191,7 @@
                         </a>
 
                         <!-- LinkedIn -->
-                        <a href="https://linkedin.com/in/username" target="_blank"
+                        <a href="https://www.linkedin.com/in/risky-aerossky/" target="_blank"
                             class="bg-blue-700 text-white p-2 rounded-full hover:bg-blue-600 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
                                 <path fill="currentColor"
@@ -192,7 +201,7 @@
                         </a>
 
                         <!-- Instagram -->
-                        <a href="https://instagram.com/username" target="_blank"
+                        <a href="https://instagram.com/risky_goh" target="_blank"
                             class="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white p-2 rounded-full hover:opacity-90 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5">
                                 <path fill="currentColor"
@@ -264,12 +273,13 @@
                             </svg>
                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.
-                <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d=" M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0
-                                    00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07
-                                    3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8
-                                    2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98
-                                    8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                                                            <path d=" M9.049 2.927c.3-.921
+                                    1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8
+                                    2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0
+                                    00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0
+                                    00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                                </path>
                             </svg>
                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
                                 <path
