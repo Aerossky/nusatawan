@@ -119,7 +119,7 @@ class DestinationSubmissionController extends Controller
         try {
             $this->destinationSubmissionService->approveSubmission($id, $validatedData);
 
-            return redirect()->route('admin.destination-submissions.index')
+            return redirect()->route('admin.destination-submission.index')
                 ->with('success', 'Pengajuan destinasi berhasil disetujui');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -147,7 +147,7 @@ class DestinationSubmissionController extends Controller
         try {
             $this->destinationSubmissionService->rejectSubmission($id, $validatedData);
 
-            return redirect()->route('admin.destination-submissions.index')
+            return redirect()->route('admin.destination-submission.index')
                 ->with('success', 'Pengajuan destinasi berhasil ditolak');
         } catch (\Exception $e) {
             return redirect()->back()
