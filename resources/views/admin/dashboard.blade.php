@@ -25,7 +25,8 @@
                                 {{ $systemNotifications['pendingDestinations'] }}
                             </p>
                         </div>
-                        <a href="" class="text-yellow-700 hover:underline">
+                        <a href="{{ route('admin.destination-submission.index', ['status' => 'pending']) }}"
+                            class="text-yellow-700 hover:underline">
                             Tinjau
                         </a>
                     </div>
@@ -38,7 +39,8 @@
                             <h3 class="text-lg font-semibold text-blue-800">Akun Tidak Aktif</h3>
                             <p class="text-2xl font-bold text-blue-900">{{ $systemNotifications['inactiveUsers'] }}</p>
                         </div>
-                        <a href="" class="text-blue-700 hover:underline">
+                        <a href="{{ route('admin.users.index', ['status' => 'inactive']) }}"
+                            class="text-blue-700 hover:underline">
                             Kelola
                         </a>
                     </div>

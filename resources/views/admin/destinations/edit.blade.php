@@ -1,5 +1,14 @@
 @extends('layouts.admin')
 
+@push('styles')
+    <!-- Tailwind Typography -->
+    <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.9/dist/typography.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+
+    {{-- Custom CSS --}}
+    @vite(['resources/css/custom/preview.css', 'resources/css/custom/map.css'])
+@endpush
+
 @section('content')
     <div>
         <div class="flex justify-between items-center p-6 border-b">
@@ -34,57 +43,60 @@
             <input type="hidden" name="primary_image_id" id="primary-image-input"
                 value="{{ $destination->images->where('is_primary', true)->first()->id ?? '' }}">
 
-            <!-- Nama Tempat -->
-            <div>
-                <label for="place_name" class="block text-sm font-medium text-gray-700">Nama Tempat</label>
-                <input type="text" name="place_name" id="place_name"
-                    value="{{ old('place_name', $destination->place_name) }}"
-                    class="mt-1 block w-full border-gray-300 rounded" required>
-                @error('place_name')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nama Tempat -->
+                <div>
+                    <label for="place_name" class="block text-sm font-medium text-gray-700">Nama Tempat</label>
+                    <input type="text" name="place_name" id="place_name"
+                        value="{{ old('place_name', $destination->place_name) }}"
+                        class="mt-1 block w-full border-gray-300 rounded" required>
+                    @error('place_name')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Kategori -->
+                <div>
+                    <label for="category_id" class="block text-sm font-medium text-gray-700">Kategori</label>
+                    <select name="category_id" id="category_id" class="mt-1 block w-full border-gray-300 rounded">
+                        <option value="" disabled>Pilih Kategori</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ old('category_id', $destination->category_id) == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- time minutes --}}
+                <div>
+                    <label for="time_minutes" class="block text-sm font-medium text-gray-700">Perkiraan Lama Berwisata
+                        (Menit)</label>
+                    <input type="number" name="time_minutes" id="time_minutes"
+                        value="{{ old('time_minutes', $destination->time_minutes) }}" min="0"
+                        class="mt-1 block w-full border-gray-300 rounded">
+                    @error('time_minutes')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Best time to visit -->
+                <div>
+                    <label for="best_visit_time" class="block text-sm font-medium text-gray-700">Jadwal Terbaik</label>
+                    <input type="text" name="best_visit_time" id="best_visit_time"
+                        value="{{ old('best_time', $destination->best_visit_time) }}"
+                        class="mt-1 block w-full border-gray-300 rounded" placeholder="Misal: Pagi 06:00 - 09:00" required>
+                    @error('best_visit_time')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
-            <!-- Kategori -->
-            <div>
-                <label for="category_id" class="block text-sm font-medium text-gray-700">Kategori</label>
-                <select name="category_id" id="category_id" class="mt-1 block w-full border-gray-300 rounded">
-                    <option value="" disabled>Pilih Kategori</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}"
-                            {{ old('category_id', $destination->category_id) == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('category_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- time minutes --}}
-            <div>
-                <label for="time_minutes" class="block text-sm font-medium text-gray-700">Perkiraan Lama Berwisata
-                    (Menit)</label>
-                <input type="number" name="time_minutes" id="time_minutes"
-                    value="{{ old('time_minutes', $destination->time_minutes) }}" min="0"
-                    class="mt-1 block w-full border-gray-300 rounded">
-                @error('time_minutes')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- kota -->
-            <div>
-                <label for="city" class="block text-sm font-medium text-gray-700">Kota</label>
-                <input type="text" name="city" id="city" value="{{ old('city', $destination->city) }}"
-                    class="mt-1 block w-full border-gray-300 rounded">
-                @error('city')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Latitude -->
                 <div>
                     <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
@@ -105,6 +117,58 @@
                     @error('longitude')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+            </div> --}}
+
+            <!-- Location section -->
+            <div class="space-y-4 border-t pt-6">
+                <h3 class="text-lg font-medium text-gray-800">Informasi Lokasi</h3>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi di Peta</label>
+                    <p class="text-sm text-gray-500 mb-2">Klik pada peta untuk menentukan lokasi</p>
+
+                    <!-- Map search -->
+                    <div class="relative mb-4">
+                        <input type="text" id="map-search"
+                            placeholder="Cari lokasi (cth: Jembatan Barelang Batam, Pantai Kuta Bali)..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Map container -->
+                    <div id="map" class="rounded-lg border border-gray-300"></div>
+
+                    <!-- Coordinates and city -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label for="latitude" class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                            <input type="text" name="latitude" id="latitude"
+                                value="{{ old('latitude', $destination->latitude) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                readonly required>
+                        </div>
+                        <div>
+                            <label for="longitude" class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                            <input type="text" name="longitude" id="longitude"
+                                value="{{ old('longitude', $destination->longitude) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                readonly required>
+                        </div>
+                        <div>
+                            <label for="administrative_area"
+                                class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten</label>
+                            <input type="text" name="administrative_area" id="administrative_area"
+                                value="{{ old('administrative_area', $destination->administrative_area) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        {{-- provinsi --}}
+                        <div class="">
+                            <label for="province" class="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
+                            <input type="text" name="province" id="province"
+                                value="{{ old('province', $destination->province) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -206,72 +270,14 @@
     </div>
 @endsection
 
-@push('styles')
-    <!-- Tailwind Typography -->
-    <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.9/dist/typography.min.css" rel="stylesheet">
-
-    <style>
-        #content-preview h1 {
-            font-size: 2em;
-            font-weight: bold;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content-preview h2 {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content-preview h3 {
-            font-size: 1.25em;
-            font-weight: bold;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content-preview ul {
-            list-style-type: disc;
-            margin-left: 1.5em;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content-preview ol {
-            list-style-type: decimal;
-            margin-left: 1.5em;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content-preview blockquote {
-            border-left: 4px solid #e5e7eb;
-            padding-left: 1em;
-            font-style: italic;
-        }
-
-        #content-preview table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #content-preview th,
-        #content-preview td {
-            border: 1px solid #e5e7eb;
-            padding: 0.5em;
-        }
-
-        .primary-image {
-            border: 3px solid #4f46e5 !important;
-        }
-    </style>
-@endpush
 
 @push('scripts')
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-    @vite('resources/js/pages/create-destination/editor.js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+
+    {{-- Custom JS --}}
+    @vite(['resources/js/pages/create-destination/editor.js', 'resources/js/pages/destination-submission/map.js'])
+    <script src="https://unpkg.com/alpinejs" defer></script>
 
     <script>
         // Handler untuk radio button gambar utama

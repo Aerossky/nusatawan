@@ -11,12 +11,14 @@ class DestinationSubmission extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'created_by',
         'category_id',
         'place_name',
         'description',
-        'city',
+        'administrative_area',
+        'province',
         'time_minutes',
+        'best_visit_time',
         'latitude',
         'longitude',
         'status',

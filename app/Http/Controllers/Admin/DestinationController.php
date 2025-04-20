@@ -63,13 +63,21 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $this->validateDestination($request);
+        try {
+            // Validasi input
+            $validated = $this->validateDestination($request);
 
-        $destination = $this->destinationService->createDestination($validated);
+            // Simpan data destinasi
+            $destination = $this->destinationService->createDestination($validated);
 
-        return $destination
-            ? redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.')
-            : redirect()->back()->with('error', 'Gagal membuat destinasi.');
+            // Redirect jika berhasil atau gagal
+            return $destination
+                ? redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dibuat.')
+                : redirect()->back()->with('error', 'Gagal membuat destinasi.');
+        } catch (\Exception $e) {
+            // Tangkap error umum lainnya
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -146,7 +154,9 @@ class DestinationController extends Controller
             'place_name'          => 'required|string|max:255',
             'category_id'         => 'required|exists:categories,id',
             'time_minutes'        => 'required|integer|min:0',
-            'city'                => 'required|string|max:255',
+            'best_visit_time'     => 'required|string|max:255',
+            'administrative_area' => 'required|string|max:255',
+            'province'            => 'required|string|max:255',
             'latitude'            => 'required|numeric|between:-90,90',
             'longitude'           => 'required|numeric|between:-180,180',
             'description'         => 'required|string',

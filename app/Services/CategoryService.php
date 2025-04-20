@@ -11,6 +11,15 @@ use Exception;
 class CategoryService
 {
     /**
+     * Mendapatkan daftar semua kategori yang ada di database.
+     *
+     * @return Collection<Category> Daftar kategori yang diurutkan berdasarkan nama.
+     */
+    public function getAllCategories()
+    {
+        return Category::withCount('destinations')->get();
+    }
+    /**
      * Mendapatkan daftar kategori dengan filter dan pagination opsional.
      *
      * @param  array  $filters  Filter yang dapat berisi:

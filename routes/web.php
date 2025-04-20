@@ -3,16 +3,33 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
+use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinationSubmissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
+use App\Http\Controllers\User\DestinationSubmissionController;
 use Illuminate\Support\Facades\Route;
 
 
 
 // resource route
-Route::get('/home', function () {
-    return view('user.home');
+Route::get('/tentang', function () {
+    return view('user.about');
 });
+// user route
+
+// user dashboard
+Route::get('/', function () {
+    return view('user.home');
+})->name('home');
+
+// destination route
+Route::resource('destinasi', DestinationController::class)
+    ->parameters(['destinasi' => 'destination'])
+    ->names('destinations');
+
+// destination submission route
+Route::get('/pengajuan-destinasi', [DestinationSubmissionController::class, 'create'])->name('destination-submission.create');
+Route::post('/pengajuan-destinasi', [DestinationSubmissionController::class, 'store'])->name('destination-submission.store');
 
 // admin route
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -43,4 +60,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('kategori', CategoryController::class)
         ->parameters(['kategori' => 'category'])
         ->names('categories');
+
+    // Pengajuan destinasi
+    // Route::get('/pengajuan-destinasi', [AdminDestinationSubmissionController::class, 'index'])->name('destination-submission.index');
+    // Route::get('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'edit'])->name('destination-submission.edit');
+    // Route::delete('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'destroy'])->name('destination-submission.destroy');
+
+    // // approve pengajuan destinasi
+    // Route::post('/pengajuan-destinasi/{destinationSubmission}/approve', [AdminDestinationSubmissionController::class, 'approve'])->name('destination-submission.approve');
+    // // tolak pengajuan destinasi
+    // Route::post('/pengajuan-destinasi/{destinationSubmission}/reject', [AdminDestinationSubmissionController::class, 'reject'])->name('destination-submission.reject');
+
+    Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
+        Route::get('/', [AdminDestinationSubmissionController::class, 'index'])->name('index');
+        Route::get('/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'edit'])->name('edit');
+        Route::delete('/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'destroy'])->name('destroy');
+        Route::post('/{destinationSubmission}/approve', [AdminDestinationSubmissionController::class, 'approve'])->name('approve');
+        Route::post('/{destinationSubmission}/reject', [AdminDestinationSubmissionController::class, 'reject'])->name('reject');
+    });
 });

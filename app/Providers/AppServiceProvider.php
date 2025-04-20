@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Category;
-use App\Models\Destination;
+use App\Models\DestinationSubmission;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\DestinationService;
@@ -21,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
             DashboardService::class,
             UserService::class,
             DestinationService::class,
-            CategoryService::class
+            CategoryService::class,
+            DestinationSubmission::class
         ];
 
         foreach ($services as $service) {

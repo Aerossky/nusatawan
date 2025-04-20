@@ -19,10 +19,12 @@ class Destination extends Model
         'category_id',
         'place_name',
         'description',
-        'city',
+        'administrative_area',
+        'province',
         'rating',
         'rating_count',
         'time_minutes',
+        'best_visit_time',
         'latitude',
         'longitude'
     ];
