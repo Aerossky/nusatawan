@@ -50,7 +50,7 @@ class DestinationService
             'place_name' => $data['place_name'],
             'description' => $data['description'],
             'category_id' => $data['category_id'],
-            'created_by' => 1, // 'created_by' => auth()->id(),
+            'created_by' => 1, // 'created_by' => auth()->id(), // TODO: Replace with appropriate user ID
             'administrative_area' => $data['administrative_area'],
             'province' => $data['province'],
             'rating' => 0,
