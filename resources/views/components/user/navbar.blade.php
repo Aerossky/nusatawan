@@ -37,7 +37,7 @@
 
                 @foreach ($menus as $page => $label)
                     <li class="my-auto">
-                        <a href="#"
+                        <a href="{{ $page }}"
                             class="block py-2 px-3 rounded-md transition md:px-6 md:py-2 md:rounded-full
                                 {{ $currentPage == $page ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }} "
                             id="nav-link-{{ $page }}" data-page="{{ $page }}">
