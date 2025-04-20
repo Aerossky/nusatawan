@@ -28,8 +28,9 @@ class DestinationSubmissionController extends Controller
 
     public function index()
     {
-        // Mengambil data pengajuan destinasi dan kategori dari service
-        $submissions = $this->destinationSubmissionService->getAllSubmissions();
+        $filters = request()->only(['status', 'category_id', 'search']);
+
+        $submissions = $this->destinationSubmissionService->getAllSubmissions($filters);
         $categories = $this->categoryService->getAllCategories();
 
         return view('admin.destination-submissions.index', compact('submissions', 'categories'));
@@ -43,6 +44,18 @@ class DestinationSubmissionController extends Controller
         $submission = $this->destinationSubmissionService->getUserSubmissionDetail($destinationSubmission);
 
         return view('admin.destination-submissions.edit', compact('submission', 'categories'));
+    }
+
+    public function destroy(DestinationSubmission $destinationSubmission)
+    {
+        try {
+            $this->destinationSubmissionService->deleteSubmission($destinationSubmission);
+            return redirect()->route('admin.destination-submissions.index')
+                ->with('success', 'Pengajuan destinasi berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error deleting destination submission: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus pengajuan destinasi');
+        }
     }
 
     public function approve(Request $request, $id)

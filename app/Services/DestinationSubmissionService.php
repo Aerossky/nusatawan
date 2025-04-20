@@ -17,12 +17,20 @@ class DestinationSubmissionService
     {
         $query = DestinationSubmission::query();
 
-        // Tambahkan filter jika ada
-        if (isset($filters['status'])) {
+        // Filter status
+        if (isset($filters['status']) && $filters['status'] !== '') {
             $query->where('status', $filters['status']);
         }
 
-        // Bisa tambahkan filter lainnya sesuai kebutuhan
+        // Filter kategori
+        if (isset($filters['category_id']) && $filters['category_id'] !== '') {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        // Filter pencarian nama tempat
+        if (isset($filters['search']) && $filters['search'] !== '') {
+            $query->where('place_name', 'like', '%' . $filters['search'] . '%');
+        }
 
         return $query->with('images')->latest()->paginate(10);
     }

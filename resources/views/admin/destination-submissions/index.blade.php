@@ -122,7 +122,8 @@
                                         </a>
 
                                         <!-- Delete Button -->
-                                        <form action="" method="POST" class="inline-block"
+                                        <form action="{{ route('admin.destination-submission.destroy', $submission) }}"
+                                            method="POST" class="inline-block"
                                             onsubmit="return confirm('Hapus pengajuan ini?')">
                                             @csrf
                                             @method('DELETE')
