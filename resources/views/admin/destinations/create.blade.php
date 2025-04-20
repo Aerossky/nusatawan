@@ -92,7 +92,7 @@
                 <h3 class="text-lg font-medium text-gray-800">Informasi Lokasi</h3>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi di Peta</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="map-search">Lokasi di Peta</label>
                     <p class="text-sm text-gray-500 mb-2">Klik pada peta untuk menentukan lokasi</p>
 
                     <!-- Map search -->
@@ -206,7 +206,7 @@
                                 <!-- Image -->
                                 <div class="aspect-square overflow-hidden bg-gray-100">
                                     <img :src="image.url" class="w-full h-full object-cover"
-                                        :class="{ 'primary-image': primaryIndex === index }">
+                                        :class="{ 'primary-image': primaryIndex === index }" alt="preview" />
                                 </div>
 
                                 <!-- Hover overlay -->

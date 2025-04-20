@@ -4,87 +4,8 @@
 @push('styles')
     <!-- CSS Leaflet -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-
-        .image-preview-item {
-            position: relative;
-            height: 150px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .image-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 0.375rem;
-        }
-
-        .delete-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .error-message {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-
-        /* CSS untuk dropdown autocomplete */
-        #map-search {
-            position: relative;
-            z-index: 2 !important;
-        }
-
-        #map {
-            height: 400px;
-            width: 100%;
-            position: relative;
-            z-index: 0;
-            /* Pastikan peta berada di bawah pencarian */
-        }
-
-        /* Jika dropdown autocomplete perlu z-index lebih tinggi */
-        .absolute.z-10.w-full.bg-white.border {
-            z-index: 2;
-            /* Pastikan dropdown muncul di atas peta */
-        }
-
-        /* Custom scrollbar untuk dropdown autocomplete */
-        .absolute.z-10.w-full.bg-white.border::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .absolute.z-10.w-full.bg-white.border::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .absolute.z-10.w-full.bg-white.border::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
-        }
-
-        .absolute.z-10.w-full.bg-white.border::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-    </style>
+    {{-- Custom CSS --}}
+    @vite(['resources/css/custom/map.css'])
 @endpush
 
 @section('content')
