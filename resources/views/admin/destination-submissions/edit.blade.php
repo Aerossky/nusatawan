@@ -17,7 +17,7 @@
         <div class="flex justify-between items-center p-6 border-b">
             <h2 class="text-2xl font-semibold text-gray-800">Review Pengajuan Destinasi</h2>
             <div>
-                <x-button href="" variant="secondary">
+                <x-button href="{{ route('admin.destination-submission.index') }}" variant="secondary">
                     Kembali
                 </x-button>
             </div>

@@ -52,7 +52,7 @@
 
             <!-- Pengajuan Destinasi -->
             <li>
-                <a href=""
+                <a href="{{ route('admin.destination-submission.index') }}"
                     class="flex items-center p-2 rounded-lg transition group
                     {{ request()->routeIs('admin.submissions.*') ? 'bg-gray-100 text-blue-600' : 'text-gray-900 hover:bg-gray-100' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin.submissions.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
@@ -67,7 +67,7 @@
 
             {{-- Kategori --}}
             <li>
-                <a href=""
+                <a href="{{ route('admin.categories.index') }}"
                     class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.categories.*') ? 'bg-gray-100' : '' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin.categories.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
