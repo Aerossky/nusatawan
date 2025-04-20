@@ -62,15 +62,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->names('categories');
 
     // Pengajuan destinasi
-    // Route::get('/pengajuan-destinasi', [AdminDestinationSubmissionController::class, 'index'])->name('destination-submission.index');
-    // Route::get('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'edit'])->name('destination-submission.edit');
-    // Route::delete('/pengajuan-destinasi/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'destroy'])->name('destination-submission.destroy');
-
-    // // approve pengajuan destinasi
-    // Route::post('/pengajuan-destinasi/{destinationSubmission}/approve', [AdminDestinationSubmissionController::class, 'approve'])->name('destination-submission.approve');
-    // // tolak pengajuan destinasi
-    // Route::post('/pengajuan-destinasi/{destinationSubmission}/reject', [AdminDestinationSubmissionController::class, 'reject'])->name('destination-submission.reject');
-
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
         Route::get('/', [AdminDestinationSubmissionController::class, 'index'])->name('index');
         Route::get('/{destinationSubmission}', [AdminDestinationSubmissionController::class, 'edit'])->name('edit');
