@@ -362,15 +362,11 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1" for="map-search">
                                     Cari Lokasi
                                 </label>
-                                <div class="flex">
+                                <!-- Map search -->
+                                <div class="relative mb-4">
                                     <input type="text" id="map-search"
-                                        placeholder="Cth: Jembatan Barelang Batam, Pantai Kuta Bali..."
-                                        class="flex-grow px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-blue-500 focus:border-blue-500 transition"
-                                        value="{{ old('map-search') }}">
-                                    <button type="button" id="use-my-location"
-                                        class="bg-gray-100 text-gray-700 px-3 py-2 border border-gray-300 border-l-0 rounded-r-lg hover:bg-gray-200 transition">
-                                        <i class="fas fa-crosshairs"></i>
-                                    </button>
+                                        placeholder="Cari lokasi (cth: Jembatan Barelang Batam, Pantai Kuta Bali)..."
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                             </div>
 
