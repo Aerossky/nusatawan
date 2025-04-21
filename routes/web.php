@@ -13,15 +13,20 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-// Auth::login(User::find(1));
+Auth::login(User::find(2));
 
-Auth::logout();
+// Auth::logout();
 
 // resource route
 Route::get('/tentang', function () {
     return view('user.about');
 });
 // user route
+
+// profile route
+Route::get('/profil', function () {
+    return view('user.profile');
+});
 
 // user dashboard
 Route::get('/', function () {
