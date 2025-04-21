@@ -7,9 +7,15 @@ use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinati
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
+// AUTH LOGIN
+// Auth::login(User::find(1));
+
+Auth::logout();
 
 // resource route
 Route::get('/tentang', function () {
