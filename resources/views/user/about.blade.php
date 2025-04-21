@@ -33,6 +33,7 @@
                     Husniati</a> dan <a href="https://www.linkedin.com/in/adriansyah-anca-197270214/"
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank">Adriansyah
                     Anca</a>.
+
             </p>
             <p class="text-gray-700 max-w-3xl mx-auto">
                 Awalnya, platform ini hanya menyajikan informasi destinasi wisata secara umum. Kini, sebagai proyek skripsi,
@@ -284,6 +285,7 @@
                                     1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8
                                     2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98
                                     8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+
                                 </path>
                             </svg>
                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
