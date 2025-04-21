@@ -8,10 +8,52 @@
                 id="brand-text">Nusatawan.</span>
         </a>
         <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <button type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Daftar
-            </button>
+            @auth
+                <div class="flex items-center">
+                    <button type="button" class="flex text-sm rounded-full focus:ring-4 focus:ring-blue-300"
+                        id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+                        data-dropdown-placement="bottom">
+                        <span class="sr-only">Buka menu pengguna</span>
+                        <img class="w-10 h-10 rounded-full object-cover border-2 border-white"
+                            src="{{ Auth::user()->profile_photo_url ?? '/images/default-avatar.png' }}" alt="Foto profil">
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-lg"
+                        id="user-dropdown">
+                        <div class="px-4 py-3">
+                            <span class="block text-sm text-gray-900">{{ Auth::user()->name }}</span>
+                            <span class="block text-sm text-gray-500 truncate">{{ Auth::user()->email }}</span>
+                        </div>
+                        <ul class="py-2" aria-labelledby="user-menu-button">
+                            <li>
+                                <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
+                            </li>
+                            <li>
+                                <a href=""
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">DestinasiKu</a>
+                            </li>
+                            <li>
+                                <a href=""
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pengaturan</a>
+                            </li>
+                            <li>
+                                <form method="POST" action="">
+                                    @csrf
+                                    <button type="submit"
+                                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Keluar</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            @else
+                <div class="flex items-center space-x-4">
+                    <a href=""
+                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center transition-all duration-300">
+                        Daftar
+                    </a>
+                </div>
+            @endauth
             <button data-collapse-toggle="navbar-sticky" type="button"
                 class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-300"
                 id="hamburger-menu" aria-controls="navbar-sticky" aria-expanded="false">
@@ -37,7 +79,7 @@
 
                 @foreach ($menus as $page => $label)
                     <li class="my-auto">
-                        <a href="#"
+                        <a href="{{ $page }}"
                             class="block py-2 px-3 rounded-md transition md:px-6 md:py-2 md:rounded-full
                                 {{ $currentPage == $page ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }} "
                             id="nav-link-{{ $page }}" data-page="{{ $page }}">
