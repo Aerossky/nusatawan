@@ -19,37 +19,73 @@ class ProfileService
     }
 
     /**
-     * Mengupdate data profil pengguna yang sedang login.
+     * Memperbarui data profil pengguna.
      *
+     * @param \App\Models\User $user
      * @param array $data
      * @return \App\Models\User
      */
     public function updateProfile(User $user, array $data)
     {
-        // Ambil user yang sedang login (nggak perlu lagi findOrFail kalau $user sudah dikirim dari controller dengan route-model binding)
+        // Hapus debugging code di production
+        // @dd($data);
 
-        // Handle upload image jika ada
-        if (isset($data['image']) && $data['image']) {
+        $this->handleProfileImage($user, $data);
+        $this->updateUserDetails($user, $data);
 
-            // Hapus gambar lama jika ada
-            if ($user->image) {
-                $oldImagePath =  public_path('storage/' . $user->image);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
-            }
+        $user->save();
 
-            // simpan gambar baru
-            $imagePath = $this->uploadImage($data['image']);
-            $user->image = $imagePath;
+        return $user;
+    }
+
+    /**
+     * menangani gambar profil pengguna
+     *
+     * @param User $user
+     * @param array $data
+     * @return void
+     */
+    private function handleProfileImage(User $user, array $data): void
+    {
+        if (!isset($data['image']) || !$data['image']) {
+            return;
         }
 
-        // Update password jika ada
+        $this->removeExistingImage($user);
+        $user->image = $this->uploadImage($data['image']);
+    }
+
+    /**
+     * menghapus gambar profil pengguna yang sudah ada
+     *
+     * @param User $user
+     * @return void
+     */
+    private function removeExistingImage(User $user): void
+    {
+        if (!$user->image) {
+            return;
+        }
+
+        $oldImagePath = public_path('storage/' . $user->image);
+        if (file_exists($oldImagePath)) {
+            unlink($oldImagePath);
+        }
+    }
+
+    /**
+     * memperbarui detail pengguna
+     *
+     * @param User $user
+     * @param array $data
+     * @return void
+     */
+    private function updateUserDetails(User $user, array $data): void
+    {
         if (!empty($data['password'])) {
             $user->password = bcrypt($data['password']);
         }
 
-        // Update name dan email
         if (isset($data['name'])) {
             $user->name = $data['name'];
         }
@@ -57,22 +93,19 @@ class ProfileService
         if (isset($data['email'])) {
             $user->email = $data['email'];
         }
-
-        // Simpan semua perubahan
-        $user->save();
-
-        return $user;
     }
 
-
-
-    private function uploadImage($image)
+    /**
+     * mengunggah gambar profil pengguna
+     *
+     * @param UploadedFile $image
+     * @return string
+     */
+    private function uploadImage($image): string
     {
-        // Generate nama gambar unik & random
         $imageName = uniqid() . '-' . Str::random(10) . '-' . time() . '.' . $image->extension();
         $path = $image->storeAs('users', $imageName);
 
-        // Return path yang dapat diakses oleh public
         return str_replace('', '', $path);
     }
 }

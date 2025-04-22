@@ -11,7 +11,7 @@
                 <div class="mb-4 md:mb-0 md:mr-8">
                     <label for="photoInput" class="relative cursor-pointer block">
                         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
-                            <img id="profileImage" src="{{ asset('storage/' . $profile->image) }}" alt="Profile Picture"
+                            <img id="profileImage" src="{{ asset('storage/' . $profile->image) }}" alt="Pengguna"
                                 class="w-full h-full object-cover">
                         </div>
                     </label>
@@ -91,9 +91,8 @@
                                         <div class="flex items-center gap-6">
                                             <div
                                                 class="bg-gray-100 rounded-full w-24 h-24 overflow-hidden border-2 border-white shadow">
-                                                <img id="current-profile"
-                                                    src="https://via.placeholder.com/200x200?text=Profile" alt="Foto Profil"
-                                                    class="w-full h-full object-cover">
+                                                <img id="current-profile" src="{{ asset('storage/' . $profile->image) }}"
+                                                    alt="pengguna" class="w-full h-full object-cover">
                                             </div>
                                             <div class="flex-1">
                                                 <input type="file" id="image" name="image" accept="image/*"
@@ -182,8 +181,7 @@
                         <div
                             class="border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-shadow duration-300">
                             <div class="relative h-48 bg-gray-100">
-                                <img src="https://via.placeholder.com/800x400?text=Bali" alt="Bali"
-                                    class="w-full h-full object-cover">
+                                <img src="" alt="Bali" class="w-full h-full object-cover">
                                 <div
                                     class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                                     <h4 class="text-white text-lg font-semibold">Bali</h4>
@@ -202,8 +200,7 @@
                         <div
                             class="border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-shadow duration-300">
                             <div class="relative h-48 bg-gray-100">
-                                <img src="https://via.placeholder.com/800x400?text=Yogyakarta" alt="Yogyakarta"
-                                    class="w-full h-full object-cover">
+                                <img src="" alt="Yogyakarta" class="w-full h-full object-cover">
                                 <div
                                     class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                                     <h4 class="text-white text-lg font-semibold">Yogyakarta</h4>
