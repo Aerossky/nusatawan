@@ -25,7 +25,8 @@ Route::get('/tentang', function () {
 // user route
 
 // profile route
-Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile', [ProfileController::class, 'show'])->name('user.profile.show');
+Route::patch('/profile/{user}', [ProfileController::class, 'update'])->name('user.profile.update');
 
 // user dashboard
 Route::get('/', function () {

@@ -75,41 +75,104 @@
             <div>
                 <!-- Profile Tab Content -->
                 <div x-show="activeTab === 'profile'" class="animate-fade-in">
-                    <h3 class="text-lg font-semibold mb-4">Profil Ku</h3>
-                    <form>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="name">Nama Lengkap</label>
-                                <input type="text" id="name" value="{{ $profile->name }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <p class="text-sm text-gray-500 mt-1">Silakan ubah jika ada perubahan nama.</p>
-                            </div>
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold mb-6">Profil Ku</h3>
 
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
-                                <input type="email" id="email" value="{{ $profile->email }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <p class="text-sm text-gray-500 mt-1">Gunakan email aktif yang bisa dihubungi.</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="image">Foto Profil</label>
-                                <input type="file" id="image" accept="image/*"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <p class="text-sm text-gray-500 mt-1">Silakan pilih gambar untuk mengganti foto profil</p>
-                                <div id="preview-container" class="mt-4">
-                                    <img id="preview" src="" alt="Preview"
-                                        class="w-32 h-32 object-cover rounded-full hidden border border-gray-300" />
+                        <form action="{{ route('user.profile.update', $profile) }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+                            @method('PATCH')
+                            <!-- Foto Profil Section -->
+                            <div class="mb-8">
+                                <div class="flex flex-col items-center md:items-start">
+                                    <div class="mb-6">
+                                        <label class="block text-gray-700 font-medium mb-2" for="image">Foto
+                                            Profil</label>
+                                        <div class="flex items-center gap-6">
+                                            <div
+                                                class="bg-gray-100 rounded-full w-24 h-24 overflow-hidden border-2 border-white shadow">
+                                                <img id="current-profile"
+                                                    src="https://via.placeholder.com/200x200?text=Profile" alt="Foto Profil"
+                                                    class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="flex-1">
+                                                <input type="file" id="image" name="image" accept="image/*"
+                                                    class="w-full px-4 py-2 border {{ $errors->has('image') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <p class="text-sm text-gray-500 mt-1">Silakan pilih gambar untuk mengganti
+                                                    foto profil</p>
+                                                @error('image')
+                                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="mt-6">
-                            <button type="submit"
-                                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
+
+                            <div class="space-y-6">
+                                <!-- Informasi Dasar -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2" for="name">Nama
+                                            Lengkap</label>
+                                        <input type="text" id="name" name="name"
+                                            value="{{ old('name', $profile->name ?? 'Budi Santoso') }}"
+                                            class="w-full px-4 py-2 border {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <p class="text-sm text-gray-500 mt-1">Silakan ubah jika ada perubahan nama.</p>
+                                        @error('name')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
+                                        <input type="email" id="email" name="email"
+                                            value="{{ old('email', $profile->email ?? 'budi@example.com') }}"
+                                            class="w-full px-4 py-2 border {{ $errors->has('email') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <p class="text-sm text-gray-500 mt-1">Gunakan email aktif yang bisa dihubungi.</p>
+                                        @error('email')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Password Section -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2" for="password">Kata Sandi
+                                            Baru</label>
+                                        <input type="password" id="password" name="password"
+                                            class="w-full px-4 py-2 border {{ $errors->has('password') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        @if ($errors->has('password'))
+                                            <p class="text-red-500 text-sm mt-1">{{ $errors->first('password') }}</p>
+                                        @else
+                                            <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah kata
+                                                sandi.</p>
+                                        @endif
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2"
+                                            for="password_confirmation">Konfirmasi
+                                            Kata Sandi</label>
+                                        <input type="password" id="password_confirmation" name="password_confirmation"
+                                            class="w-full px-4 py-2 border {{ $errors->has('password_confirmation') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        @if ($errors->has('password_confirmation'))
+                                            <p class="text-red-500 text-sm mt-1">
+                                                {{ $errors->first('password_confirmation') }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <button type="submit"
+                                    class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium transition-colors">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <!-- Destinations Tab Content -->
                 <div x-show="activeTab === 'destinations'" x-transition.opacity.duration.500ms class="animate-fade-in">
@@ -165,19 +228,16 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
-        const input = document.getElementById('image');
-        const preview = document.getElementById('preview');
+        // JavaScript untuk preview gambar
+        document.getElementById('image').addEventListener('change', function(e) {
+            const currentProfile = document.getElementById('current-profile');
+            const file = e.target.files[0];
 
-        input.addEventListener('change', function(event) {
-            const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                };
-
+                    currentProfile.src = e.target.result;
+                }
                 reader.readAsDataURL(file);
             }
         });
