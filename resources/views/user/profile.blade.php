@@ -36,18 +36,14 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="bg-white p-4 rounded-lg shadow-md text-center transition-transform hover:transform hover:scale-105">
-                <div class="text-3xl font-bold text-blue-600">1</div>
+                <div class="text-3xl font-bold text-blue-600">{{ $destinationUserTotal }}</div>
                 <div class="text-sm text-gray-600 font-medium">Destinasi</div>
             </div>
             <div class="bg-white p-4 rounded-lg shadow-md text-center transition-transform hover:transform hover:scale-105">
-                <div class="text-3xl font-bold text-blue-600">10</div>
-                <div class="text-sm text-gray-600 font-medium">Favorit</div>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow-md text-center transition-transform hover:transform hover:scale-105">
-                <div class="text-3xl font-bold text-blue-600">1</div>
-                <div class="text-sm text-gray-600 font-medium">Itinerari</div>
+                <div class="text-3xl font-bold text-blue-600">{{ $likedDestinationUserTotal }}</div>
+                <div class="text-sm text-gray-600 font-medium">Menyukai Destinasi</div>
             </div>
         </div>
 
