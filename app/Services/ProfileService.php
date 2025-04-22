@@ -2,6 +2,13 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class ProfileService {}
+class ProfileService
+{
+    public function getProfile()
+    {
+        return Auth::user();
+    }
+}

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinati
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
+use App\Http\Controllers\User\ProfileController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,7 @@ Route::get('/tentang', function () {
 // user route
 
 // profile route
-Route::get('/profil', function () {
-    return view('user.profile');
-});
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 
 // user dashboard
 Route::get('/', function () {

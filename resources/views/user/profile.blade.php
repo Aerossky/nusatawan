@@ -11,7 +11,7 @@
                 <div class="mb-4 md:mb-0 md:mr-8">
                     <label for="photoInput" class="relative cursor-pointer block">
                         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
-                            <img id="profileImage" src="https://via.placeholder.com/150?text=Risky" alt="Profile Picture"
+                            <img id="profileImage" src="{{ asset('storage/' . $profile->image) }}" alt="Profile Picture"
                                 class="w-full h-full object-cover">
                         </div>
                     </label>
@@ -19,10 +19,18 @@
 
                 <!-- Profile Info -->
                 <div class="flex-1 text-center md:text-left">
-                    <h1 class="text-2xl font-bold text-gray-800">Risky</h1>
-                    <p class="text-gray-600 mb-2">riskywig@gmail.com</p>
-                    <span
-                        class="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">Aktif</span>
+                    <h1 class="text-2xl font-bold text-gray-800">{{ $profile->name }}</h1>
+                    <p class="text-gray-600 mb-2">{{ $profile->email }}</p>
+
+                    {{-- kondisi kalau user aktif --}}
+                    @if ($profile->status)
+                        <span
+                            class="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">Aktif</span>
+                    @else
+                        <span class="inline-block bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-medium">Tidak
+                            Aktif</span>
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -72,28 +80,23 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-gray-700 font-medium mb-2" for="name">Nama Lengkap</label>
-                                <input type="text" id="name" value="Risky"
+                                <input type="text" id="name" value="{{ $profile->name }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <p class="text-sm text-gray-500 mt-1">Silakan ubah jika ada perubahan nama.</p>
                             </div>
+
                             <div>
                                 <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
-                                <input type="email" id="email" value="riskywig@gmail.com"
+                                <input type="email" id="email" value="{{ $profile->email }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <p class="text-sm text-gray-500 mt-1">Gunakan email aktif yang bisa dihubungi.</p>
                             </div>
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="phone">Nomor Telepon</label>
-                                <input type="tel" id="phone" placeholder="Masukkan nomor telepon"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="location">Lokasi</label>
-                                <input type="text" id="location" placeholder="Masukkan kota/provinsi"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+
                             <div>
                                 <label class="block text-gray-700 font-medium mb-2" for="image">Foto Profil</label>
                                 <input type="file" id="image" accept="image/*"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <p class="text-sm text-gray-500 mt-1">Silakan pilih gambar untuk mengganti foto profil</p>
                                 <div id="preview-container" class="mt-4">
                                     <img id="preview" src="" alt="Preview"
                                         class="w-32 h-32 object-cover rounded-full hidden border border-gray-300" />
@@ -108,7 +111,6 @@
                         </div>
                     </form>
                 </div>
-
                 <!-- Destinations Tab Content -->
                 <div x-show="activeTab === 'destinations'" x-transition.opacity.duration.500ms class="animate-fade-in">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Destinasi Yang Saya Bagikan</h3>
