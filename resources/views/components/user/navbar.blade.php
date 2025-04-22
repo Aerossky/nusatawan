@@ -15,7 +15,8 @@
                         data-dropdown-placement="bottom">
                         <span class="sr-only">Buka menu pengguna</span>
                         <img class="w-10 h-10 rounded-full object-cover border-2 border-white"
-                            src="{{ Auth::user()->profile_photo_url ?? '/images/default-avatar.png' }}" alt="Foto profil">
+                            src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('/images/default-avatar.png') }}"
+                            alt="Foto profil {{ Auth::user()->name }}">
                     </button>
                     <!-- Dropdown menu -->
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-lg"

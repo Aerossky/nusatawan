@@ -6,8 +6,10 @@ use App\Models\DestinationSubmission;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\DestinationService;
+use App\Services\ProfileService;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
             UserService::class,
             DestinationService::class,
             CategoryService::class,
-            DestinationSubmission::class
+            DestinationSubmission::class,
+            ProfileService::class,
         ];
 
         foreach ($services as $service) {

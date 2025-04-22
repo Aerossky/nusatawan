@@ -146,6 +146,16 @@ class DestinationService
         return $destination;
     }
 
+    /**
+     * Mengambil destinasi yang disukai oleh pengguna
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getTotalDestinationsByUser($userId): int
+    {
+        return Destination::where('created_by', $userId)->count();
+    }
 
 
     /**

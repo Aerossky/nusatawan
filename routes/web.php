@@ -7,35 +7,45 @@ use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinati
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
+use App\Http\Controllers\User\ProfileController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-// Auth::login(User::find(1));
+Auth::login(User::find(3));
 
-Auth::logout();
+// Auth::logout();
 
-// resource route
-Route::get('/tentang', function () {
-    return view('user.about');
+Route::name('user.')->group(function () {
+    // Dashboard route
+    Route::get('/', function () {
+        return view('user.home');
+    })->name('home');
+
+    // About page
+    Route::get('/tentang', function () {
+        return view('user.about');
+    })->name('about');
+
+    // Profile routes
+    Route::prefix('profil')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::patch('/{user}', [ProfileController::class, 'update'])->name('update');
+    });
+
+    // Destination routes
+    Route::resource('destinasi', DestinationController::class)
+        ->parameters(['destinasi' => 'destination'])
+        ->names('destinations');
+
+    // Destination submission routes
+    Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
+        Route::get('/', [DestinationSubmissionController::class, 'create'])->name('create');
+        Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
+    });
 });
-// user route
-
-// user dashboard
-Route::get('/', function () {
-    return view('user.home');
-})->name('home');
-
-// destination route
-Route::resource('destinasi', DestinationController::class)
-    ->parameters(['destinasi' => 'destination'])
-    ->names('destinations');
-
-// destination submission route
-Route::get('/pengajuan-destinasi', [DestinationSubmissionController::class, 'create'])->name('destination-submission.create');
-Route::post('/pengajuan-destinasi', [DestinationSubmissionController::class, 'store'])->name('destination-submission.store');
 
 // admin route
 Route::prefix('admin')->name('admin.')->group(function () {
