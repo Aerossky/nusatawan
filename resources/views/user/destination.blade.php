@@ -56,10 +56,11 @@
             <div class="mt-12"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {{-- Card Destinasi --}}
                 @foreach ($destinations as $data)
                     <div class="bg-white rounded-md overflow-hidden shadow-md">
                         <div class="relative">
-                            <img src="{{ asset('images/pantai-kuta.jpg') }}" alt="Pantai Kuta"
+                            <img src="{{ asset('storage/' . $data->primaryImage->url) }}" alt="Pantai Kuta"
                                 class="w-full h-32 object-cover">
                         </div>
                         <div class="p-4">
@@ -77,9 +78,11 @@
                                     </button>
                                 </div>
                             </div>
-                            <p class="text-gray-600 text-sm mb-2">Bali</p>
+                            <p class="text-gray-600 text-sm mb-2">{{ $data->administrative_area . ', ' . $data->province }}
+                            </p>
                             <div class="mb-3">
-                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">Pantai</span>
+                                <span
+                                    class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{{ $data->category->name }}</span>
                             </div>
                             <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
                                 Detail</button>

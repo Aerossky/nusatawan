@@ -166,7 +166,7 @@ class DestinationService
     private function buildBaseQuery()
     {
         return Destination::query()
-            ->with(['category'])
+            ->with(['category', 'primaryImage'])
             ->withCount(['reviews']);
     }
 

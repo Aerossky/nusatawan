@@ -4,17 +4,31 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
+use App\Services\DestinationService;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
+    protected $destinationService;
+
+    /**
+     * konstruktor controller destinasi.
+     *
+     * @param DestinationService $destinationService
+     */
+    public function __construct(DestinationService $destinationService)
+    {
+        $this->destinationService = $destinationService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         //
-        $destinations = Destination::all();
+        // mengambil data destinasi dari service
+        $destinations = $this->destinationService->getDestinationsList();
 
         return view('user.destination', compact('destinations'));
     }
