@@ -166,10 +166,9 @@ class DestinationService
     private function buildBaseQuery()
     {
         return Destination::query()
-            ->with(['category', 'primaryImage'])
-            ->withCount(['reviews']);
+            ->with(['category', 'primaryImage']) // Hapus string kosong ''
+            ->withCount(['likedByUsers as likes_count', 'reviews']); // Gabungkan withCount dalam satu panggilan
     }
-
     /**
      * Menerapkan filter pencarian pada query
      *
@@ -227,6 +226,14 @@ class DestinationService
                 case 'newest':
                     $column = 'created_at';
                     $direction = 'desc';
+                    break;
+                case 'likes_desc':
+                    $column = 'likes_count';
+                    $direction = 'desc';
+                    break;
+                case 'likes_asc':
+                    $column = 'likes_count';
+                    $direction = 'asc';
                     break;
             }
         }

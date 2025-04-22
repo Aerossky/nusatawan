@@ -67,7 +67,7 @@
                             <div class="flex justify-between items-center mb-1">
                                 <h3 class="font-semibold">{{ $data->place_name }}</h3>
                                 <div class="flex items-center">
-                                    <span class="text-sm text-gray-700 mr-2">123</span>
+                                    <span class="text-sm text-gray-700 mr-2">{{ $data->likes_count }}</span>
                                     <button class="text-gray-400 hover:text-red-500 focus:outline-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">

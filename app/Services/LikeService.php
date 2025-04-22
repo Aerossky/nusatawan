@@ -17,4 +17,15 @@ class LikeService
     {
         return LikedDestination::where('user_id', $userId)->count();
     }
+
+    /**
+     * Mengambil total like dari destinasi tertentu.
+     *
+     * @param int $userId
+     * @return int
+     */
+    public function getTotalLikesByDestination(int $destinationId): int
+    {
+        return LikedDestination::where('destination_id', $destinationId)->count();
+    }
 }

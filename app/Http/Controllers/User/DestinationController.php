@@ -24,11 +24,30 @@ class DestinationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        // mengambil data destinasi dari service
-        $destinations = $this->destinationService->getDestinationsList();
+        // Set default filter untuk mengurutkan berdasarkan likes (terbanyak)
+        $filters = [
+            'sort_by' => 'likes_desc',
+            'per_page' => 12 // Biasanya halaman user menampilkan lebih banyak item
+        ];
+
+        // Tetap memungkinkan user untuk mengubah sorting jika diperlukan
+        if ($request->has('sort')) {
+            $filters['sort_by'] = $request->sort;
+        }
+
+        // Apply kategori filter jika ada
+        if ($request->has('category')) {
+            $filters['category_id'] = $request->category;
+        }
+
+        // Apply search filter jika ada
+        if ($request->has('search')) {
+            $filters['search'] = $request->search;
+        }
+
+        $destinations = $this->destinationService->getDestinationsList($filters);
 
         return view('user.destination', compact('destinations'));
     }
