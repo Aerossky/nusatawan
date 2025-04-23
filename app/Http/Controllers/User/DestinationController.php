@@ -71,9 +71,17 @@ class DestinationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
         //
+
+        $destination = $this->destinationService->getDestinationBySlug($slug);
+
+        if (!$destination) {
+            abort(404);
+        }
+
+        return view('user.destination-detail', compact('destination'));
     }
 
     /**

@@ -1,6 +1,10 @@
 @extends('layouts.user')
 @section('title', 'Detail Destinasi')
 
+@push('styles')
+    @vite(['resources/css/custom/preview.css'])
+@endpush
+
 @section('content')
     <div class="container mx-auto max-w-full">
         <!-- Gambar Header dengan Overlay - Full Width -->
@@ -18,18 +22,20 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        Bali, Indonesia - 8 Januari 2023
+                        {{ $destination->administrative_area . ', ' . $destination->province }} -
+                        {{ $destination->created_at->format('d M Y') }}
                     </div>
-                    <h1 class="text-3xl font-bold">Pantai Kuta</h1>
+                    <h1 class="text-3xl font-bold">{{ $destination->place_name }}</h1>
                     <div class="flex items-center mt-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20"
                             fill="currentColor">
                             <path
                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        <span class="ml-1 text-white">4.5</span>
+                        <span class="ml-1 text-white">4.5</span> // TODO: Replace with appropriate user ID
                         <span class="mx-2 text-white">•</span>
-                        <button class="text-blue-300">16 Review</button>
+                        <button class="text-blue-300">16 Review</button> //TODO : Ambil review dari database
+
                     </div>
                 </div>
             </div>
@@ -45,10 +51,16 @@
                     </div>
                     <div>
                         <div class="flex flex-wrap items-center">
-                            <h3 class="font-semibold text-gray-800">Ditulis oleh: Anisa Sari</h3>
+                            <h3 class="font-semibold text-gray-800">Ditulis oleh: {{ $destination->user['name'] }}</h3>
                         </div>
-                        <p class="text-sm text-gray-500 mt-1">Dipublikasikan: 8 Januari 2023 • Diperbarui: 15 Januari 2023
+                        <p class="text-sm text-gray-500 mt-1">
+                            Dipublikasikan: {{ $destination->created_at->format('d M Y') }}
+                            {{-- jika terdapat perubahan --}}
+                            @if ($destination->created_at->format('d M Y') != $destination->updated_at->format('d M Y'))
+                                • Diubah: {{ $destination->updated_at->format('d M Y') }}
+                            @endif
                         </p>
+
                         <div class="flex items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 mr-1" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -57,9 +69,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                            <span class="text-sm text-gray-500">238 dilihat</span>
-                            <span class="mx-2 text-gray-400">•</span>
-                            <button class="text-sm text-blue-500 hover:underline">Lihat profil penulis</button>
+                            <button class="text-sm text-blue-500 hover:underline">Lihat Foto Destinasi Lainnya</button>
                         </div>
                     </div>
                 </div>
@@ -67,26 +77,14 @@
 
             <!-- Informasi Destinasi -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <p class="text-gray-700 mb-4">
-                    Kei-nya bertemakan Pantai Kuta, salah satu destinasi pantai terbaik di Bali dengan pasir putih terhalus
-                    dan
-                    ombak yang sempurna untuk berselancar. Nikmati pemandangan matahari terbenam yang spektakuler, suasana
-                    pantai yang ramai, hingga berbagai aktivitas menarik seperti bermain parasailing atau banana boat.
-                    Jelajahi
-                    juga berbagai kafe dan restoran di sekitarnya.
-                </p>
-                <p class="text-gray-700 mb-4">
-                    Lokasi ini menawarkan berbagai aktivitas. Telusuri pesisir pantai sembari menikmati sunset yang memukau,
-                    gunakan papan selancar untuk berselancar di ombak, duduk santai sambil menyesap minuman kelapa muda,
-                    bahkan
-                    temukan berbagai kuliner yang beragam di tepi pantai. 😍
-                </p>
+                <div class="text-gray-700 mb-4" id="content-preview">
+                    {!! $destination->description !!}
+                </div>
                 <div class="text-sm text-gray-600 mb-2">
-                    <span class="font-medium">Jam Buka:</span> 06.00 - 19.00 (setiap hari, termasuk weekend)
+                    <span class="font-medium">Waktu Terbaik Untuk Kunjungan:</span> {{ $destination->best_visit_time }}
                 </div>
                 <div class="text-sm text-gray-600">
-                    <span class="font-medium">Tiket Masuk:</span> Rp 20.000/orang, Parkir motor Rp 5.000 dan mobil Rp 10.000
-                    (weekdays dan weekend)
+                    <span class="font-medium">Durasi Kunjungan:</span> {{ $destination->time_minutes }} menit
                 </div>
             </div>
 

@@ -39,6 +39,22 @@ class DestinationService
     }
 
     /**
+     * Mengambil detail destinasi berdasarkan slug
+     *
+     * @param  string  $slug
+     * @return Destination|null
+     */
+    public function getDestinationBySlug(string $slug): ?Destination
+    {
+        $destination = Destination::where('slug', $slug)->first();
+
+        if (!$destination) {
+            return null;
+        }
+
+        return $destination->load(['category', 'images']);
+    }
+    /**
      * Menyimpan destinasi baru ke dalam database
      *
      * @param  array  $data  Data destinasi yang akan disimpan

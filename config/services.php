@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'openweather' => [
+        'key' => env('OPENWEATHER_API_KEY'),
+        'base_url' => 'https://api.openweathermap.org/data/2.5/', // optional kalau mau modular
+    ],
+
 ];
