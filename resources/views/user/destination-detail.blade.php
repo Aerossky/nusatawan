@@ -3,6 +3,21 @@
 
 @push('styles')
     @vite(['resources/css/custom/preview.css'])
+    <style>
+        .weather-card {
+            transition: all 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .weather-icon {
+            width: 64px;
+            height: 64px;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -89,134 +104,222 @@
             </div>
 
             <!-- Cuaca dengan Tab Pilihan (Hari Ini/Prakiraan) -->
-            <div class="mb-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                    <h2 class="text-xl font-semibold mb-2 sm:mb-0">Informasi Cuaca</h2>
-                    <div class="flex bg-gray-100 rounded-lg overflow-hidden">
-                        <button id="todayBtn" class="px-4 py-2 font-medium bg-blue-500 text-white">Hari Ini</button>
-                        <button id="forecastBtn"
-                            class="px-4 py-2 font-medium text-gray-700 hover:bg-gray-200">Prakiraan</button>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z" />
+                    </svg>
+                    Informasi Cuaca
+                </h2>
+
+                <!-- Weather Tab System -->
+                <div x-data="{ activeTab: 'today' }">
+                    <!-- Tab Headers -->
+                    <div class="flex border-b mb-4">
+                        <button @click="activeTab = 'today'"
+                            :class="{ 'border-b-2 border-blue-500 text-blue-600': activeTab === 'today' }"
+                            class="py-2 px-4 font-medium text-sm focus:outline-none">
+                            Cuaca Hari Ini
+                        </button>
+                        <button @click="activeTab = 'forecast'"
+                            :class="{ 'border-b-2 border-blue-500 text-blue-600': activeTab === 'forecast' }"
+                            class="py-2 px-4 font-medium text-sm focus:outline-none">
+                            Prakiraan 5 Hari
+                        </button>
+                    </div>
+
+                    <!-- Today's Weather Tab -->
+                    <div x-show="activeTab === 'today'">
+                        @if ($currentWeather)
+                            <!-- Current Weather Summary -->
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 mb-4 text-white">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="text-sm">{{ $destination->administrative_area }}</div>
+                                        <div class="text-2xl font-bold">{{ round($currentWeather['temp']) }}°C
+                                        </div>
+                                        <div class="text-sm">Terasa seperti
+                                            {{ round($currentWeather['feels_like']) }}°C</div>
+                                        <div class="mt-1 text-sm">
+                                            <span class="capitalize"></span>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <img src="{{ $currentWeather['icon_url'] }}" alt="Weather Icon"
+                                            class="weather-icon inline-block">
+                                    </div>
+                                </div>
+                                <div class="flex justify-between mt-3 text-sm">
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                        </svg>
+                                        {{ $currentWeather['humidity'] }}% kelembaban
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                        {{ $currentWeather['wind_speed'] }} m/s
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Today's Time Slots -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                @if ($todayForecast)
+                                    @foreach (['morning', 'afternoon', 'evening'] as $slot)
+                                        @if (isset($todayForecast[$slot]))
+                                            <div class="weather-card bg-gray-50 rounded-lg p-3 text-center">
+                                                <div class="font-medium text-gray-700">
+                                                    {{ $todayForecast[$slot]['time'] }}</div>
+                                                <img src="{{ $todayForecast[$slot]['icon_url'] }}" alt="Weather Icon"
+                                                    class="weather-icon mx-auto my-1">
+                                                <div class="text-xl font-semibold text-gray-800">
+                                                    {{ $todayForecast[$slot]['temp'] }}°C</div>
+                                                <div class="text-sm text-gray-600 capitalize">
+                                                    {{ $todayForecast[$slot]['description'] }}</div>
+                                            </div>
+                                        @else
+                                            <div class="weather-card bg-gray-50 rounded-lg p-3 text-center">
+                                                <div class="font-medium text-gray-700">
+                                                    @if ($slot == 'morning')
+                                                        Pagi
+                                                    @elseif($slot == 'afternoon')
+                                                        Siang
+                                                    @else
+                                                        Malam
+                                                    @endif
+                                                </div>
+                                                <div class="h-16 flex items-center justify-center">
+                                                    <span class="text-gray-400">Data tidak tersedia</span>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <div class="col-span-3 text-center py-4 text-gray-500">
+                                        Data prakiraan tidak tersedia saat ini
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="text-center py-4 text-gray-500">
+                                Data cuaca tidak tersedia saat ini
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- 5-Day Forecast Tab -->
+                    <div x-show="activeTab === 'forecast'" class="py-4">
+                        @if ($weekForecast)
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                                @foreach ($weekForecast as $index => $day)
+                                    <div class="relative group">
+                                        <!-- Main Weather Card -->
+                                        <div
+                                            class="bg-white rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-100 transform hover:-translate-y-1">
+                                            <div class="font-medium text-gray-800 text-lg">{{ $day['day'] }}</div>
+                                            <div class="text-sm text-gray-500 mb-2">{{ $day['date'] }}</div>
+                                            <img src="{{ $day['icon_url'] }}" alt="Weather Icon"
+                                                class="mx-auto h-16 w-16 my-2">
+                                            <div class="text-2xl font-semibold text-gray-800 mt-1">
+                                                {{ $day['avg_temp'] }}°C</div>
+                                            <div class="text-sm text-gray-600 capitalize mt-1">{{ $day['main_weather'] }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Hover Detail Card -->
+                                        <div
+                                            class="absolute left-0 right-0 top-full mt-2 z-10 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100 w-full">
+                                            <div class="p-4">
+                                                <h3 class="font-medium text-gray-800 text-center border-b pb-2 mb-3">
+                                                    {{ $day['day'] }}, {{ $day['date'] }}</h3>
+
+                                                @foreach (['morning', 'afternoon', 'evening'] as $timeSlot)
+                                                    @if ($day['time_details'][$timeSlot])
+                                                        <div
+                                                            class="py-2 {{ !$loop->first ? 'border-t border-gray-100' : '' }}">
+                                                            <div class="flex items-center justify-between">
+                                                                <span
+                                                                    class="font-medium text-gray-700">{{ $day['time_details'][$timeSlot]['time'] }}</span>
+                                                                <span
+                                                                    class="text-gray-900 font-semibold">{{ $day['time_details'][$timeSlot]['temp'] }}°C</span>
+                                                            </div>
+
+                                                            <div class="flex items-center mt-1">
+                                                                <img src="{{ $day['time_details'][$timeSlot]['icon_url'] }}"
+                                                                    alt="Weather Icon" class="h-8 w-8 mr-2">
+                                                                <span
+                                                                    class="text-sm text-gray-600 capitalize">{{ $day['time_details'][$timeSlot]['description'] }}</span>
+                                                            </div>
+
+                                                            <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-500">
+                                                                <div class="flex items-center">
+                                                                    <svg class="h-4 w-4 mr-1"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M8 7l4-4m0 0l4 4m-4-4v18" />
+                                                                    </svg>
+                                                                    <span>Terasa:
+                                                                        {{ $day['time_details'][$timeSlot]['feels_like'] }}°C</span>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <svg class="h-4 w-4 mr-1"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                                    </svg>
+                                                                    <span>Kelembaban:
+                                                                        {{ $day['time_details'][$timeSlot]['humidity'] }}%</span>
+                                                                </div>
+                                                                <div class="flex items-center col-span-2 mt-1">
+                                                                    <svg class="h-4 w-4 mr-1"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                    </svg>
+                                                                    <span>Angin:
+                                                                        {{ $day['time_details'][$timeSlot]['wind_speed'] }}
+                                                                        m/s</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                                <svg class="h-12 w-12 mx-auto text-gray-400 mb-3" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                </svg>
+                                <p class="font-medium">Data prakiraan tidak tersedia saat ini</p>
+                                <p class="text-sm mt-1">Silakan coba lagi nanti</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Cuaca Hari Ini (Default) - Simetris dengan grid-cols-3 pada semua ukuran layar -->
-                <div id="todayWeather" class="grid grid-cols-1 sm:grid-cols-3 gap-4 ">
-                    <div class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center h-40">
-                        <h3 class="text-gray-600 text-sm mb-1">Pagi</h3>
-                        <div class="text-2xl font-bold mb-1">31°C</div>
-                        <div class="flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center h-40">
-                        <h3 class="text-gray-600 text-sm mb-1">Siang</h3>
-                        <div class="text-2xl font-bold mb-1">33°C</div>
-                        <div class="flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center h-40">
-                        <h3 class="text-gray-600 text-sm mb-1">Malam</h3>
-                        <div class="text-2xl font-bold mb-1">29°C</div>
-                        <div class="flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Prakiraan Cuaca (Hidden by Default) -->
-                <div id="forecastWeather" class="hidden">
-                    <div class="overflow-x-auto">
-                        <div class="flex space-x-4 py-2 justify-between">
-                            <!-- Besok -->
-                            <div
-                                class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center flex-1">
-                                <h3 class="text-gray-800 font-medium mb-2">Besok</h3>
-                                <div class="text-xl font-bold mb-1">32°C</div>
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Cerah</span>
-                            </div>
-
-                            <!-- 2 Hari Lagi -->
-                            <div
-                                class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center flex-1">
-                                <h3 class="text-gray-800 font-medium mb-2">2 Hari</h3>
-                                <div class="text-xl font-bold mb-1">30°C</div>
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Berawan</span>
-                            </div>
-
-                            <!-- 3 Hari Lagi -->
-                            <div
-                                class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center flex-1">
-                                <h3 class="text-gray-800 font-medium mb-2">3 Hari</h3>
-                                <div class="text-xl font-bold mb-1">28°C</div>
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Hujan</span>
-                            </div>
-
-                            <!-- 4 Hari Lagi -->
-                            <div
-                                class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center flex-1">
-                                <h3 class="text-gray-800 font-medium mb-2">4 Hari</h3>
-                                <div class="text-xl font-bold mb-1">29°C</div>
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Berawan Sebagian</span>
-                            </div>
-
-                            <!-- 5 Hari Lagi -->
-                            <div
-                                class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center flex-1">
-                                <h3 class="text-gray-800 font-medium mb-2">5 Hari</h3>
-                                <div class="text-xl font-bold mb-1">31°C</div>
-                                <div class="flex items-center justify-center mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Cerah</span>
-                            </div>
-                        </div>
-
-                    </div>
+                <!-- Weather Notice -->
+                <div class="mt-4 text-xs text-gray-500 text-center">
+                    Data cuaca diperbarui secara berkala. Terakhir diperbarui: {{ now()->format('d M Y H:i') }}
                 </div>
             </div>
 
@@ -317,29 +420,36 @@
 
     <div class="my-5"></div>
 
-    <!-- Script untuk Toggle Cuaca -->
+@endsection
+
+@push('scripts')
+    <script src="https://unpkg.com/alpinejs" defer></script>
     <script>
-        const todayBtn = document.getElementById('todayBtn');
-        const forecastBtn = document.getElementById('forecastBtn');
-        const todayWeather = document.getElementById('todayWeather');
-        const forecastWeather = document.getElementById('forecastWeather');
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('weatherTooltips', () => ({
+                adjustTooltipPosition() {
+                    const tooltips = document.querySelectorAll('.group');
+                    tooltips.forEach(tooltip => {
+                        const card = tooltip.querySelector('.absolute');
+                        const rect = tooltip.getBoundingClientRect();
+                        const isNearLeftEdge = rect.left < 160;
+                        const isNearRightEdge = window.innerWidth - rect.right < script 160;
 
-        todayBtn.addEventListener('click', function() {
-            todayWeather.classList.remove('hidden');
-            forecastWeather.classList.add('hidden');
-            todayBtn.classList.add('bg-blue-500', 'text-white');
-            todayBtn.classList.remove('text-gray-700', 'hover:bg-gray-200');
-            forecastBtn.classList.remove('bg-blue-500', 'text-white');
-            forecastBtn.classList.add('text-gray-700', 'hover:bg-gray-200');
-        });
+                        if (isNearLeftEdge) {
+                            card.classList.add('left-0', 'right-auto');
+                            card.classList.remove('right-0', 'left-auto');
+                        } else if (isNearRightEdge) {
+                            card.classList.add('right-0', 'left-auto');
+                            card.classList.remove('left-0', 'right-auto');
+                        }
+                    });
+                },
+                init() {
+                    this.adjustTooltipPosition();
+                    window.addEventListener('resize', this.adjustTooltipPosition);
+                }
+            }));
 
-        forecastBtn.addEventListener('click', function() {
-            todayWeather.classList.add('hidden');
-            forecastWeather.classList.remove('hidden');
-            forecastBtn.classList.add('bg-blue-500', 'text-white');
-            forecastBtn.classList.remove('text-gray-700', 'hover:bg-gray-200');
-            todayBtn.classList.remove('bg-blue-500', 'text-white');
-            todayBtn.classList.add('text-gray-700', 'hover:bg-gray-200');
         });
     </script>
-@endsection
+@endpush

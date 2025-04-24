@@ -142,6 +142,10 @@
         </div>
     </x-section>
 
+
+@endsection
+
+@push('scripts')
     <script>
         function shareDestination(title, url) {
             // Cek apakah Web Share API tersedia
@@ -166,4 +170,4 @@
             }
         }
     </script>
-@endsection
+@endpush

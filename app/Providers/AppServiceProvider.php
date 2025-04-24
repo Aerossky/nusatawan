@@ -8,6 +8,7 @@ use App\Services\DashboardService;
 use App\Services\DestinationService;
 use App\Services\ProfileService;
 use App\Services\UserService;
+use App\Services\WeatherService;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
             CategoryService::class,
             DestinationSubmission::class,
             ProfileService::class,
+            WeatherService::class,
         ];
 
         foreach ($services as $service) {

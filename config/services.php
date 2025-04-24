@@ -35,9 +35,10 @@ return [
         ],
     ],
 
-    'openweather' => [
+    'openweathermap' => [
         'key' => env('OPENWEATHER_API_KEY'),
-        'base_url' => 'https://api.openweathermap.org/data/2.5/', // optional kalau mau modular
+        'url' => 'https://api.openweathermap.org/data/2.5',
+        'cache_minutes' => env('OPENWEATHER_CACHE_MINUTES', 60), // Cache for 1 hour by default
     ],
 
 ];
