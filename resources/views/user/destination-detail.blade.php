@@ -394,44 +394,33 @@
 
             <!-- Komentar yang ada -->
             <div id="comments">
-                <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-                    <div class="flex items-start mb-3">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-                        </div>
-                        <div>
-                            <h4 class="font-medium">Auliya Rachman</h4>
-                            <p class="text-sm text-gray-500">21 Januari 2023</p>
-                        </div>
+                {{-- Ketika belum ada komentar --}}
+                @if ($destination->reviews->count() == 0)
+                    <div class="text-center py-4 text-gray-500">
+                        Belum ada komentar untuk destinasi ini.
                     </div>
-                    <p class="text-gray-700">Pemandangan sunsetnya sangat indah! Tetapi agak ramai akhir pekan.</p>
-                </div>
+                @endif
 
-                <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-                    <div class="flex items-start mb-3">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                @foreach ($destination->reviews as $review)
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                        <div class="flex items-start mb-3">
+                            <div class="flex-shrink-0 mr-3">
+                                <div class="w-10 h-10 bg-gray-300 rounded-full">
+                                    {{-- foto pengguna --}}
+                                    <img src="{{ asset('storage/' . $review->user->image) }}" alt="User"
+                                        class="w-full h-full rounded-full object-cover" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">{{ $review->user->name }}</h4>
+                                <p class="text-sm text-gray-500">{{ $review->created_at }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-medium">Budi Santoso</h4>
-                            <p class="text-sm text-gray-500">15 Januari 2023</p>
-                        </div>
+                        <p class="text-gray-700">{{ $review->comment }}</p>
                     </div>
-                    <p class="text-gray-700">Pantainya bersih dan nyaman. Banyak pilihan makanan di sekitar.</p>
-                </div>
+                @endforeach
 
-                <div class="bg-white rounded-lg shadow-md p-4">
-                    <div class="flex items-start mb-3">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-                        </div>
-                        <div>
-                            <h4 class="font-medium">Ratna Purnama</h4>
-                            <p class="text-sm text-gray-500">10 Januari 2023</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700">Kunjungan kedua saya ke sini dan masih suka dengan suasananya!</p>
-                </div>
+
             </div>
         </div>
     </div>
