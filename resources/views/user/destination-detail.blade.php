@@ -60,33 +60,50 @@
         <div class="max-w-4xl mx-auto px-4">
             <!-- Informasi Penulis (Baru) -->
             <div class="bg-white rounded-lg shadow-md p-5 mb-6">
-                <div class="flex flex-col sm:flex-row items-start">
-                    <div class="flex-shrink-0 mr-4 mb-3 sm:mb-0">
-                        <img src="{{ asset('images/auth.png') }}" alt="Author"
-                            class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
+                <div class="flex flex-col sm:flex-row justify-between items-start w-full">
+                    {{-- Kiri: foto + info --}}
+                    <div class="flex items-start">
+                        {{-- foto penulis --}}
+                        <div class="flex-shrink-0 mr-4 mb-3 sm:mb-0">
+                            <img src="{{ asset('images/auth.png') }}" alt="Author"
+                                class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
+                        </div>
+                        {{-- informasi penulis --}}
+                        <div>
+                            <div class="flex flex-wrap items-center">
+                                <h3 class="font-semibold text-gray-800">Ditulis oleh: {{ $destination->user['name'] }}</h3>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Dipublikasikan: {{ $destination->created_at->format('d M Y') }}
+                                @if ($destination->created_at->format('d M Y') != $destination->updated_at->format('d M Y'))
+                                    • Diubah: {{ $destination->updated_at->format('d M Y') }}
+                                @endif
+                            </p>
+                            <div class="flex items-center mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <button class="text-sm text-blue-500 hover:underline">Lihat Foto Destinasi Lainnya</button>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="flex flex-wrap items-center">
-                            <h3 class="font-semibold text-gray-800">Ditulis oleh: {{ $destination->user['name'] }}</h3>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">
-                            Dipublikasikan: {{ $destination->created_at->format('d M Y') }}
-                            {{-- jika terdapat perubahan --}}
-                            @if ($destination->created_at->format('d M Y') != $destination->updated_at->format('d M Y'))
-                                • Diubah: {{ $destination->updated_at->format('d M Y') }}
-                            @endif
-                        </p>
 
-                        <div class="flex items-center mt-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 mr-1" fill="none"
+                    {{-- Kanan: tombol share --}}
+                    <div class="mt-4 sm:mt-0">
+                        <button
+                            class="share-button ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
+                            data-title="{{ $destination->place_name }}"
+                            data-url="{{ route('user.destinations.show', $destination) }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                             </svg>
-                            <button class="text-sm text-blue-500 hover:underline">Lihat Foto Destinasi Lainnya</button>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -387,7 +404,7 @@
                             <p class="text-sm text-gray-500">21 Januari 2023</p>
                         </div>
                     </div>
-                    <p class="text-gray-700">Pemandangan sunsetnya sangat indah! Tetapi agak ramai di akhir pekan.</p>
+                    <p class="text-gray-700">Pemandangan sunsetnya sangat indah! Tetapi agak ramai akhir pekan.</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-4 mb-4">
@@ -425,6 +442,7 @@
 
 @push('scripts')
     <script src="https://unpkg.com/alpinejs" defer></script>
+    @vite('resources/js/share.js')
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('weatherTooltips', () => ({

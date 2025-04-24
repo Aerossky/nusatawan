@@ -123,10 +123,11 @@
                                     </button>
                                 </form>
 
-                                <!-- Share Button dengan JavaScript -->
+                                <!-- Share Button-->
                                 <button
-                                    onclick="shareDestination('{{ $data->place_name }}', '{{ route('user.destinations.show', $data) }}')"
-                                    class="ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    class="share-button ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
+                                    data-title="{{ $data->place_name }}"
+                                    data-url="{{ route('user.destinations.show', $data) }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -146,28 +147,5 @@
 @endsection
 
 @push('scripts')
-    <script>
-        function shareDestination(title, url) {
-            // Cek apakah Web Share API tersedia
-            if (navigator.share) {
-                navigator.share({
-                        title: title,
-                        url: url
-                    })
-                    .catch(error => console.log('Error sharing:', error));
-            } else {
-                // Fallback untuk browser yang tidak mendukung Web Share API
-                // Buat temporary input untuk menyalin URL
-                const tempInput = document.createElement('input');
-                document.body.appendChild(tempInput);
-                tempInput.value = url;
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-
-                // Beri feedback kepada user
-                alert('Link berhasil disalin!');
-            }
-        }
-    </script>
+    @vite('resources/js/share.js')
 @endpush
