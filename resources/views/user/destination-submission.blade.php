@@ -203,7 +203,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('destination-submission.store') }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('user.destination-submission.store') }}" method="POST" enctype="multipart/form-data"
                 id="destinationForm">
                 @csrf
                 @method('POST')
