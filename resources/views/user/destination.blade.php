@@ -56,38 +56,96 @@
             <div class="mt-12"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {{-- Card Destinasi --}}
                 @foreach ($destinations as $data)
-                    <div class="bg-white rounded-md overflow-hidden shadow-md">
-                        <div class="relative">
-                            <img src="{{ asset('images/pantai-kuta.jpg') }}" alt="Pantai Kuta"
-                                class="w-full h-32 object-cover">
-                        </div>
-                        <div class="p-4">
-                            <div class="flex justify-between items-center mb-1">
-                                <h3 class="font-semibold">{{ $data->place_name }}</h3>
-                                <div class="flex items-center">
-                                    <span class="text-sm text-gray-700 mr-2">123</span>
-                                    <button class="text-gray-400 hover:text-red-500 focus:outline-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
+                    <div class="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md">
+                        <!-- Card Image -->
+                        <div class="relative h-52 overflow-hidden">
+                            @if ($data->images->count() > 0)
+                                <img src="{{ asset('storage/' . $data->images->where('is_primary', true)->first()->path ?? $data->images->first()->path) }}"
+                                    alt="{{ $data->place_name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
                                 </div>
+                            @endif
+
+                            <!-- Category Badge -->
+                            <div class="absolute top-3 left-3">
+                                <span
+                                    class="bg-white bg-opacity-90 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full">
+                                    {{ $data->category->name }}
+                                </span>
                             </div>
-                            <p class="text-gray-600 text-sm mb-2">Bali</p>
-                            <div class="mb-3">
-                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">Pantai</span>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg text-gray-800 mb-1 truncate">{{ $data->place_name }}</h3>
+                            <p class="text-sm text-gray-500 mb-3 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $data->administrative_area . ', ' . $data->province }}
+                            </p>
+
+                            <!-- Action Buttons -->
+                            <div class="flex items-center justify-between mt-3">
+                                <a href="{{ route('user.destinations.show', $data->slug) }}"
+                                    class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-md transition-colors text-sm font-medium mr-2">
+                                    Lihat Detail
+                                </a>
+
+                                <!-- Like Button dengan Form (tanpa JS) -->
+                                <form method="POST" action="" class="inline">
+                                    @csrf
+                                    @if ($data->is_liked_by_user)
+                                        @method('DELETE')
+                                    @endif
+                                    <button type="submit"
+                                        class="flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors">
+                                        <svg class="{{ $data->is_liked_by_user ? 'text-red-500 fill-red-500' : 'text-gray-400' }} h-5 w-5 transition-colors"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
+                                            stroke-width="1.5"
+                                            fill="{{ $data->is_liked_by_user ? 'currentColor' : 'none' }}">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                        </svg>
+                                        <span class="text-xs font-medium ml-1 text-gray-500">{{ $data->likes_count }}</span>
+                                    </button>
+                                </form>
+
+                                <!-- Share Button-->
+                                <button
+                                    class="share-button ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
+                                    data-title="{{ $data->place_name }}"
+                                    data-url="{{ route('user.destinations.show', $data) }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                    </svg>
+                                </button>
                             </div>
-                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm">Lihat
-                                Detail</button>
                         </div>
                     </div>
                 @endforeach
+
             </div>
         </div>
     </x-section>
 
+
 @endsection
+
+@push('scripts')
+    @vite('resources/js/share.js')
+@endpush

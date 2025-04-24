@@ -74,4 +74,10 @@ class Destination extends Model
     {
         return $this->hasMany(ItineraryDestination::class);
     }
+
+    // Relasi dengan User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

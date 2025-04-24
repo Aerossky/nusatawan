@@ -37,7 +37,7 @@ Route::name('user.')->group(function () {
 
     // Destination routes
     Route::resource('destinasi', DestinationController::class)
-        ->parameters(['destinasi' => 'destination'])
+        ->parameters(['destinasi' => 'destination:slug'])
         ->names('destinations');
 
     // Destination submission routes

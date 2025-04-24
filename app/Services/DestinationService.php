@@ -39,6 +39,22 @@ class DestinationService
     }
 
     /**
+     * Mengambil detail destinasi berdasarkan slug
+     *
+     * @param  string  $slug
+     * @return Destination|null
+     */
+    public function getDestinationBySlug(string $slug): ?Destination
+    {
+        $destination = Destination::where('slug', $slug)->first();
+
+        if (!$destination) {
+            return null;
+        }
+
+        return $destination->load(['category', 'images', 'reviews']);
+    }
+    /**
      * Menyimpan destinasi baru ke dalam database
      *
      * @param  array  $data  Data destinasi yang akan disimpan
@@ -166,10 +182,9 @@ class DestinationService
     private function buildBaseQuery()
     {
         return Destination::query()
-            ->with(['category'])
-            ->withCount(['reviews']);
+            ->with(['category', 'primaryImage']) // Hapus string kosong ''
+            ->withCount(['likedByUsers as likes_count', 'reviews']); // Gabungkan withCount dalam satu panggilan
     }
-
     /**
      * Menerapkan filter pencarian pada query
      *
@@ -227,6 +242,14 @@ class DestinationService
                 case 'newest':
                     $column = 'created_at';
                     $direction = 'desc';
+                    break;
+                case 'likes_desc':
+                    $column = 'likes_count';
+                    $direction = 'desc';
+                    break;
+                case 'likes_asc':
+                    $column = 'likes_count';
+                    $direction = 'asc';
                     break;
             }
         }

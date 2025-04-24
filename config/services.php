@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openweathermap' => [
+        'key' => env('OPENWEATHER_API_KEY'),
+        'url' => 'https://api.openweathermap.org/data/2.5',
+        'cache_minutes' => env('OPENWEATHER_CACHE_MINUTES', 60), // Cache for 1 hour by default
+    ],
+
 ];
