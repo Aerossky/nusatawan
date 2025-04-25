@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\DestinationSubmission;
+use App\Models\Review;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\DestinationService;
 use App\Services\ProfileService;
+use App\Services\ReviewService;
 use App\Services\UserService;
 use App\Services\WeatherService;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
             DestinationSubmission::class,
             ProfileService::class,
             WeatherService::class,
+            ReviewService::class,
         ];
 
         foreach ($services as $service) {
