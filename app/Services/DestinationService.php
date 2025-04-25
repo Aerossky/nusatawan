@@ -52,7 +52,7 @@ class DestinationService
             return null;
         }
 
-        return $destination->load(['category', 'images', 'reviews']);
+        return $destination->load(['category', 'images']);
     }
     /**
      * Menyimpan destinasi baru ke dalam database

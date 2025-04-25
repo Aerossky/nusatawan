@@ -8,13 +8,14 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\ReviewController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(3));
+Auth::login(User::find(1));
 
 // Auth::logout();
 
@@ -45,6 +46,13 @@ Route::name('user.')->group(function () {
         Route::get('/', [DestinationSubmissionController::class, 'create'])->name('create');
         Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
     });
+
+    // Review routes
+    Route::prefix('destinations/{destinationId}')->group(function () {
+        // Route::get('reviews', [ReviewController::class, 'index']); // Uncomment jika dibutuhkan
+        Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    });
+    Route::delete('reviews/{reviewId}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // admin route

@@ -49,9 +49,9 @@
                         </svg>
 
                         {{-- informasi rating & review --}}
-                        <span class="ml-1 text-white">{{ $destination->reviews->avg('rating') }}</span>
+                        <span class="ml-1 text-white">{{ number_format($destinationRating, 1) }}</span>
                         <span class="mx-2 text-white">•</span>
-                        <a href="#comments" class="text-blue-300">{{ $destination->reviews->count() }} Review</a>
+                        <a href="#comments" class="text-blue-300">{{ $totalReview }} Review</a>
                     </div>
                 </div>
             </div>
@@ -373,35 +373,165 @@
             </div>
 
             <!-- Form Komentar -->
-            <div class="mb-6 pb-6">
-                <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <div class="mb-8 bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-5 flex items-center text-gray-800 border-b pb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
                             clip-rule="evenodd" />
                     </svg>
-                    Tinggalkan Komentar
+                    {{ $userReview ? 'Edit Ulasan & Rating' : 'Beri Ulasan & Rating' }}
                 </h2>
-                <form>
-                    <textarea rows="4"
-                        class="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:border-blue-500"
-                        placeholder="Tulis komentar Anda..."></textarea>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">Kirim
-                        Komentar</button>
+
+                <form action="{{ route('user.reviews.store', $destination) }}" method="POST">
+                    @csrf
+
+                    <div class="space-y-6">
+                        <!-- Rating Section with Card Design -->
+                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-100">
+                            <label class="block text-gray-700 mb-3 font-medium flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500"
+                                    viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                Bagaimana Kualitas Konten?
+                            </label>
+
+                            <div x-data="{
+                                rating: {{ $userReview ? $userReview->rating : 0 }},
+                                hoverRating: 0,
+                                ratings: [
+                                    { value: 1, label: 'Buruk', color: 'text-red-500' },
+                                    { value: 2, label: 'Kurang', color: 'text-orange-500' },
+                                    { value: 3, label: 'Cukup', color: 'text-yellow-500' },
+                                    { value: 4, label: 'Bagus', color: 'text-lime-500' },
+                                    { value: 5, label: 'Sangat Bagus', color: 'text-green-500' }
+                                ],
+                                rate(val) {
+                                    this.rating = val;
+                                },
+                                currentLabel() {
+                                    let label = '';
+                                    let value = this.hoverRating || this.rating;
+                            
+                                    if (value > 0) {
+                                        label = this.ratings.find(r => r.value === value)?.label || '';
+                                    }
+                            
+                                    return value ? `${value}.0 - ${label}` : 'Pilih rating';
+                                },
+                                getColor() {
+                                    let value = this.hoverRating || this.rating;
+                                    if (value > 0) {
+                                        return this.ratings.find(r => r.value === value)?.color || 'text-gray-500';
+                                    }
+                                    return 'text-gray-500';
+                                }
+                            }">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <!-- Stars Selection -->
+                                    <div class="flex items-center">
+                                        <template x-for="(star, index) in 5" :key="index">
+                                            <button type="button" @click="rate(star)" @mouseover="hoverRating = star"
+                                                @mouseleave="hoverRating = 0"
+                                                class="focus:outline-none p-1 transition-transform duration-200"
+                                                :class="{ 'scale-110': hoverRating === star || rating === star }">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-9 w-9 transition-colors duration-200"
+                                                    :class="(hoverRating >= star) ? 'text-yellow-400' : (rating >= star ?
+                                                        'text-yellow-400' : 'text-gray-300')"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <!-- Rating Label -->
+                                    <div class="flex items-center justify-between sm:justify-end gap-3">
+                                        <span
+                                            class="font-medium text-sm px-3 py-1 rounded-full transition-colors duration-200"
+                                            :class="getColor()">
+                                            <span x-text="currentLabel()"></span>
+                                        </span>
+                                        <input type="hidden" name="rating" x-model="rating">
+                                    </div>
+                                </div>
+
+                                <!-- Rating Selection Helper Text -->
+                                <div class="mt-3 text-xs text-gray-500" x-show="rating === 0">
+                                    <p>Klik bintang untuk memberikan rating</p>
+                                </div>
+
+                                <!-- Selected Rating Confirmation -->
+                                <div class="mt-3 text-xs flex items-center" x-show="rating > 0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-500 mr-1"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Rating Anda: <span class="font-semibold" x-text="rating + '.0'"></span> - Terima
+                                        kasih atas penilaian Anda!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div>
+                            <label for="comment" class="block text-gray-700 mb-2 font-medium flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                                Bagikan pengalaman Anda:
+                            </label>
+                            <textarea id="comment" name="comment" rows="4"
+                                class="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                                placeholder="Ceritakan pengalaman kunjungan Anda ke destinasi ini...">{{ $userReview ? $userReview->comment : '' }}</textarea>
+                            <p class="mt-2 text-xs text-gray-500">Ulasan Anda akan membantu wisatawan lain merencanakan
+                                perjalanan mereka.</p>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                            <button type="submit"
+                                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                {{ $userReview ? 'Ubah Ulasan & Rating' : 'Kirim Ulasan & Rating' }}
+                            </button>
+
+                            <div class="flex items-center text-sm text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ $userReview ? 'Ulasan Anda terakhir diperbarui: ' . $userReview->updated_at->format('d M Y') : 'Ulasan akan ditampilkan setelah moderasi' }}
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
             <!-- Komentar yang ada -->
             <div id="comments">
                 {{-- Ketika belum ada komentar --}}
-                @if ($destination->reviews->count() == 0)
+                @if ($reviews->count() == 0)
                     <div class="text-center py-4 text-gray-500">
                         Belum ada komentar untuk destinasi ini.
                     </div>
                 @endif
 
-                @foreach ($destination->reviews as $review)
+                @foreach ($reviews as $review)
                     <div class="bg-white rounded-lg shadow-md p-4 mb-4">
                         <div class="flex items-start mb-3">
                             <div class="flex-shrink-0 mr-3">
@@ -420,6 +550,10 @@
                     </div>
                 @endforeach
 
+                {{-- Pagination --}}
+                <div class="flex justify-center mt-4">
+                    {{ $reviews->links() }}
+                </div>
 
             </div>
         </div>
