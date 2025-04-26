@@ -116,7 +116,19 @@
                     </div>
 
                     {{-- Kanan: tombol share --}}
-                    <div class="mt-4 sm:mt-0">
+                    <div class="mt-4 sm:mt-0 flex">
+                        <!-- Tombol Kembali -->
+                        <a href="{{ route('user.destinations.index') }}"
+                            class="flex items-center justify-center px-3 py-1 mr-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            <span class="ml-1 text-sm">Kembali</span>
+                        </a>
+
+                        <!-- Tombol Share yang sudah ada -->
                         <button
                             class="share-button ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
                             data-title="{{ $destination->place_name }}"

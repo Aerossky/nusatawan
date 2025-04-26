@@ -62,7 +62,7 @@
                         <!-- Card Image -->
                         <div class="relative h-52 overflow-hidden">
                             @if ($data->images->count() > 0)
-                                <img src="{{ asset('storage/' . $data->images->where('is_primary', true)->first()->path ?? $data->images->first()->path) }}"
+                                <img src="{{ asset($data->primaryImage ? 'storage/' . $data->primaryImage->url : 'images/auth.png') }}"
                                     alt="{{ $data->place_name }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full bg-gray-100 flex items-center justify-center">

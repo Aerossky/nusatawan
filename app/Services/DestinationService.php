@@ -193,7 +193,7 @@ class DestinationService
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildBaseQuery()
+    private function    buildBaseQuery()
     {
         $query = Destination::query()
             ->with(['category', 'primaryImage'])
