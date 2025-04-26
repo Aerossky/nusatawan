@@ -8,16 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewService
 {
-    /**
-     * Membuat review baru untuk destinasi yang ditentukan.
-     *
-     * Jika user sudah memberikan review sebelumnya, maka review akan diupdate.
-     *
-     * @param int $destinationId ID destinasi
-     * @param array $data Data review
-     * @return Review
-     * @throws \Exception
-     */
     public function submitReview(int $destinationId, array $data)
     {
         // Periksa apakah Destination ada
@@ -35,7 +25,7 @@ class ReviewService
         if ($existingReview) {
             // Update existing review
             $existingReview->update([
-                'rating' => $data['rating'],
+                'rating' => $data['rating'] ?? 0,
                 'comment' => $data['comment'] ?? null,
                 'updated_at' => now(),
             ]);
@@ -59,7 +49,6 @@ class ReviewService
         return $review;
     }
 
-    // mengambil review berdasarkan id destinasi dan  filter berdasarkan terbaru dan terlama selain itu pagination
     public function getReviewsByDestinationId(int $destinationId, int $perPage = 10, string $order = 'desc')
     {
         return Review::where('destination_id', $destinationId)
@@ -80,7 +69,7 @@ class ReviewService
         $avgRating = $this->getDestinationRating($destinationId);
 
         Destination::where('id', $destinationId)->update([
-            'avg_rating' => $avgRating,
+            'rating' => $avgRating,
             'updated_at' => now(),
         ]);
     }

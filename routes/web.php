@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(1));
+Auth::login(User::find(3));
 
 // Auth::logout();
 
@@ -48,11 +48,9 @@ Route::name('user.')->group(function () {
     });
 
     // Review routes
-    Route::prefix('destinations/{destinationId}')->group(function () {
-        // Route::get('reviews', [ReviewController::class, 'index']); // Uncomment jika dibutuhkan
+    Route::prefix('destinations/{destination}')->group(function () {
         Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
     });
-    Route::delete('reviews/{reviewId}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // admin route

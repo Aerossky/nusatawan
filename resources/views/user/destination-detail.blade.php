@@ -373,7 +373,7 @@
             </div>
 
             <!-- Form Komentar -->
-            <div class="mb-8 bg-white rounded-lg shadow-md p-6">
+            <div id="review-form" class="mb-8 bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-5 flex items-center text-gray-800 border-b pb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20"
                         fill="currentColor">
@@ -383,6 +383,9 @@
                     </svg>
                     {{ $userReview ? 'Edit Ulasan & Rating' : 'Beri Ulasan & Rating' }}
                 </h2>
+
+                {{-- Pesan --}}
+                <div id="message-container" class="mb-4"></div>
 
                 <form action="{{ route('user.reviews.store', $destination) }}" method="POST">
                     @csrf
@@ -396,7 +399,7 @@
                                     <path
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
-                                Bagaimana Kualitas Konten?
+                                Bagaimana Kualitas Konten? <span class="text-red-500 ml-1">*</span>
                             </label>
 
                             <div x-data="{
@@ -488,7 +491,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                                 </svg>
-                                Bagikan pengalaman Anda:
+                                Bagikan pengalaman Anda: <span class="text-red-500 ml-1">*</span>
                             </label>
                             <textarea id="comment" name="comment" rows="4"
                                 class="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
@@ -565,6 +568,7 @@
 
 @push('scripts')
     <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @vite('resources/js/share.js')
     <script>
         document.addEventListener('alpine:init', () => {
@@ -575,7 +579,8 @@
                         const card = tooltip.querySelector('.absolute');
                         const rect = tooltip.getBoundingClientRect();
                         const isNearLeftEdge = rect.left < 160;
-                        const isNearRightEdge = window.innerWidth - rect.right < script 160;
+                        const isNearRightEdge = window.innerWidth - rect.right <
+                            160; // Fixed this line
 
                         if (isNearLeftEdge) {
                             card.classList.add('left-0', 'right-auto');
@@ -591,7 +596,82 @@
                     window.addEventListener('resize', this.adjustTooltipPosition);
                 }
             }));
+        });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#review-form form').on('submit', function(e) {
+                e.preventDefault();
+
+                // Get the rating and comment values
+                const rating = $('input[name="rating"]').val();
+                const comment = $('#comment').val().trim();
+
+                // Validate form fields
+                if (!rating || rating === '0') {
+                    showFormError('Harap pilih rating terlebih dahulu',
+                        'Rating dan komentar harus diisi untuk mengirim ulasan.');
+                    return false;
+                }
+
+                if (!comment) {
+                    showFormError('Harap isi komentar terlebih dahulu',
+                        'Rating dan komentar harus diisi untuk mengirim ulasan.');
+                    return false;
+                }
+
+                // If validation passes, proceed with AJAX submission
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        // Display success message
+                        showFormSuccess('Review berhasil dikirim');
+
+                        // Refresh page after 2 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = "Terjadi kesalahan yang tidak diketahui";
+
+                        if (xhr.responseText) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMessage = response.message || xhr.responseText;
+                            } catch (e) {
+                                errorMessage = xhr.responseText;
+                            }
+                        }
+
+                        showFormError('Terjadi kesalahan', errorMessage);
+                    }
+                });
+            });
+
+            // Helper functions for displaying messages
+            function showFormError(title, message) {
+                $('#message-container').html(
+                    `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p class="font-medium">${title}</p>
+                <p>${message}</p>
+            </div>`
+                );
+            }
+
+            function showFormSuccess(message) {
+                $('#message-container').html(
+                    `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+                ${message}
+            </div>`
+                );
+            }
         });
     </script>
 @endpush

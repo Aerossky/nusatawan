@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Destination;
 use App\Services\ReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,25 +20,28 @@ class ReviewController extends Controller
         // $this->middleware('auth');
     }
 
+
     /**
-     * Membuat review baru untuk destinasi yang ditentukan.
+     * Mengirimkan review untuk destinasi yang ditentukan.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $destinationId
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Destination $destination
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request, $destinationId)
+    public function store(Request $request, Destination $destination)
     {
+
         try {
             $validated = $request->validate([
                 'rating'  => 'nullable|integer|min:1|max:5',
                 'comment' => 'nullable|string|max:1000',
             ]);
 
-            $this->reviewService->submitReview($destinationId, $validated);
+            $this->reviewService->submitReview($destination->id, $validated);
 
             return redirect()
-                ->route('user.destinations.show', $destinationId)
+                ->route('user.destinations.show', $destination->slug)
                 ->with('success', 'Review berhasil dikirim');
         } catch (\Exception $e) {
             Log::error('Form submission error: ' . $e->getMessage());
