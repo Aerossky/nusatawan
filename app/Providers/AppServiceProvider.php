@@ -7,6 +7,7 @@ use App\Models\Review;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\DestinationService;
+use App\Services\LikeService;
 use App\Services\ProfileService;
 use App\Services\ReviewService;
 use App\Services\UserService;
@@ -31,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
             ProfileService::class,
             WeatherService::class,
             ReviewService::class,
+            LikeService::class,
         ];
 
         foreach ($services as $service) {

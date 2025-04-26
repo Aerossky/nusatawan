@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class DestinationService
 {
@@ -46,7 +47,20 @@ class DestinationService
      */
     public function getDestinationBySlug(string $slug): ?Destination
     {
-        $destination = Destination::where('slug', $slug)->first();
+        $query = Destination::where('slug', $slug)
+            ->withCount(['likedByUsers as likes_count', 'reviews', 'primaryImage']);
+
+        if (Auth::check()) {
+            $userId = Auth::id();
+
+            $query->withExists([
+                'likedByUsers as is_liked_by_user' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ]);
+        }
+
+        $destination = $query->first();
 
         if (!$destination) {
             return null;
@@ -181,9 +195,21 @@ class DestinationService
      */
     private function buildBaseQuery()
     {
-        return Destination::query()
-            ->with(['category', 'primaryImage']) // Hapus string kosong ''
-            ->withCount(['likedByUsers as likes_count', 'reviews']); // Gabungkan withCount dalam satu panggilan
+        $query = Destination::query()
+            ->with(['category', 'primaryImage'])
+            ->withCount(['likedByUsers as likes_count', 'reviews']);
+
+        if (Auth::check()) {
+            $userId = Auth::id();
+
+            $query->withExists([
+                'likedByUsers as is_liked_by_user' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ]);
+        }
+
+        return $query;
     }
     /**
      * Menerapkan filter pencarian pada query

@@ -6,6 +6,54 @@ use App\Models\LikedDestination;
 
 class LikeService
 {
+    /**
+     * Menyukai destinasi tertentu.
+     *
+     * @param int $userId
+     * @param int $destinationId
+     * @return LikedDestination|null
+     */
+    public function likeDestination(int $userId, int $destinationId): ?LikedDestination
+    {
+        if ($this->isDestinationLiked($userId, $destinationId)) {
+            // Sudah like, tidak perlu buat lagi
+            return null;
+        }
+
+        return LikedDestination::create([
+            'user_id' => $userId,
+            'destination_id' => $destinationId,
+        ]);
+    }
+
+
+    /**
+     * Menghapus like dari destinasi tertentu.
+     *
+     * @param int $userId
+     * @param int $destinationId
+     * @return bool
+     */
+    public function unlikeDestination(int $userId, int $destinationId): bool
+    {
+        return LikedDestination::where('user_id', $userId)
+            ->where('destination_id', $destinationId)
+            ->delete() > 0;
+    }
+    /**
+     * Memeriksa apakah pengguna menyukai destinasi tertentu.
+     *
+     * @param int $userId
+     * @param int $destinationId
+     * @return bool
+     */
+    public function isDestinationLiked(int $userId, int $destinationId): bool
+    {
+        return LikedDestination::where('user_id', $userId)
+            ->where('destination_id', $destinationId)
+            ->exists();
+    }
+
 
     /**
      * Mengambil total destinasi yang disukai oleh pengguna tertentu.

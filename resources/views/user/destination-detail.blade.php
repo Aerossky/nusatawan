@@ -21,14 +21,17 @@
 @endpush
 
 @section('content')
+    {{-- Header Gambar dan Informasi --}}
     <div class="container mx-auto max-w-full">
         <!-- Gambar Header dengan Overlay - Full Width -->
         <div class="relative mb-4 w-full">
-            <img src="{{ asset('images/auth.png') }}" alt="Pantai Kuta"
-                class="w-full h-[300px] md:h-[500px] lg:h-[600px] max-h-96 object-cover">
+            <img src="{{ asset($destination->primaryImage ? 'storage/' . $destination->primaryImage->url : 'images/auth.png') }}"
+                alt="{{ $destination->place_name }}" class="w-full h-[300px] md:h-[500px] lg:h-[600px] max-h-96 object-cover">
+
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
             <div class="absolute bottom-0 left-0 w-full p-6 text-white">
                 <div class="container mx-auto px-0 md:px-6 md:max-w-4xl">
+                    <!-- Lokasi dan tanggal -->
                     <div class="flex items-center text-sm mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -40,15 +43,36 @@
                         {{ $destination->administrative_area . ', ' . $destination->province }} -
                         {{ $destination->created_at->format('d M Y') }}
                     </div>
-                    <h1 class="text-3xl font-bold">{{ $destination->place_name }}</h1>
-                    <div class="flex items-center mt-1">
+
+                    <!-- Judul dan tombol like -->
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-3xl font-bold">{{ $destination->place_name }}</h1>
+
+                        <!-- Like Button yang diperbaiki posisinya -->
+                        <button
+                            class="like-button flex items-center justify-center px-3 py-1 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
+                            data-destination-id="{{ $destination->id }}"
+                            data-is-liked="{{ $destination->is_liked_by_user ? 'true' : 'false' }}"
+                            data-likes-count="{{ $destination->likes_count }}"
+                            data-like-url="{{ route('user.destinations.like', $destination) }}">
+                            <svg class="{{ $destination->is_liked_by_user ? 'text-red-500 fill-red-500' : 'text-white' }} h-5 w-5 transition-colors like-icon"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="1.5" fill="{{ $destination->is_liked_by_user ? 'currentColor' : 'none' }}">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                            <span
+                                class="text-sm font-medium ml-1 text-white likes-count">{{ $destination->likes_count }}</span>
+                        </button>
+                    </div>
+
+                    <!-- Rating dan review -->
+                    <div class="flex items-center mt-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20"
                             fill="currentColor">
                             <path
                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-
-                        {{-- informasi rating & review --}}
                         <span class="ml-1 text-white">{{ number_format($destinationRating, 1) }}</span>
                         <span class="mx-2 text-white">•</span>
                         <a href="#comments" class="text-blue-300">{{ $totalReview }} Review</a>
@@ -56,7 +80,6 @@
                 </div>
             </div>
         </div>
-
         <div class="max-w-4xl mx-auto px-4">
             <!-- Informasi Penulis (Baru) -->
             <div class="bg-white rounded-lg shadow-md p-5 mb-6">
@@ -569,7 +592,7 @@
 @push('scripts')
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    @vite('resources/js/share.js')
+    @vite(['resources/js/share.js', 'resources/js/like.js']);
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('weatherTooltips', () => ({

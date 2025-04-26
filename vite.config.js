@@ -8,6 +8,8 @@ export default defineConfig({
                 'resources/css/custom/preview.css',
                 'resources/css/custom/map.css',
                 'resources/js/app.js',
+                // like
+                'resources/js/like.js',
                 // share
                 'resources/js/share.js',
                 // Destination Submission Admin

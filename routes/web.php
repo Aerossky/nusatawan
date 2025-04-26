@@ -47,6 +47,12 @@ Route::name('user.')->group(function () {
         Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
     });
 
+    // Like routes
+    Route::prefix('destinations/{destination}')->group(function () {
+        Route::post('like', [DestinationController::class, 'like'])->name('destinations.like');
+        Route::delete('unlike', [DestinationController::class, 'unlike'])->name('destinations.unlike');
+    });
+
     // Review routes
     Route::prefix('destinations/{destination}')->group(function () {
         Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
