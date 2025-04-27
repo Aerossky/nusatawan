@@ -75,6 +75,21 @@ class ReviewService
     }
 
     /**
+     * Hapus review yang ditentukan.
+     *
+     * Setelah hapus, rata-rata rating untuk destinasi yang terkait juga akan diupdate.
+     *
+     * @param Review $review Review yang akan dihapus
+     */
+    public function destroyReview(Destination $destination, Review $review)
+    {
+        $review->delete();
+
+        // Update destination average rating
+        $this->updateDestinationRating($destination->id);
+    }
+
+    /**
      * Mengambil review yang dibuat oleh user untuk destinasi tertentu.
      *
      * Jika user belum memberikan review untuk destinasi ini, maka akan dikembalikan null.

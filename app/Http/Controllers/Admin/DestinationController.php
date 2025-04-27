@@ -7,20 +7,24 @@ use App\Models\Category;
 use App\Models\Destination;
 use App\Models\DestinationImage;
 use App\Services\DestinationService;
+use App\Services\ReviewService;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
     protected $destinationService;
+    protected $reviewService;
 
     /**
      * Konstruktor controller destinasi.
      *
      * @param DestinationService $destinationService
+     * @param ReviewService $reviewService
      */
-    public function __construct(DestinationService $destinationService)
+    public function __construct(DestinationService $destinationService, ReviewService $reviewService)
     {
         $this->destinationService = $destinationService;
+        $this->reviewService = $reviewService;
     }
 
     /**
@@ -91,6 +95,7 @@ class DestinationController extends Controller
         return view('admin.destinations.edit', [
             'destination' => $this->destinationService->getDestinationDetails($destination),
             'categories'  => Category::all(),
+            'reviews' => $this->reviewService->getReviewsByDestinationId($destination->id, 10, 'desc')
         ]);
     }
 

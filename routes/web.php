@@ -81,6 +81,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->parameters(['destinasi' => 'destination'])
         ->names('destinations');
 
+    // Review routes
+    Route::prefix('destinasi/{destination}')->group(function () {
+        Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('destinations.reviews.destroy');
+    });
+
     // hapus foto Destinasi
     Route::delete('destinasi/{destination}/image/{image}', [AdminDestinationController::class, 'destroyImage'])->name('destinations.image.destroy');
 
