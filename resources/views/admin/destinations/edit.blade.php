@@ -33,6 +33,16 @@
             @method('DELETE')
         </form>
 
+        {{-- Form untuk menangani hapus review (di luar form utama) --}}
+        @foreach ($reviews as $review)
+            <form id="delete-review-form-{{ $review->id }}"
+                action="{{ route('admin.destinations.reviews.destroy', [$destination, $review]) }}" method="POST"
+                style="display: none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endforeach
+
         <form action="{{ route('admin.destinations.update', $destination) }}" method="POST" enctype="multipart/form-data"
             class="p-6 space-y-6" x-data="imageUploader" id="edit-form">
             {{-- CSRF Token --}}
@@ -96,29 +106,6 @@
                 </div>
             </div>
 
-            {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Latitude -->
-                <div>
-                    <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
-                    <input type="number" name="latitude" id="latitude"
-                        value="{{ old('latitude', $destination->latitude) }}" step="0.000001" min="-90" max="90"
-                        class="mt-1 block w-full border-gray-300 rounded">
-                    @error('latitude')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Longitude -->
-                <div>
-                    <label for="longitude" class="block text-sm font-medium text-gray-700">Longitude</label>
-                    <input type="number" name="longitude" id="longitude"
-                        value="{{ old('longitude', $destination->longitude) }}" step="0.000001" min="-180"
-                        max="180" class="mt-1 block w-full border-gray-300 rounded">
-                    @error('longitude')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div> --}}
 
             <!-- Location section -->
             <div class="space-y-4 border-t pt-6">
@@ -267,6 +254,38 @@
                 </button>
             </div>
         </form>
+
+        {{-- Bagian Review  --}}
+        <div class="p-6 border-t">
+            <h3 class="text-md font-medium text-gray-700 mb-2">Review</h3>
+            @if ($reviews->isEmpty())
+                <p class="text-gray-500">Tidak ada review untuk destinasi ini.</p>
+            @endif
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                @foreach ($reviews as $review)
+                    <div class="bg-white p-4 rounded shadow-sm">
+                        <div class="flex items-center mb-2">
+                            <img src="{{ $review->user->profile_photo_url }}" alt="User"
+                                class="w-10 h-10 rounded-full mr-2">
+                            <div>
+                                <p class="text-sm font-semibold">{{ $review->user->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $review->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-700 mb-2">
+                            <strong>{{ $review->rating }} / 5</strong>
+                            <p class="text-sm text-gray-600">{{ $review->comment }}</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <button type="button" onclick="deleteReview({{ $review->id }})"
+                                class="text-red-500 hover:underline">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -300,6 +319,13 @@
                 const form = document.getElementById('delete-image-form');
                 form.action = url;
                 form.submit();
+            }
+        }
+
+        // Fungsi untuk menangani penghapusan review
+        function deleteReview(reviewId) {
+            if (confirm('Apakah Anda yakin ingin menghapus review ini?')) {
+                document.getElementById('delete-review-form-' + reviewId).submit();
             }
         }
 

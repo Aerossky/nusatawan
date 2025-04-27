@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\ReviewController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,17 @@ Route::name('user.')->group(function () {
         Route::get('/', [DestinationSubmissionController::class, 'create'])->name('create');
         Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
     });
+
+    // Like routes
+    Route::prefix('destinations/{destination}')->group(function () {
+        Route::post('like', [DestinationController::class, 'like'])->name('destinations.like');
+        Route::delete('unlike', [DestinationController::class, 'unlike'])->name('destinations.unlike');
+    });
+
+    // Review routes
+    Route::prefix('destinations/{destination}')->group(function () {
+        Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    });
 });
 
 // admin route
@@ -68,6 +80,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('destinasi', AdminDestinationController::class)
         ->parameters(['destinasi' => 'destination'])
         ->names('destinations');
+
+    // Review routes
+    Route::prefix('destinasi/{destination}')->group(function () {
+        Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('destinations.reviews.destroy');
+    });
 
     // hapus foto Destinasi
     Route::delete('destinasi/{destination}/image/{image}', [AdminDestinationController::class, 'destroyImage'])->name('destinations.image.destroy');

@@ -26,19 +26,32 @@ class DestinationSubmissionController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    public function index() {}
 
+    /**
+     * Menampilkan form untuk membuat pengajuan destinasi.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $categories = $this->categoryService->getAllCategories();
         return view('user.destination-submission', compact('categories'));
     }
 
+    /**
+     * Membuat pengajuan destinasi berdasarkan data yang diterima dari form.
+     *
+     * Fungsi ini akan memvalidasi data yang diterima dan jika valid,
+     * akan membuat pengajuan destinasi melalui service, lalu redirect ke halaman
+     * detail pengajuan destinasi yang baru dibuat.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         try {
-            // Log error (Debug)
-            Log::info('Form data received', $request->all());
+            // Validasi data yang diterima dari form
             $data = $this->validateDestination($request);
 
             $images = $request->file('images') ?? [];
@@ -48,13 +61,22 @@ class DestinationSubmissionController extends Controller
             return redirect()->route('destination-submissions.show', $submission)
                 ->with('success', 'Pengajuan destinasi berhasil dibuat.');
         } catch (\Exception $e) {
-            // Log error (Debug)
             Log::error('Form submission error: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
         }
     }
 
+    /**
+     * Melakukan validasi terhadap data yang diterima dari form submission destinasi.
+     *
+     * Validasi ini akan memastikan bahwa data yang diterima sesuai dengan
+     * kriteria yang diharapkan. Jika data valid, maka akan dikembalikan
+     * sebagai array yang berisi data yang telah divalidasi.
+     *
+     * @param Request $request
+     * @return array
+     */
     protected function validateDestination(Request $request): array
     {
         return $request->validate([

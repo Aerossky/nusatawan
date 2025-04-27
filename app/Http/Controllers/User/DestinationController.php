@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Destination;
 use App\Services\DestinationService;
+use App\Services\LikeService;
+use App\Services\ReviewService;
 use App\Services\WeatherService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DestinationController extends Controller
 {
@@ -18,39 +21,147 @@ class DestinationController extends Controller
     protected $destinationService;
 
     /**
-     * Service untuk mengelola data cuaca
+     * Service untuk mengambil data cuaca
      *
      * @var WeatherService
      */
     protected $weatherService;
 
     /**
-     * Konstruktor untuk DestinationController
+     * Service untuk mengelola ulasan destinasi
+     *
+     * @var ReviewService
+     */
+    protected $reviewsService;
+
+    /**
+     * Service untuk mengelola like destinasi
+     *
+     * @var LikeService
+     */
+    protected $likeService;
+
+    /**
+     * Inisialisasi controller dengan dependency injection
      *
      * @param DestinationService $destinationService Service untuk data destinasi
      * @param WeatherService $weatherService Service untuk data cuaca
+     * @param ReviewService $reviewsService Service untuk data ulasan
+     * @param LikeService $likeService Service untuk data like
      */
-    public function __construct(DestinationService $destinationService, WeatherService $weatherService)
-    {
+    public function __construct(
+        DestinationService $destinationService,
+        WeatherService $weatherService,
+        ReviewService $reviewsService,
+        LikeService $likeService
+    ) {
         $this->destinationService = $destinationService;
         $this->weatherService = $weatherService;
+        $this->reviewsService = $reviewsService;
+        $this->likeService = $likeService;
     }
 
     /**
      * Menampilkan daftar destinasi dengan filter
      *
-     * @param Request $request Request dengan parameter filter
+     * @param Request $request Request dari pengguna yang berisi parameter filter
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
-        // Inisialisasi filter default
+        $filters = $this->getFiltersFromRequest($request);
+        $destinations = $this->destinationService->getDestinationsList($filters);
+
+        return view('user.destination', compact('destinations'));
+    }
+
+    /**
+     * Menampilkan detail destinasi beserta informasi cuaca dan ulasan
+     *
+     * @param Request $request Request dari pengguna
+     * @param string $slug Slug unik destinasi
+     * @return \Illuminate\View\View
+     */
+    public function show(Request $request, $slug)
+    {
+        $destination = $this->destinationService->getDestinationBySlug($slug);
+
+        if (!$destination) {
+            abort(404);
+        }
+
+        // Ambil data ulasan
+        $reviewData = $this->getDestinationReviewData($destination->id);
+
+        // Ambil data cuaca
+        $weatherData = $this->getDestinationWeatherData(
+            $destination->latitude,
+            $destination->longitude
+        );
+
+        return view('user.destination-detail', array_merge(
+            ['destination' => $destination],
+            $reviewData,
+            $weatherData
+        ));
+    }
+
+    /**
+     * Menangani permintaan untuk menambah atau menghapus like pada destinasi tertentu.
+     *
+     * @param Request $request Objek permintaan yang berisi data like
+     * @param Destination $destination Objek destinasi yang akan dilike atau di-unlike
+     * @return \Illuminate\Http\RedirectResponse Redirect kembali ke halaman sebelumnya
+     */
+    public function like(Request $request, Destination $destination)
+    {
+        $destination = $this->destinationService->getDestinationBySlug($destination->slug);
+
+        if (!$destination) {
+            abort(404);
+        }
+
+        $user = Auth::user();
+
+        if ($request->input('like') == '1') {
+            $this->likeService->likeDestination($user->id, $destination->id);
+            $isLiked = true;
+        } else {
+            $this->likeService->unlikeDestination($user->id, $destination->id);
+            $isLiked = false;
+        }
+
+        // Ambil jumlah like terbaru
+        $updatedDestination = $this->destinationService->getDestinationBySlug($destination->slug);
+        $likesCount = $updatedDestination->likes_count;
+
+        // Cek apakah ini request AJAX
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'liked' => $isLiked,
+                'likes_count' => $likesCount
+            ]);
+        }
+
+        // Untuk request non-AJAX (fallback)
+        return redirect()->back();
+    }
+
+
+    /**
+     * Mengekstrak parameter filter dari request
+     *
+     * @param Request $request Request yang berisi parameter filter
+     * @return array Filter yang akan digunakan
+     */
+    private function getFiltersFromRequest(Request $request): array
+    {
         $filters = [
             'sort_by' => 'likes_desc',
             'per_page' => 12
         ];
 
-        // Terapkan filter dari request
         if ($request->has('sort')) {
             $filters['sort_by'] = $request->sort;
         }
@@ -63,60 +174,57 @@ class DestinationController extends Controller
             $filters['search'] = $request->search;
         }
 
-        $destinations = $this->destinationService->getDestinationsList($filters);
-
-        return view('user.destination', compact('destinations'));
+        return $filters;
     }
 
     /**
-     * Menampilkan detail destinasi beserta data cuaca
+     * Mengambil data ulasan untuk destinasi tertentu
      *
-     * @param string $slug Slug destinasi
-     * @return \Illuminate\View\View
+     * @param int $destinationId ID destinasi
+     * @return array Data ulasan destinasi
      */
-    public function show($slug)
+    private function getDestinationReviewData(int $destinationId): array
     {
-        $destination = $this->destinationService->getDestinationBySlug($slug);
+        return [
+            'reviews' => $this->reviewsService->getReviewsByDestinationId($destinationId, 10, 'desc'),
+            'userReview' => $this->reviewsService->getUserReview($destinationId),
+            'destinationRating' => $this->reviewsService->getDestinationRating($destinationId),
+            'totalReview' => $this->reviewsService->getDestinationReviewCount($destinationId)
+        ];
+    }
 
-        if (!$destination) {
-            abort(404);
-        }
+    /**
+     * Mengambil data cuaca untuk lokasi destinasi
+     *
+     * @param float $latitude Koordinat lintang destinasi
+     * @param float $longitude Koordinat bujur destinasi
+     * @return array Data cuaca destinasi
+     */
+    private function getDestinationWeatherData(float $latitude, float $longitude): array
+    {
+        $currentWeather = $this->getCurrentWeather($latitude, $longitude);
 
-        // Ambil data cuaca untuk koordinat destinasi
-        $currentWeather = $this->getCurrentWeather(
-            $destination->latitude,
-            $destination->longitude
-        );
-
-        // Ambil prakiraan cuaca untuk 5 hari
         $forecast = $this->weatherService->getForecast(
-            $destination->latitude,
-            $destination->longitude,
+            $latitude,
+            $longitude,
             5
         );
 
-        // Proses data cuaca untuk hari ini (pagi, siang, malam)
-        $todayForecast = $this->processTodayForecast($forecast);
-
-        // Proses data prakiraan 5 hari
-        $weekForecast = $this->processWeekForecast($forecast);
-
-        return view('user.destination-detail', compact(
-            'destination',
-            'currentWeather',
-            'todayForecast',
-            'weekForecast'
-        ));
+        return [
+            'currentWeather' => $currentWeather,
+            'todayForecast' => $this->processTodayForecast($forecast),
+            'weekForecast' => $this->processWeekForecast($forecast)
+        ];
     }
 
     /**
-     * Mendapatkan data cuaca saat ini berdasarkan koordinat
+     * Mengambil data cuaca saat ini berdasarkan koordinat
      *
-     * @param float $lat Koordinat latitude
-     * @param float $lng Koordinat longitude
-     * @return array|null Data cuaca saat ini yang telah diformat
+     * @param float $lat Koordinat lintang
+     * @param float $lng Koordinat bujur
+     * @return array|null Data cuaca saat ini atau null jika tidak tersedia
      */
-    private function getCurrentWeather($lat, $lng)
+    private function getCurrentWeather(float $lat, float $lng): ?array
     {
         $currentWeather = $this->weatherService->getCurrentWeather($lat, $lng);
 
@@ -137,12 +245,12 @@ class DestinationController extends Controller
     }
 
     /**
-     * Memproses data prakiraan cuaca untuk hari ini (pagi, siang, malam)
+     * Memproses data ramalan cuaca hari ini (pagi, siang, malam)
      *
-     * @param array|null $forecast Data prakiraan mentah dari service
-     * @return array|null Data prakiraan yang telah diproses per waktu
+     * @param array|null $forecast Data ramalan cuaca dari API
+     * @return array|null Data ramalan cuaca hari ini yang sudah diformat
      */
-    private function processTodayForecast($forecast)
+    private function processTodayForecast(?array $forecast): ?array
     {
         if (!$this->isValidForecast($forecast)) {
             return null;
@@ -171,12 +279,12 @@ class DestinationController extends Controller
     }
 
     /**
-     * Memproses data prakiraan cuaca untuk 5 hari dengan detail per waktu
+     * Memproses data ramalan cuaca 5 hari ke depan dengan detail waktu
      *
-     * @param array|null $forecast Data prakiraan mentah dari service
-     * @return array|null Data yang telah diproses untuk 5 hari dengan detail waktu
+     * @param array|null $forecast Data ramalan cuaca dari API
+     * @return array|null Data ramalan cuaca mingguan yang sudah diformat
      */
-    private function processWeekForecast($forecast)
+    private function processWeekForecast(?array $forecast): ?array
     {
         if (!$this->isValidForecast($forecast)) {
             return null;
@@ -189,13 +297,12 @@ class DestinationController extends Controller
         foreach ($days as $day) {
             $dayData = $this->initDayData($day);
 
-            // Temukan semua entri untuk hari ini dan kelompokkan berdasarkan waktu
             foreach ($forecast['list'] as $item) {
                 $itemDate = date('Y-m-d', strtotime($item['dt_txt']));
                 $hour = (int)date('H', strtotime($item['dt_txt']));
 
                 if ($itemDate === $day) {
-                    // Simpan untuk kalkulasi keseluruhan hari
+                    // Simpan untuk kalkulasi rata-rata harian
                     $dayData['temps'][] = round($item['main']['temp']);
                     $dayData['icons'][] = $item['weather'][0]['icon'];
                     $dayData['weather'][] = $item['weather'][0]['description'];
@@ -219,11 +326,11 @@ class DestinationController extends Controller
     }
 
     /**
-     * Mendapatkan slot waktu (pagi, siang, malam) dengan range jam
+     * Mendapatkan pembagian waktu (pagi, siang, malam) dengan rentang jam
      *
-     * @return array Definisi slot waktu
+     * @return array Pembagian waktu dengan rentang jam
      */
-    private function getTimeSlots()
+    private function getTimeSlots(): array
     {
         return [
             'morning' => ['id' => 'Pagi', 'minHour' => 6, 'maxHour' => 11],
@@ -233,25 +340,25 @@ class DestinationController extends Controller
     }
 
     /**
-     * Memeriksa apakah jam berada dalam range waktu tertentu
+     * Memeriksa apakah jam tertentu berada dalam rentang waktu yang ditentukan
      *
      * @param int $hour Jam yang akan diperiksa
-     * @param array $range Range waktu dengan minHour dan maxHour
-     * @return bool True jika dalam range
+     * @param array $range Rentang waktu dengan minHour dan maxHour
+     * @return bool Hasil pemeriksaan
      */
-    private function isInTimeRange($hour, $range)
+    private function isInTimeRange(int $hour, array $range): bool
     {
         return $hour >= $range['minHour'] && $hour <= $range['maxHour'];
     }
 
     /**
-     * Memformat data cuaca dari API menjadi format yang konsisten
+     * Memformat data cuaca dari API ke format yang konsisten
      *
      * @param array $item Data cuaca dari API
-     * @param string $timeLabel Label waktu (Pagi/Siang/Malam)
-     * @return array Data cuaca yang telah diformat
+     * @param string $timeLabel Label waktu untuk data cuaca
+     * @return array Data cuaca yang sudah diformat
      */
-    private function formatWeatherData($item, $timeLabel)
+    private function formatWeatherData(array $item, string $timeLabel): array
     {
         return [
             'time' => $timeLabel,
@@ -267,24 +374,24 @@ class DestinationController extends Controller
     }
 
     /**
-     * Memeriksa apakah data forecast valid untuk diproses
+     * Memeriksa apakah data ramalan cuaca valid untuk diproses
      *
-     * @param array|null $forecast Data forecast yang akan diperiksa
-     * @return bool True jika data valid
+     * @param array|null $forecast Data ramalan cuaca dari API
+     * @return bool Hasil pemeriksaan validitas
      */
-    private function isValidForecast($forecast)
+    private function isValidForecast(?array $forecast): bool
     {
         return $forecast && isset($forecast['list']) && !empty($forecast['list']);
     }
 
     /**
-     * Mendapatkan daftar hari unik dari data prakiraan
+     * Mendapatkan daftar hari unik dari data ramalan cuaca
      *
-     * @param array $forecastList Data list dari forecast
-     * @param int $limit Jumlah maksimal hari yang diambil
-     * @return array Daftar tanggal (Y-m-d)
+     * @param array $forecastList Daftar item ramalan cuaca
+     * @param int $limit Batas jumlah hari yang diambil
+     * @return array Daftar hari unik
      */
-    private function getUniqueDays($forecastList, $limit)
+    private function getUniqueDays(array $forecastList, int $limit): array
     {
         $days = [];
         foreach ($forecastList as $item) {
@@ -299,10 +406,10 @@ class DestinationController extends Controller
     /**
      * Inisialisasi struktur data untuk satu hari
      *
-     * @param string $day Tanggal (Y-m-d)
-     * @return array Struktur data hari
+     * @param string $day Tanggal hari dalam format Y-m-d
+     * @return array Struktur data untuk satu hari
      */
-    private function initDayData($day)
+    private function initDayData(string $day): array
     {
         return [
             'date' => date('d M', strtotime($day)),
@@ -322,18 +429,18 @@ class DestinationController extends Controller
      * Menghitung rata-rata data cuaca untuk satu hari
      *
      * @param array $dayData Data cuaca satu hari
-     * @return array Data cuaca yang telah dihitung rata-ratanya
+     * @return array Data cuaca yang sudah dihitung rata-ratanya
      */
-    private function calculateDayAverage($dayData)
+    private function calculateDayAverage(array $dayData): array
     {
         $dayData['avg_temp'] = round(array_sum($dayData['temps']) / count($dayData['temps']));
 
-        // Dapatkan kondisi cuaca yang paling umum
+        // Mendapatkan kondisi cuaca yang paling sering muncul
         $weatherCounts = array_count_values($dayData['weather']);
         arsort($weatherCounts);
         $mainWeather = key($weatherCounts);
 
-        // Temukan ikon yang sesuai untuk cuaca utama
+        // Mencari ikon yang sesuai dengan cuaca utama
         $iconIndex = array_search($mainWeather, $dayData['weather']);
         $icon = $dayData['icons'][$iconIndex] ?? $dayData['icons'][0];
 
@@ -345,12 +452,12 @@ class DestinationController extends Controller
     }
 
     /**
-     * Mengubah nama hari dalam bahasa Inggris ke bahasa Indonesia
+     * Mengubah nama hari dalam Bahasa Inggris ke Bahasa Indonesia
      *
-     * @param string $day Nama hari dalam bahasa Inggris
-     * @return string Nama hari dalam bahasa Indonesia
+     * @param string $day Nama hari dalam Bahasa Inggris
+     * @return string Nama hari dalam Bahasa Indonesia
      */
-    private function getDayInIndonesian($day)
+    private function getDayInIndonesian(string $day): string
     {
         $days = [
             'Sunday' => 'Minggu',
