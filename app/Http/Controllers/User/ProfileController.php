@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Destination;
 use App\Models\User;
 use App\Services\DestinationService;
+use App\Services\DestinationSubmissionService;
 use App\Services\LikeService;
 use App\Services\ProfileService;
 use Illuminate\Container\Attributes\Auth;
@@ -16,6 +18,7 @@ class ProfileController extends Controller
 
     protected $profileService;
     protected $destinationService;
+    protected $destinationSubmissionService;
     protected $likeService;
 
     /**
@@ -23,22 +26,26 @@ class ProfileController extends Controller
      *
      * @param ProfileService $ProfileService
      * @param DestinationService $destinationService
+     * @param DestinationSubmissionService $destinationSubmissionService
+     * @param LikeService $likeService
      */
-    public function __construct(ProfileService $profileService, DestinationService $destinationService, LikeService $likeService)
+    public function __construct(ProfileService $profileService, DestinationService $destinationService, DestinationSubmissionService $destinationSubmissionService, LikeService $likeService)
     {
         $this->profileService = $profileService;
         $this->destinationService = $destinationService;
+        $this->destinationSubmissionService = $destinationSubmissionService;
         $this->likeService = $likeService;
     }
 
     public function show()
     {
         $profile = $this->profileService->getProfile();
+        $destinationSubmissions = $this->destinationSubmissionService->getUserSubmissions($profile->id);
         $destinationUserTotal = $this->destinationService->getTotalDestinationsByUser($profile->id);
         $likedDestinationUserTotal = $this->likeService->getTotalLikesByUser($profile->id);
 
 
-        return view('user.profile', compact('profile', 'destinationUserTotal', 'likedDestinationUserTotal'));
+        return view('user.profile', compact('destinationSubmissions', 'profile', 'destinationUserTotal', 'likedDestinationUserTotal'));
     }
 
     public function update(User $user, Request $request)
