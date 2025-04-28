@@ -7,6 +7,19 @@ use App\Models\LikedDestination;
 class LikeService
 {
     /**
+     * Mengambil daftar destinasi yang disukai oleh pengguna tertentu.
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getLikedDestinations(int $userId): array
+    {
+        return LikedDestination::where('user_id', $userId)
+            ->with('destination')
+            ->get()
+            ->toArray();
+    }
+    /**
      * Menyukai destinasi tertentu.
      *
      * @param int $userId
