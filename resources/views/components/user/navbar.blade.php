@@ -31,11 +31,11 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
                             </li>
                             <li>
-                                <a href="{{ route('user.profile.show') }}#destinations"
+                                <a href="{{ route('user.profile.show') }}#destinasi"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">DestinasiKu</a>
                             </li>
                             <li>
-                                <a href=""
+                                <a href="{{ route('user.destination-favorite.index') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Favorit</a>
                             </li>
                             <li>

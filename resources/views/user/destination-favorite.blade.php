@@ -19,7 +19,7 @@
 
     {{-- Card Section --}}
     <x-section>
-        <div class="bg-gray-50 p-6 rounded-lg">
+        <div class="bg-gray-50 p-6 rounded-lg mb-20">
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 class="text-xl font-bold text-gray-800">Destinasi Favorit Anda</h2>
@@ -29,12 +29,15 @@
                 </div>
 
                 <div class="relative">
-                    <select
-                        class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option>Urutkan: Terbaru</option>
-                        <option>Urutkan: A-Z</option>
-                        <option>Urutkan: Rating</option>
-                    </select>
+                    <form method="GET" id="sortForm" action="{{ route('user.destination-favorite.index') }}">
+                        <select name="sort" onchange="document.getElementById('sortForm').submit()"
+                            class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Urutkan: Terbaru
+                            </option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Urutkan: Rating
+                            </option>
+                        </select>
+                    </form>
                 </div>
             </div>
 
@@ -82,7 +85,7 @@
                     </div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">Belum Ada Destinasi Favorit</h3>
                     <p class="text-gray-600 mb-6">Anda belum menyimpan destinasi favorit apapun</p>
-                    <a href="{{ route('destination.all') }}"
+                    <a href="{{ route('user.destinations.index') }}"
                         class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md transition">
                         Jelajahi Destinasi
                     </a>

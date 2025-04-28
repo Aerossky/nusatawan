@@ -50,7 +50,7 @@ Route::name('user.')->group(function () {
 
     // Favorite routes
     Route::prefix('destinasi-favorit')->name('destination-favorite.')->group(function () {
-        Route::get('/', [FavoriteController::class, 'index'])->name('favorite');
+        Route::get('/', [FavoriteController::class, 'index'])->name('index');
     });
 
     // Like routes

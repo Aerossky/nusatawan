@@ -23,12 +23,21 @@ class FavoriteController extends Controller
         $this->likeService = $LikeService;
     }
 
+    /**
+     * Menampilkan halaman daftar destinasi favorit dari user yang sedang login.
+     * Data diambil dari LikeService dan diurutkan berdasarkan parameter 'sort'
+     * yang diterima dari request.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $userId = Auth::id();
         $perPage = $request->get('per_page', 9);
-        $favorites = $this->likeService->getLikedDestinations($userId, $perPage);
+        $sort = $request->get('sort', 'latest'); // Default 'latest'
 
+        $favorites = $this->likeService->getLikedDestinations($userId, $perPage, $sort);
 
         return view('user.destination-favorite', compact('favorites'));
     }
