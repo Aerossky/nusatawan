@@ -18,7 +18,14 @@
 <body class="bg-background text-dark ">
 
     {{-- Navbar User --}}
-    <x-user.navbar currentPage="{{ $currentPath = request()->path() }}" />
+    <x-user.navbar
+        currentPage="{{ request()->routeIs('user.home')
+            ? 'user.home'
+            : (request()->routeIs('user.destinations.*')
+                ? 'user.destinations.index'
+                : (request()->routeIs('user.about')
+                    ? 'user.about'
+                    : '')) }}" />
 
     {{-- Konten Halaman --}}
     <div class="mx-auto">

@@ -46,7 +46,7 @@ class DestinationSubmissionService
      */
     public function getUserSubmissions(int $userId)
     {
-        return DestinationSubmission::where('user_id', $userId)
+        return DestinationSubmission::where('created_by', $userId)
             ->with('images')
             ->latest()
             ->paginate(10);
@@ -82,7 +82,7 @@ class DestinationSubmissionService
                 'place_name' => $data['place_name'],
                 'description' => $data['description'],
                 'category_id' => $data['category_id'],
-                'created_by' => 1, // TODO: Replace with appropriate user ID
+                'created_by' => $data['user_id'],
                 'administrative_area' => $data['administrative_area'],
                 'province' => $data['province'],
                 'time_minutes' => $data['time_minutes'],

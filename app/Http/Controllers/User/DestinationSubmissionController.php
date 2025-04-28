@@ -8,6 +8,7 @@ use App\Models\DestinationSubmission;
 use App\Services\CategoryService;
 use App\Services\DestinationSubmissionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class DestinationSubmissionController extends Controller
@@ -54,6 +55,8 @@ class DestinationSubmissionController extends Controller
             // Validasi data yang diterima dari form
             $data = $this->validateDestination($request);
 
+            // user_id diambil dari auth user
+            $data['user_id'] = Auth::user()->id;
             $images = $request->file('images') ?? [];
 
             $submission = $this->destinationSubmissionService->createSubmission($data, $images);

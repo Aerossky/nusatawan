@@ -3,7 +3,7 @@
 <nav id="navbar" data-page="{{ $currentPage }}"
     class="fixed w-full z-50 top-0 start-0 transition-all duration-300 bg-transparent">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="{{ route('user.home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-white transition-colors duration-300"
                 id="brand-text">Nusatawan.</span>
         </a>
@@ -27,15 +27,16 @@
                         </div>
                         <ul class="py-2" aria-labelledby="user-menu-button">
                             <li>
-                                <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
+                                <a href="{{ route('user.profile.show') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
                             </li>
                             <li>
-                                <a href=""
+                                <a href="{{ route('user.profile.show') }}#destinations"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">DestinasiKu</a>
                             </li>
                             <li>
                                 <a href=""
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pengaturan</a>
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Favorit</a>
                             </li>
                             <li>
                                 <form method="POST" action="">
@@ -49,7 +50,7 @@
                 </div>
             @else
                 <div class="flex items-center space-x-4">
-                    <a href=""
+                    <a href="{{ route('register') }}"
                         class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center transition-all duration-300">
                         Daftar
                     </a>
@@ -71,20 +72,23 @@
                 class="flex flex-col p-4 md:p-0 mt-4 font-medium border md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 my-auto">
                 @php
                     $menus = [
-                        '/' => 'Beranda',
-                        'destinasi' => 'Destinasi',
-                        'rencana' => 'Rencana Perjalanan',
-                        'tentang' => 'Tentang Kami',
+                        ['route' => 'user.home', 'name' => 'user.home', 'label' => 'Beranda'],
+                        [
+                            'route' => 'user.destinations.index',
+                            'name' => 'user.destinations.index',
+                            'label' => 'Destinasi',
+                        ],
+                        ['route' => 'user.about', 'name' => 'user.about', 'label' => 'Tentang Kami'],
                     ];
                 @endphp
 
-                @foreach ($menus as $page => $label)
+                @foreach ($menus as $menu)
                     <li class="my-auto">
-                        <a href="{{ $page }}"
+                        <a href="{{ route($menu['route']) }}"
                             class="block py-2 px-3 rounded-md transition md:px-6 md:py-2 md:rounded-full
-                                {{ $currentPage == $page ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }} "
-                            id="nav-link-{{ $page }}" data-page="{{ $page }}">
-                            {{ $label }}
+                            {{ $currentPage == $menu['name'] ? 'bg-blue-600 text-white' : 'text-white hover:text-blue-400 transition-colors duration-300' }} "
+                            id="nav-link-{{ str_replace('.', '-', $menu['name']) }}" data-page="{{ $menu['name'] }}">
+                            {{ $menu['label'] }}
                         </a>
                     </li>
                 @endforeach
@@ -101,7 +105,8 @@
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const currentPage = navbar.getAttribute('data-page');
 
-        if (currentPage !== "/" && currentPage !== "destinasi") {
+        // Check if current page is home or destinations
+        if (currentPage !== "user.home" && currentPage !== "user.destinations.index") {
             navbar.classList.add('bg-white', 'shadow-md');
             navbar.classList.remove('bg-transparent');
             brandText.classList.remove('text-white');
