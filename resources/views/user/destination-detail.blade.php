@@ -88,7 +88,8 @@
                     <div class="flex items-start">
                         {{-- foto penulis --}}
                         <div class="flex-shrink-0 mr-4 mb-3 sm:mb-0">
-                            <img src="{{ asset('images/auth.png') }}" alt="Author"
+                            <img src="{{ asset('storage/' . $destination->user['image']) }}"
+                                alt="penulis $destination->user['name']"
                                 class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
                         </div>
                         {{-- informasi penulis --}}
@@ -110,7 +111,52 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
-                                <button class="text-sm text-blue-500 hover:underline">Lihat Foto Destinasi Lainnya</button>
+                                <!-- Modal Button -->
+                                <button class="text-sm text-blue-500 hover:underline" data-modal-target="static-modal"
+                                    data-modal-toggle="static-modal">Lihat Foto Destinasi Lainnya</button>
+
+                                <!-- Main modal -->
+                                <div id="static-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
+                                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                    <div class="relative p-4 w-full max-w-4xl max-h-full">
+                                        <!-- Modal content -->
+                                        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                                            <!-- Modal header -->
+                                            <div
+                                                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                                    Foto Destinasi Lainnya
+                                                </h3>
+                                                <button type="button"
+                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    data-modal-hide="static-modal">
+                                                    <svg class="w-3 h-3" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 14 14">
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="2"
+                                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                                    </svg>
+                                                    <span class="sr-only">Close modal</span>
+                                                </button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="p-4 md:p-5">
+                                                <!-- Photo Grid Layout -->
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    @foreach ($destination->images as $image)
+                                                        <div class="overflow-hidden rounded-lg">
+                                                            <img src="{{ asset('storage/' . $image->url) }}"
+                                                                alt="Destinasi {{ $destination->name }}"
+                                                                class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
