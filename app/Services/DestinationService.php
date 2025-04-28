@@ -48,7 +48,7 @@ class DestinationService
     public function getDestinationBySlug(string $slug): ?Destination
     {
         $query = Destination::where('slug', $slug)
-            ->withCount(['likedByUsers as likes_count', 'reviews', 'primaryImage']);
+            ->withCount(['likedByUsers as likes_count', 'reviews', 'primaryImage', 'images']);
 
         if (Auth::check()) {
             $userId = Auth::id();

@@ -41,15 +41,16 @@
                 <div class="text-3xl font-bold text-blue-600">{{ $destinationUserTotal }}</div>
                 <div class="text-sm text-gray-600 font-medium">Destinasi</div>
             </div>
-            <div class="bg-white p-4 rounded-lg shadow-md text-center transition-transform hover:transform hover:scale-105">
+            <a href="{{ route('user.destination-favorite.index') }}"
+                class="bg-white p-4 rounded-lg shadow-md text-center transition-transform hover:transform hover:scale-105">
                 <div class="text-3xl font-bold text-blue-600">{{ $likedDestinationUserTotal }}</div>
                 <div class="text-sm text-gray-600 font-medium">Menyukai Destinasi</div>
-            </div>
+            </a>
         </div>
 
         <!-- Tabs Section -->
         <div class="bg-white rounded-lg shadow-md p-6" x-data="{
-            activeTab: window.location.hash === '#destinations' ? 'destinations' : 'profile'
+            activeTab: window.location.hash === '#destinasi' ? 'destinations' : 'profile'
         }">
             <h2 class="text-xl font-bold text-gray-800 mb-6">Informasi Pengguna</h2>
 
@@ -394,7 +395,7 @@
             }
 
             // Periksa hash URL saat halaman dimuat
-            if (window.location.hash === '#destinations') {
+            if (window.location.hash === '#destinasi') {
                 // Tunggu beberapa saat untuk memastikan Alpine sudah diinisialisasi
                 setTimeout(() => {
                     setActiveTabOnAllComponents('destinations');
@@ -404,7 +405,7 @@
 
         // Tangani perubahan hash URL - pastikan hanya ada satu listener
         window.addEventListener('hashchange', function() {
-            if (window.location.hash === '#destinations') {
+            if (window.location.hash === '#destinasi') {
                 setTimeout(() => {
                     document.querySelectorAll('[x-data]').forEach(component => {
                         if (component.__x && component.__x.$data.activeTab !== undefined) {
