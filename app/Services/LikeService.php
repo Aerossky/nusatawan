@@ -12,13 +12,28 @@ class LikeService
      * @param int $userId
      * @return array
      */
-    public function getLikedDestinations(int $userId): array
+    public function getLikedDestinations(int $userId, int $perPage = 9)
     {
-        return LikedDestination::where('user_id', $userId)
-            ->with('destination')
-            ->get()
-            ->toArray();
+        $likedDestinations = LikedDestination::where('user_id', $userId)
+            ->with(['destination.images', 'destination.likedByUsers']) // Mengambil relasi likedByUsers untuk menghitung likes_count
+            ->paginate($perPage);
+
+        // Tambahkan field is_liked_by_user = true dan likes_count untuk setiap destination
+        $likedDestinations->getCollection()->transform(function ($likedDestination) {
+            if ($likedDestination->destination) {
+                $destination = $likedDestination->destination;
+                $destination->is_liked_by_user = true; // Set is_liked_by_user menjadi true
+
+                // Hitung jumlah likes dari relasi likedByUsers
+                $destination->likes_count = 0; // Hitung jumlah likes
+            }
+            return $likedDestination;
+        });
+
+        return $likedDestinations;
     }
+
+
     /**
      * Menyukai destinasi tertentu.
      *

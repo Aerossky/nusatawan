@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinati
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
+use App\Http\Controllers\User\FavoriteController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReviewController;
 use App\Models\User;
@@ -47,8 +48,14 @@ Route::name('user.')->group(function () {
         Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
     });
 
+    // Favorite routes
+    Route::prefix('destinasi-favorit')->name('destination-favorite.')->group(function () {
+        Route::get('/', [FavoriteController::class, 'index'])->name('favorite');
+    });
+
     // Like routes
     Route::prefix('destinations/{destination}')->group(function () {
+        Route::get('like', [DestinationController::class, 'index'])->name('destinations.liked');
         Route::post('like', [DestinationController::class, 'like'])->name('destinations.like');
         Route::delete('unlike', [DestinationController::class, 'unlike'])->name('destinations.unlike');
     });
