@@ -121,8 +121,8 @@ class DestinationController extends Controller
         $nearbyDestinations = $this->destinationService->getNearbyDestinations([
             'lat' => $destination->latitude,
             'lng' => $destination->longitude,
-            'max_distance' => 30, // Default 50km
-            'per_page' => 5
+            'max_distance' => 20, 
+            'per_page' => 10
         ]);
 
         return view('user.destination-detail', array_merge(

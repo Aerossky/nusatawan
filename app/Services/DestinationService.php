@@ -41,6 +41,20 @@ class DestinationService
         return $query->paginate($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
     }
 
+    /**
+     * Mendapatkan daftar destinasi terdekat berdasarkan koordinat yang diberikan,
+     * dengan opsi untuk mengecualikan destinasi tertentu dan membatasi jarak maksimum.
+     *
+     * @param  array  $filters  Filter yang dapat berisi:
+     *                          - lat: latitude dari lokasi saat ini
+     *                          - lng: longitude dari lokasi saat ini
+     *                          - exclude_id: ID destinasi yang harus dikecualikan
+     *                          - max_distance: jarak maksimum dalam kilometer
+     *                          - per_page: jumlah data per halaman (default: 10)
+     *
+     * @return LengthAwarePaginator
+     */
+
     public function getNearbyDestinations(array $filters = []): LengthAwarePaginator
     {
         // Get coordinates from filters
@@ -61,20 +75,19 @@ class DestinationService
 
         // Sisa kode tetap sama...
         $subQuery = $baseQuery->toSql();
-        $bindings = $baseQuery->getBindings();
 
         // Now create new query with distance calculation
         $query = DB::table(DB::raw("({$subQuery}) as base_destinations"))
             ->mergeBindings($baseQuery->getQuery())
             ->selectRaw("base_destinations.*, (
-            6371 * acos(
-                cos(radians($lat)) *
-                cos(radians(latitude)) *
-                cos(radians(longitude) - radians($lng)) +
-                sin(radians($lat)) *
-                sin(radians(latitude))
-            )
-        ) AS distance");
+                6371 * acos(
+                    cos(radians($lat)) *
+                    cos(radians(latitude)) *
+                    cos(radians(longitude) - radians($lng)) +
+                    sin(radians($lat)) *
+                    sin(radians(latitude))
+                )
+            ) AS distance");
 
         // Add distance constraint if specified
         if (isset($filters['max_distance'])) {
@@ -86,7 +99,6 @@ class DestinationService
         $query->orderBy('distance', 'asc');
 
         // Catatan: karena kita menggunakan DB::table dengan raw query,
-        // eager loading relasi tidak akan berfungsi langsung di sini
 
         // Solusi 1: Jika menggunakan Eloquent, ambil ID dan lakukan query kedua
         $paginator = $query->paginate($filters['per_page'] ?? self::DEFAULT_PER_PAGE);

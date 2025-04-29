@@ -560,11 +560,11 @@
                                 currentLabel() {
                                     let label = '';
                                     let value = this.hoverRating || this.rating;
-
+                            
                                     if (value > 0) {
                                         label = this.ratings.find(r => r.value === value)?.label || '';
                                     }
-
+                            
                                     return value ? `${value}.0 - ${label}` : 'Pilih rating';
                                 },
                                 getColor() {
