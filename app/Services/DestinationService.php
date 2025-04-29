@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DestinationService
 {
@@ -30,6 +31,7 @@ class DestinationService
      */
     public function getDestinationsList(array $filters = []): LengthAwarePaginator
     {
+
         $query = $this->buildBaseQuery();
 
         $this->applySearchFilter($query, $filters);
@@ -37,6 +39,81 @@ class DestinationService
         $this->applySorting($query, $filters);
 
         return $query->paginate($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
+    }
+
+    public function getNearbyDestinations(array $filters = []): LengthAwarePaginator
+    {
+        // Get coordinates from filters
+        $lat = $filters['lat'] ?? null;
+        $lng = $filters['lng'] ?? null;
+        $excludeId = $filters['exclude_id'] ?? null; // Tambahkan parameter exclude_id
+
+        // Start with base query but DON'T add the Haversine formula yet
+        $baseQuery = $this->buildBaseQuery();
+
+        // Jika ada ID yang perlu dikecualikan
+        if ($excludeId) {
+            $baseQuery->where('id', '!=', $excludeId);
+        }
+
+        // Jika Anda ingin eager load relasi images dalam base query
+        $baseQuery->with('images');
+
+        // Sisa kode tetap sama...
+        $subQuery = $baseQuery->toSql();
+        $bindings = $baseQuery->getBindings();
+
+        // Now create new query with distance calculation
+        $query = DB::table(DB::raw("({$subQuery}) as base_destinations"))
+            ->mergeBindings($baseQuery->getQuery())
+            ->selectRaw("base_destinations.*, (
+            6371 * acos(
+                cos(radians($lat)) *
+                cos(radians(latitude)) *
+                cos(radians(longitude) - radians($lng)) +
+                sin(radians($lat)) *
+                sin(radians(latitude))
+            )
+        ) AS distance");
+
+        // Add distance constraint if specified
+        if (isset($filters['max_distance'])) {
+            $maxDistance = $filters['max_distance'];
+            $query->havingRaw("distance <= ?", [$maxDistance]);
+        }
+
+        // Order by distance
+        $query->orderBy('distance', 'asc');
+
+        // Catatan: karena kita menggunakan DB::table dengan raw query,
+        // eager loading relasi tidak akan berfungsi langsung di sini
+
+        // Solusi 1: Jika menggunakan Eloquent, ambil ID dan lakukan query kedua
+        $paginator = $query->paginate($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
+
+        // Jika Anda ingin mengambil relasi setelah paginasi
+        if ($paginator->count() > 0) {
+            // Ambil ID dari hasil paginasi
+            $destinationIds = collect($paginator->items())->pluck('id')->toArray();
+
+            // Load destinasi dengan eager loading images
+            $destinationsWithImages = Destination::with('images')
+                ->whereIn('id', $destinationIds)
+                ->get()
+                ->keyBy('id');
+
+            // Ganti item dalam paginasi dengan model yang memiliki relasi
+            $paginator->setCollection(collect($paginator->items())->map(function ($item) use ($destinationsWithImages) {
+                if (isset($destinationsWithImages[$item->id])) {
+                    // Tambahkan properti distance ke model
+                    $destinationsWithImages[$item->id]->distance = $item->distance;
+                    return $destinationsWithImages[$item->id];
+                }
+                return $item;
+            }));
+        }
+
+        return $paginator;
     }
 
     /**
@@ -193,7 +270,7 @@ class DestinationService
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function    buildBaseQuery()
+    private function  buildBaseQuery()
     {
         $query = Destination::query()
             ->with(['category', 'primaryImage'])

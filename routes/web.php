@@ -38,9 +38,16 @@ Route::name('user.')->group(function () {
     });
 
     // Destination routes
+    Route::match(['get', 'post'], 'destinasi', [DestinationController::class, 'index'])
+        ->name('destinations.index');
+
+    // Jika kamu masih butuh detail berdasarkan slug
     Route::resource('destinasi', DestinationController::class)
+        ->only(['show']) // hanya `show` karena `index` sudah kamu override
         ->parameters(['destinasi' => 'destination:slug'])
-        ->names('destinations');
+        ->names(['show' => 'destinations.show']);
+
+
 
     // Destination submission routes
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {

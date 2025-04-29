@@ -1,34 +1,34 @@
 
-document.addEventListener("DOMContentLoaded", function() {
-    new Swiper(".mySwiper", {
-        slidesPerView: "auto", // Menyesuaikan lebar card secara otomatis
-        spaceBetween: 10, // Jarak antar card
-        centeredSlides: false, // Jangan dipaksa ke tengah
-        initialSlide: 0,
-        loop: false,
-        watchSlidesProgress: true,
-        speed: 1500,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Swiper with custom pagination options
+    const swiper = new Swiper('.mySwiper', {
+        slidesPerView: 'auto',
+        spaceBetween: 20,
         pagination: {
-            el: ".swiper-pagination",
+            el: '.swiper-pagination',
             clickable: true,
         },
         breakpoints: {
             640: {
                 slidesPerView: 2,
-                spaceBetween: 20
             },
             768: {
                 slidesPerView: 3,
-                spaceBetween: 30
             },
             1024: {
-                slidesPerView: 4,
-                spaceBetween: 40
+                slidesPerView: 3,
             },
-        },
+        }
+    });
+
+    // Apply Tailwind classes to pagination bullets
+    const bullets = document.querySelectorAll('.swiper-pagination');
+    bullets.forEach(bullet => {
+        bullet.classList.add('w-2.5', 'h-2.5', 'mx-1');
+    });
+
+    const activeBullets = document.querySelectorAll('.swiper-pagination-active');
+    activeBullets.forEach(bullet => {
+        bullet.classList.add('bg-blue-500');
     });
 });

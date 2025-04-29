@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Destination;
+use App\Services\CategoryService;
 use App\Services\DestinationService;
 use App\Services\LikeService;
 use App\Services\ReviewService;
 use App\Services\WeatherService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DestinationController extends Controller
 {
@@ -41,6 +44,7 @@ class DestinationController extends Controller
      */
     protected $likeService;
 
+    protected $categoryService;
     /**
      * Inisialisasi controller dengan dependency injection
      *
@@ -48,17 +52,20 @@ class DestinationController extends Controller
      * @param WeatherService $weatherService Service untuk data cuaca
      * @param ReviewService $reviewsService Service untuk data ulasan
      * @param LikeService $likeService Service untuk data like
+     * @param CategoryService $categoryService Service untuk data kategori
      */
     public function __construct(
         DestinationService $destinationService,
         WeatherService $weatherService,
         ReviewService $reviewsService,
-        LikeService $likeService
+        LikeService $likeService,
+        CategoryService $categoryService
     ) {
         $this->destinationService = $destinationService;
         $this->weatherService = $weatherService;
         $this->reviewsService = $reviewsService;
         $this->likeService = $likeService;
+        $this->categoryService = $categoryService;
     }
 
     /**
@@ -70,9 +77,19 @@ class DestinationController extends Controller
     public function index(Request $request)
     {
         $filters = $this->getFiltersFromRequest($request);
-        $destinations = $this->destinationService->getDestinationsList($filters);
 
-        return view('user.destination', compact('destinations'));
+        if ($request->filled('lat') && $request->filled('lng')) {
+            $destinations = $this->destinationService->getNearbyDestinations($filters);
+        } else {
+            $destinations = $this->destinationService->getDestinationsList($filters);
+        }
+
+        $categories = $this->categoryService->getAllCategories();
+
+        // This ensures the paginator appends all query parameters to pagination links
+        $destinations->appends($request->except('page'));
+
+        return view('user.destination', compact('destinations', 'categories'));
     }
 
     /**
@@ -82,9 +99,10 @@ class DestinationController extends Controller
      * @param string $slug Slug unik destinasi
      * @return \Illuminate\View\View
      */
-    public function show(Request $request, $slug)
+    public function show($slug)
     {
         $destination = $this->destinationService->getDestinationBySlug($slug);
+
 
         if (!$destination) {
             abort(404);
@@ -99,8 +117,17 @@ class DestinationController extends Controller
             $destination->longitude
         );
 
+        // Ambil Destinasi terdekat
+        $nearbyDestinations = $this->destinationService->getNearbyDestinations([
+            'lat' => $destination->latitude,
+            'lng' => $destination->longitude,
+            'max_distance' => 30, // Default 50km
+            'per_page' => 5
+        ]);
+
         return view('user.destination-detail', array_merge(
             ['destination' => $destination],
+            ['nearbyDestinations' => $nearbyDestinations],
             $reviewData,
             $weatherData
         ));
@@ -148,34 +175,20 @@ class DestinationController extends Controller
         return redirect()->back();
     }
 
-
-    /**
-     * Mengekstrak parameter filter dari request
-     *
-     * @param Request $request Request yang berisi parameter filter
-     * @return array Filter yang akan digunakan
-     */
     private function getFiltersFromRequest(Request $request): array
     {
-        $filters = [
-            'sort_by' => 'likes_desc',
-            'per_page' => 12
+        return [
+            'sort_by' => $request->get('sort_by', 'likes_desc'),
+            'per_page' => $request->get('per_page', 9),
+            'search' => $request->get('q'),
+            'category_id' => $request->get('category'),
+            'lat' => $request->get('lat'),
+            'lng' => $request->get('lng'),
+            'max_distance' => $request->get('max_distance', 30), // Default 50km
+            'sort' => $request->get('sort', 'distance'), // Default sort by distance if coords provided
         ];
-
-        if ($request->has('sort')) {
-            $filters['sort_by'] = $request->sort;
-        }
-
-        if ($request->has('category')) {
-            $filters['category_id'] = $request->category;
-        }
-
-        if ($request->has('search')) {
-            $filters['search'] = $request->search;
-        }
-
-        return $filters;
     }
+
 
     /**
      * Mengambil data ulasan untuk destinasi tertentu
