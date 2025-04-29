@@ -300,7 +300,8 @@ class DestinationService
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('place_name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('city', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('administrative_area', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('province', 'like', '%' . $filters['search'] . '%')
                     ->orWhere('description', 'like', '%' . $filters['search'] . '%');
             });
         }
