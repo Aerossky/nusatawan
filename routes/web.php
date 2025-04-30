@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\FavoriteController;
+use App\Http\Controllers\User\ItineraryController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReviewController;
 use App\Models\User;
@@ -41,13 +42,15 @@ Route::name('user.')->group(function () {
     Route::match(['get', 'post'], 'destinasi', [DestinationController::class, 'index'])
         ->name('destinations.index');
 
-    // Jika kamu masih butuh detail berdasarkan slug
     Route::resource('destinasi', DestinationController::class)
         ->only(['show']) // hanya `show` karena `index` sudah kamu override
         ->parameters(['destinasi' => 'destination:slug'])
         ->names(['show' => 'destinations.show']);
 
-
+    // Itinerary routes
+    Route::prefix('rencana-perjalanan')->name('itinerary.')->group(function () {
+        Route::get('/', [ItineraryController::class, 'index'])->name('index');
+    });
 
     // Destination submission routes
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {

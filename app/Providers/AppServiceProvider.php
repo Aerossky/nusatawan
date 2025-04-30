@@ -7,6 +7,7 @@ use App\Models\Review;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\DestinationService;
+use App\Services\ItineraryService;
 use App\Services\LikeService;
 use App\Services\ProfileService;
 use App\Services\ReviewService;
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             DestinationService::class,
             CategoryService::class,
             DestinationSubmission::class,
+            ItineraryService::class,
             ProfileService::class,
             WeatherService::class,
             ReviewService::class,
