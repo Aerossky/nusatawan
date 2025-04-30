@@ -71,7 +71,7 @@
                     <h2 class="text-xl font-semibold text-gray-800">Rencanakan Perjalanan Anda</h2>
                     <p class="text-gray-500 mt-1">Buat dan kelola rencana perjalanan dengan mudah</p>
                 </div>
-                <a href=""
+                <a href="{{ route('user.itinerary.create') }}"
                     class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 border border-transparent rounded-lg font-semibold text-white hover:from-blue-600 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-300 transform hover:scale-105">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"

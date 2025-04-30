@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->date('startDate');
             $table->date('endDate');
-            $table->enum('status', ['complete', 'ongoing'])->default('ongoing');
+            $table->enum('status', ['complete', 'ongoing', 'draft'])->default('ongoing');
             $table->timestamps();
         });
     }

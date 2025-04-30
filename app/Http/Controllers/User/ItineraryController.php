@@ -34,4 +34,23 @@ class ItineraryController extends Controller
 
         return view('user.itinerary.index', compact('itineraries', 'filters'));
     }
+
+    public function create()
+    {
+        return view('user.itinerary.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'startDate' => 'required|date|after_or_equal:today',
+            'endDate' => 'required|date|after_or_equal:startDate',
+        ]);
+
+        $itinerary = $this->itineraryService->createItinerary($data);
+
+        return redirect()->route('itineraries.show', $itinerary->id)
+            ->with('success', 'Rencana perjalanan berhasil dibuat.');
+    }
 }

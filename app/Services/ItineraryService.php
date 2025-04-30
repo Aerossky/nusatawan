@@ -44,4 +44,10 @@ class ItineraryService
 
         return $query->paginate(9);
     }
+    public function createItinerary(array $data)
+    {
+        $data['user_id'] = Auth::id();
+
+        return Itinerary::create($data);
+    }
 }

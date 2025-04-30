@@ -50,6 +50,8 @@ Route::name('user.')->group(function () {
     // Itinerary routes
     Route::prefix('rencana-perjalanan')->as('itinerary.')->group(function () {
         Route::get('/', [ItineraryController::class, 'index'])->name('index');
+        Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
+        Route::post('/', [ItineraryController::class, 'store'])->name('store');
     });
 
 
