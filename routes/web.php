@@ -52,6 +52,7 @@ Route::name('user.')->group(function () {
         Route::get('/', [ItineraryController::class, 'index'])->name('index');
         Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
         Route::post('/', [ItineraryController::class, 'store'])->name('store');
+        Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
     });
 
 

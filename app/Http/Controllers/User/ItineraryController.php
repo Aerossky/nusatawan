@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Itinerary;
 use App\Services\ItineraryService;
 use Illuminate\Http\Request;
 
@@ -52,5 +53,12 @@ class ItineraryController extends Controller
 
         return redirect()->route('itineraries.show', $itinerary->id)
             ->with('success', 'Rencana perjalanan berhasil dibuat.');
+    }
+
+    public function show(Itinerary $itinerary)
+    {
+        $itinerary = $this->itineraryService->getItinerary($itinerary->id);
+
+        return view('user.itinerary.show', compact('itinerary'));
     }
 }

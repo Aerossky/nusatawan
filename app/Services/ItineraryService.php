@@ -50,4 +50,11 @@ class ItineraryService
 
         return Itinerary::create($data);
     }
+
+    public function getItinerary($id)
+    {
+        return Itinerary::with('itineraryDestinations.destination')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+    }
 }

@@ -18,6 +18,7 @@ class ItinerarySeeder extends Seeder
             [
                 'user_id' => 2, // Budi
                 'title' => 'Liburan Bali 3 Hari',
+                'slug' => 'liburan-bali-3-hari',
                 'startDate' => '2025-05-01',
                 'endDate' => '2025-05-03',
                 'status' => 'ongoing',
@@ -27,6 +28,7 @@ class ItinerarySeeder extends Seeder
             [
                 'user_id' => 3, // Siti
                 'title' => 'Wisata Jawa Timur',
+                'slug' => 'wisata-jawa-timur',
                 'startDate' => '2025-06-15',
                 'endDate' => '2025-06-20',
                 'status' => 'ongoing',
@@ -36,6 +38,7 @@ class ItinerarySeeder extends Seeder
             [
                 'user_id' => 4, // Ahmad
                 'title' => 'Trip Yogyakarta',
+                'slug' => 'trip-yogyakarta',
                 'startDate' => '2024-12-10',
                 'endDate' => '2024-12-15',
                 'status' => 'complete',

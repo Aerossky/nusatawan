@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Itinerary extends Model
 {
     //
-    use HasFactory;
+    use HasFactory, Sluggable;
 
     protected $fillable = [
         'user_id',
@@ -22,6 +23,22 @@ class Itinerary extends Model
         'start_date',
         'end_date'
     ];
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title',
+                'onUpdate' => true,
+            ]
+        ];
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 
     // Relasi dengan User
     public function user()
