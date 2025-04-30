@@ -11,6 +11,6 @@ class ItineraryController extends Controller
 
     public function index()
     {
-        dd('itinerary index');
+        return view('user.itinerary.index');
     }
 }

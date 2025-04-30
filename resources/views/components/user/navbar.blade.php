@@ -78,7 +78,11 @@
                             'name' => 'user.destinations.index',
                             'label' => 'Destinasi',
                         ],
-                        ['route' => 'user.itinerary.index', 'name' => 'user.contact', 'label' => 'Rencana Perjalanan'],
+                        [
+                            'route' => 'user.itinerary.index',
+                            'name' => 'user.itinerary.index',
+                            'label' => 'Rencana Perjalanan',
+                        ],
                         ['route' => 'user.about', 'name' => 'user.about', 'label' => 'Tentang Kami'],
                     ];
                 @endphp

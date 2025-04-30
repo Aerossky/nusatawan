@@ -48,9 +48,10 @@ Route::name('user.')->group(function () {
         ->names(['show' => 'destinations.show']);
 
     // Itinerary routes
-    Route::prefix('rencana-perjalanan')->name('itinerary.')->group(function () {
+    Route::prefix('rencana-perjalanan')->as('itinerary.')->group(function () {
         Route::get('/', [ItineraryController::class, 'index'])->name('index');
     });
+
 
     // Destination submission routes
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {

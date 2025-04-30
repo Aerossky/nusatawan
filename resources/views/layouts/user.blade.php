@@ -25,7 +25,9 @@
                 ? 'user.destinations.index'
                 : (request()->routeIs('user.about')
                     ? 'user.about'
-                    : '')) }}" />
+                    : (request()->routeIs('user.itinerary.*')
+                        ? 'user.itinerary.index'
+                        : ''))) }}" />
 
     {{-- Konten Halaman --}}
     <div class="mx-auto">
