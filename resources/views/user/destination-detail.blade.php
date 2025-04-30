@@ -228,7 +228,7 @@
                         </button>
                     </div>
 
-                    <!-- Today's Weather Tab -->
+                    <!-- Prakiraan Cuaca Hari Ini -->
                     <div x-show="activeTab === 'today'">
                         @if ($currentWeather)
                             <!-- Current Weather Summary -->
@@ -314,7 +314,7 @@
                         @endif
                     </div>
 
-                    <!-- 5-Day Forecast Tab -->
+                    <!-- Prakiraan 5 Hari -->
                     <div x-show="activeTab === 'forecast'" class="py-4">
                         @if ($weekForecast)
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -437,15 +437,16 @@
                 <!-- SwiperJS Container -->
                 <div class="swiper mySwiper relative">
                     <div class="swiper-wrapper">
-                        @foreach ($nearbyDestinations as $destination)
+                        @foreach ($nearbyDestinations as $nearbyDestination)
                             <div class="swiper-slide w-auto max-w-xs">
                                 <div
                                     class="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md">
                                     <!-- Card Image -->
                                     <div class="relative h-52 overflow-hidden">
-                                        @if ($destination->images->count() > 0)
-                                            <img src="{{ asset($destination->primaryImage ? 'storage/' . $destination->primaryImage->url : 'images/auth.png') }}"
-                                                alt="{{ $destination->place_name }}" class="w-full h-full object-cover">
+                                        @if ($nearbyDestination->images->count() > 0)
+                                            <img src="{{ asset($nearbyDestination->primaryImage ? 'storage/' . $nearbyDestination->primaryImage->url : 'images/auth.png') }}"
+                                                alt="{{ $nearbyDestination->place_name }}"
+                                                class="w-full h-full object-cover">
                                         @else
                                             <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300"
@@ -461,7 +462,7 @@
                                         <div class="absolute top-3 left-3">
                                             <span
                                                 class="bg-white bg-opacity-90 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full">
-                                                {{ $destination->category->name }}
+                                                {{ $nearbyDestination->category->name }}
                                             </span>
                                         </div>
 
@@ -475,7 +476,7 @@
                                                     <path
                                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                 </svg>
-                                                <span>{{ number_format($destination->rating ?? 0, 1) }}</span>
+                                                <span>{{ number_format($nearbyDestination->rating ?? 0, 1) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -483,7 +484,7 @@
                                     <!-- Card Content -->
                                     <div class="p-4">
                                         <h3 class="font-semibold text-lg text-gray-800 mb-1 truncate">
-                                            {{ $destination->place_name }}</h3>
+                                            {{ $nearbyDestination->place_name }}</h3>
                                         <p class="text-sm text-gray-500 mb-3 flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -492,11 +493,11 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            {{ $destination->administrative_area . ', ' . $destination->province }}
+                                            {{ $nearbyDestination->administrative_area . ', ' . $nearbyDestination->province }}
                                         </p>
                                         <!-- Detail Button Only -->
                                         <div class="mt-3">
-                                            <a href="{{ route('user.destinations.show', $destination->slug) }}"
+                                            <a href="{{ route('user.destinations.show', $nearbyDestination->slug) }}"
                                                 class="block bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-md transition-colors text-sm font-medium">
                                                 Lihat Detail
                                             </a>
@@ -560,11 +561,11 @@
                                 currentLabel() {
                                     let label = '';
                                     let value = this.hoverRating || this.rating;
-                            
+
                                     if (value > 0) {
                                         label = this.ratings.find(r => r.value === value)?.label || '';
                                     }
-                            
+
                                     return value ? `${value}.0 - ${label}` : 'Pilih rating';
                                 },
                                 getColor() {
