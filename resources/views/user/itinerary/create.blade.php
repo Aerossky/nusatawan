@@ -104,3 +104,20 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        const startInput = document.getElementById('startDate');
+        const endInput = document.getElementById('endDate');
+
+        startInput.addEventListener('change', () => {
+            const startDate = new Date(startInput.value);
+            if (startDate.toString() !== 'Invalid Date') {
+                const maxEndDate = new Date(startDate);
+                maxEndDate.setMonth(maxEndDate.getMonth() + 1);
+                endInput.min = startInput.value;
+                endInput.max = maxEndDate.toISOString().split('T')[0];
+            }
+        });
+    </script>
+@endpush
