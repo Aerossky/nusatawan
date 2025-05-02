@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(2));
+Auth::login(User::find(5));
 
 // Auth::logout();
 
@@ -53,8 +53,12 @@ Route::name('user.')->group(function () {
         Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
         Route::post('/', [ItineraryController::class, 'store'])->name('store');
         Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
-    });
 
+        // itinerary destination routes
+        Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
+        Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
+        Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
+    });
 
     // Destination submission routes
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
