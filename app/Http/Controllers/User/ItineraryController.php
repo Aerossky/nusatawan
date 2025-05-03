@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\Itinerary;
 use App\Services\Destination\DestinationService;
-// use App\Services\DestinationService;
+use App\Services\Destination\DestinationGeoService;
 
 use App\Services\ItineraryService;
 use Illuminate\Http\Request;
@@ -27,15 +27,21 @@ class ItineraryController extends Controller
     protected $destinationService;
 
     /**
+     * @var DestinationGeoService
+     */
+    protected $destinationGeoService;
+
+    /**
      * Constructor
      *
      * @param ItineraryService $itineraryService
      * @param DestinationService $destinationService
      */
-    public function __construct(ItineraryService $itineraryService, DestinationService $destinationService)
+    public function __construct(ItineraryService $itineraryService, DestinationService $destinationService, DestinationGeoService $destinationGeoService)
     {
         $this->itineraryService = $itineraryService;
         $this->destinationService = $destinationService;
+        $this->destinationGeoService = $destinationGeoService;
     }
 
     /**
@@ -119,10 +125,11 @@ class ItineraryController extends Controller
         try {
             $lat = $validated['lat'];
             $lng = $validated['lng'];
+            $radiusKm = 25;
 
-            $nearbyDestinations = Destination::select('*')
-                ->whereRaw("(6371 * acos(cos(radians($lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($lng)) + sin(radians($lat)) * sin(radians(latitude)))) < 50")
-                ->get();
+            // Ambil data destinasi terdekat berdasarkan koordinat
+            $nearbyDestinations = $this->destinationGeoService->getNearbyDestinationRaws($lat, $lng, $radiusKm);
+
 
             // Kembalikan response dengan data koordinat dan destinasi terdekat
             return response()->json([

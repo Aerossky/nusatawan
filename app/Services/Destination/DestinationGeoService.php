@@ -5,6 +5,7 @@ namespace App\Services\Destination;
 use App\Models\Destination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DestinationGeoService
 {
@@ -80,6 +81,22 @@ class DestinationGeoService
         $this->processNearbyResults($paginator);
 
         return $paginator;
+    }
+
+    /**
+     * Mendapatkan daftar destinasi dalam radius tertentu berdasarkan koordinat yang diberikan.
+     * 
+     * @param float $lat Latitude dari lokasi saat ini
+     * @param float $lng Longitude dari lokasi saat ini
+     * @param float $radiusKm Radius pencarian dalam kilometer (default: 50)
+     * @return Collection
+     */
+    public function getNearbyDestinationRaws(float $lat, float $lng, float $radiusKm = 50)
+    {
+        return Destination::select('*')
+            ->whereRaw("(6371 * acos(cos(radians($lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($lng)) + sin(radians($lat)) * sin(radians(latitude)))) < ?", [$radiusKm])
+            ->with('images')
+            ->get();
     }
 
     /**
