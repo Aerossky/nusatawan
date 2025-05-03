@@ -5,7 +5,9 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\Itinerary;
-use App\Services\DestinationService;
+use App\Services\Destination\DestinationService;
+// use App\Services\DestinationService;
+
 use App\Services\ItineraryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

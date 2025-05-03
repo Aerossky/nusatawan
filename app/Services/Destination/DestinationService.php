@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 class DestinationService
 {
     private const DEFAULT_PER_PAGE = 10;
-    private const DEFAULT_SORT = 'created_at';
-    private const DEFAULT_SORT_DIRECTION = 'desc';
 
     protected $queryService;
     protected $imageService;

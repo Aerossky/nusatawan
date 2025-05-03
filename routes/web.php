@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(5));
+Auth::login(User::find(3));
 
 // Auth::logout();
 
