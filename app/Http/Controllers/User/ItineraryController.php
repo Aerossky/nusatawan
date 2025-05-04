@@ -217,4 +217,39 @@ class ItineraryController extends Controller
             ], 422);
         }
     }
+
+    /**
+     * Remove a destination from an itinerary
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removeDestinationItinerary(Request $request)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'itinerary_id' => 'required|integer|exists:itineraries,id',
+            'destination_id' => 'required|integer|exists:destinations,id',
+        ]);
+
+        @dd($validated);
+
+        try {
+            // Process the destination through the service
+            $result = $this->itineraryService->removeDestinationFromItinerary($validated);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Destinasi berhasil dihapus dari rencana perjalanan',
+                'data' => $result,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error removing destination: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 422);
+        }
+    }
 }

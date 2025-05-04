@@ -366,7 +366,6 @@
             let selectedDestinationSource = null;
 
             // Initialize LocationSearch with database search capability
-            // MODIFIKASI: Parameter baru untuk mengatur urutan hasil
             const locationSearch = new LocationSearch({
                 inputId: 'destination',
                 resultsContainerId: 'destination-search-results',
@@ -536,15 +535,6 @@
                     locationElement.className = 'text-xs text-gray-500 mt-1';
                     locationElement.textContent =
                         `${destination.administrative_area || ''}, ${destination.province || ''}`;
-
-                    // Distance (if available)
-                    let distanceElement = null;
-                    if (destination.distance !== undefined) {
-                        distanceElement = document.createElement('div');
-                        distanceElement.className = 'text-xs text-gray-500 mt-1';
-                        distanceElement.textContent =
-                            `${parseFloat(destination.distance).toFixed(1)} km dari lokasi`;
-                    }
 
                     // Append elements to card
                     card.appendChild(nameElement);
@@ -756,6 +746,53 @@
                         saveButton.textContent = 'Simpan';
                     });
             }
+
+            /**
+             * Function to remove a destination from the itinerary
+             * @param {number} destinationId - The ID of the itinerary destination to remove
+             */
+            window.removeDestination = function(destinationId) {
+                // Confirm before deleting
+                if (!confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
+                    return;
+                }
+
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                // Send delete request to the server
+                fetch('{{ route('user.itinerary.destination.remove') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            itinerary_destination_id: destinationId
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Show success message if needed
+                            console.log('Destination removed successfully:', data);
+                            // Refresh the page to update the destination list
+                            window.location.reload();
+                        } else {
+                            // Show error message
+                            alert(data.message || 'Terjadi kesalahan saat menghapus destinasi');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error saat menghapus destinasi:', error);
+                        alert('Terjadi kesalahan saat menghapus destinasi');
+                    });
+            };
         });
     </script>
 @endpush
