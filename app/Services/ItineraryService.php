@@ -110,4 +110,32 @@ class ItineraryService
             throw $e;
         }
     }
+
+    public function removeDestinationFromItinerary(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Find the itinerary destination
+            $itineraryDestination = ItineraryDestination::where('itinerary_id', $data['itinerary_id'])
+                ->where('id', $data['destination_id'])  // Changed from destination_id to id
+                ->firstOrFail();
+
+            Log::info('Debug service data:', ['itinerary_destination' => $itineraryDestination]);
+
+            // Delete the itinerary destination
+            $itineraryDestination->delete();
+
+            DB::commit();
+
+            return [
+                'status' => 'success',
+                'message' => 'Destinasi berhasil dihapus dari rencana perjalanan'
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to remove destination from itinerary: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

@@ -188,9 +188,8 @@
                                                         d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                                 </svg>
                                             </button>
-                                            <button type="button"
-                                                onclick="removeDestination({{ $itineraryDestination->id }})"
-                                                class="inline-flex items-center p-1.5 border border-gray-300 shadow-sm text-xs rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                            <button type="button" data-destination-id="{{ $itineraryDestination->id }}"
+                                                class="deleteDestination inline-flex items-center p-1.5 border border-gray-300 shadow-sm text-xs rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500"
                                                     viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd"
@@ -350,6 +349,7 @@
             // Elements
             const destinationForm = document.getElementById('destinationForm');
             const saveButton = document.getElementById('saveDestination');
+            const deleteButtons = document.querySelectorAll('.deleteDestination');
             const nearbyDestinationsContainer = document.getElementById('nearby-destinations');
             const selectedDestinationInfo = document.getElementById('selected-destination-info');
             const selectedDestinationName = document.getElementById('selected-destination-name');
@@ -429,6 +429,26 @@
                     saveButton.addEventListener('click', function(e) {
                         e.preventDefault();
                         saveDestination();
+                    });
+                }
+
+                // Delete destination buttons
+                if (deleteButtons.length > 0) {
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            // Get the destination ID directly from the button
+                            const destinationId = this.getAttribute('data-destination-id');
+                            // Get the itinerary ID from the hidden input field
+                            const itineraryId = document.getElementById('itinerary_id').value;
+
+                            // Call the removeDestination function with both IDs
+                            if (destinationId) {
+                                removeDestination(destinationId, itineraryId);
+                            } else {
+                                console.error('No destination ID found on delete button');
+                            }
+                        });
                     });
                 }
 
@@ -539,7 +559,11 @@
                     // Append elements to card
                     card.appendChild(nameElement);
                     card.appendChild(locationElement);
-                    if (distanceElement) card.appendChild(distanceElement);
+
+                    // Check if distanceElement exists before appending
+                    if (typeof distanceElement !== 'undefined' && distanceElement) {
+                        card.appendChild(distanceElement);
+                    }
 
                     // Add click event to select this destination
                     card.addEventListener('click', function() {
@@ -746,53 +770,55 @@
                         saveButton.textContent = 'Simpan';
                     });
             }
-
-            /**
-             * Function to remove a destination from the itinerary
-             * @param {number} destinationId - The ID of the itinerary destination to remove
-             */
-            window.removeDestination = function(destinationId) {
-                // Confirm before deleting
-                if (!confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
-                    return;
-                }
-
-                // Get CSRF token
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                // Send delete request to the server
-                fetch('{{ route('user.itinerary.destination.remove') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({
-                            itinerary_destination_id: destinationId
-                        })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.status === 'success') {
-                            // Show success message if needed
-                            console.log('Destination removed successfully:', data);
-                            // Refresh the page to update the destination list
-                            window.location.reload();
-                        } else {
-                            // Show error message
-                            alert(data.message || 'Terjadi kesalahan saat menghapus destinasi');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error saat menghapus destinasi:', error);
-                        alert('Terjadi kesalahan saat menghapus destinasi');
-                    });
-            };
         });
+
+        /**
+         * Function to remove a destination from the itinerary
+         * @param {number} destinationId - The ID of the destination to remove
+         * @param {number} itineraryId - The ID of the itinerary
+         */
+        function removeDestination(destinationId, itineraryId) {
+            // Confirm before deleting
+            if (!confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
+                return;
+            }
+
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Send delete request to the server
+            fetch('{{ route('user.itinerary.destination.remove') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        itinerary_id: itineraryId,
+                        destination_id: destinationId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Show success message if needed
+                        console.log('Destination removed successfully:', data);
+                        // Refresh the page to update the destination list
+                        window.location.reload();
+                    } else {
+                        // Show error message
+                        alert(data.message || 'Terjadi kesalahan saat menghapus destinasi');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saat menghapus destinasi:', error);
+                    alert('Terjadi kesalahan saat menghapus destinasi');
+                });
+        }
     </script>
 @endpush

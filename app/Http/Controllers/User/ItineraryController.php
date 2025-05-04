@@ -224,15 +224,13 @@ class ItineraryController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function removeDestinationItinerary(Request $request)
+    public function removeDestinationFromItinerary(Request $request)
     {
         // Validate the request data
         $validated = $request->validate([
             'itinerary_id' => 'required|integer|exists:itineraries,id',
-            'destination_id' => 'required|integer|exists:destinations,id',
+            'destination_id' => 'required|integer|exists:itinerary_destinations,id',
         ]);
-
-        @dd($validated);
 
         try {
             // Process the destination through the service

@@ -58,7 +58,7 @@ Route::name('user.')->group(function () {
         Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
         Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
         Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
-        Route::delete('/hapus-destinasi', [ItineraryController::class, 'removeDestinationItinerary'])->name('destination.remove');
+        Route::post('/hapus-destinasi', [ItineraryController::class, 'removeDestinationFromItinerary'])->name('destination.remove');
     });
 
     // Destination submission routes
