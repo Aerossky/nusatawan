@@ -95,8 +95,17 @@ class ItineraryController extends Controller
             ->with('success', 'Rencana perjalanan berhasil dibuat.');
     }
 
+    public function edit(Itinerary $itinerary)
+    {
+        // get itinerary details
+        $itinerary = $this->itineraryService->getItinerary($itinerary->id);
+
+        // get itinerary destinations
+        return view('user.itinerary.edit', compact('itinerary'));
+    }
+
     /**
-     * Display the specified itinerary
+     * Display the specified itinerary Details With destinations
      *
      * @param Itinerary $itinerary
      * @return \Illuminate\View\View

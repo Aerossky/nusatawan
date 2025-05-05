@@ -52,9 +52,10 @@ Route::name('user.')->group(function () {
         Route::get('/', [ItineraryController::class, 'index'])->name('index');
         Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
         Route::post('/', [ItineraryController::class, 'store'])->name('store');
-        Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
+        Route::get('/{itinerary}/edit', [ItineraryController::class, 'edit'])->name('edit');
 
         // itinerary destination routes
+        Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
         Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
         Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
         Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
