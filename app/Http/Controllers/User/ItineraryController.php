@@ -7,12 +7,10 @@ use App\Models\Destination;
 use App\Models\Itinerary;
 use App\Services\Destination\DestinationService;
 use App\Services\Destination\DestinationGeoService;
-
 use App\Services\ItineraryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Laravel\Pail\ValueObjects\Origin\Console;
+use Illuminate\Support\Facades\Validator;
 
 class ItineraryController extends Controller
 {
@@ -36,9 +34,13 @@ class ItineraryController extends Controller
      *
      * @param ItineraryService $itineraryService
      * @param DestinationService $destinationService
+     * @param DestinationGeoService $destinationGeoService
      */
-    public function __construct(ItineraryService $itineraryService, DestinationService $destinationService, DestinationGeoService $destinationGeoService)
-    {
+    public function __construct(
+        ItineraryService $itineraryService,
+        DestinationService $destinationService,
+        DestinationGeoService $destinationGeoService
+    ) {
         $this->itineraryService = $itineraryService;
         $this->destinationService = $destinationService;
         $this->destinationGeoService = $destinationGeoService;
@@ -101,10 +103,8 @@ class ItineraryController extends Controller
      */
     public function show(Itinerary $itinerary)
     {
-        // Get the basic itinerary data
         $itinerary = $this->itineraryService->getItinerary($itinerary->id);
 
-        // Regular view rendering
         return view('user.itinerary.show', compact('itinerary'));
     }
 
@@ -116,7 +116,6 @@ class ItineraryController extends Controller
      */
     public function searchDestinationsByCoordinates(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
@@ -127,11 +126,8 @@ class ItineraryController extends Controller
             $lng = $validated['lng'];
             $radiusKm = 25;
 
-            // Ambil data destinasi terdekat berdasarkan koordinat
             $nearbyDestinations = $this->destinationGeoService->getNearbyDestinationRaws($lat, $lng, $radiusKm);
 
-
-            // Kembalikan response dengan data koordinat dan destinasi terdekat
             return response()->json([
                 'message' => 'Berhasil mendapatkan destinasi terdekat',
                 'status' => 'success',
@@ -139,7 +135,6 @@ class ItineraryController extends Controller
                 'nearbyDestinations' => $nearbyDestinations,
             ]);
         } catch (\Exception $e) {
-            // Tangani error jika terjadi masalah
             return response()->json([
                 'message' => 'Terjadi error saat memproses',
                 'status' => 'error',
@@ -163,7 +158,6 @@ class ItineraryController extends Controller
         try {
             $query = $validated['query'];
 
-            // Search for destinations by name or location details
             $destinations = Destination::where('place_name', 'like', "%{$query}%")
                 ->orWhere('administrative_area', 'like', "%{$query}%")
                 ->orWhere('province', 'like', "%{$query}%")
@@ -191,7 +185,6 @@ class ItineraryController extends Controller
      */
     public function addDestinationItinerary(Request $request)
     {
-        // Validate the request data
         $validated = $request->validate([
             'itinerary_id' => 'required|integer|exists:itineraries,id',
             'visit_date_time' => 'nullable|date',
@@ -200,7 +193,6 @@ class ItineraryController extends Controller
         ]);
 
         try {
-            // Process the destination through the service
             $result = $this->itineraryService->addDestinationToItinerary($validated);
 
             return response()->json([
@@ -219,6 +211,97 @@ class ItineraryController extends Controller
     }
 
     /**
+     * Get itinerary destination details
+     *
+     * @param int $itineraryDestinationId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDestinationDetails($itineraryDestinationId)
+    {
+        try {
+            $destination = $this->itineraryService->getDestinationById($itineraryDestinationId);
+
+            if (!$destination) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Destinasi tidak ditemukan'
+                ], 404);
+            }
+
+            Log::info('Debug itinerary destination:', ['destination' => $destination]);
+
+            return response()->json([
+                'status' => 'success',
+                'destination' => $destination
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error getting destination details: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengambil detail destinasi'
+            ], 500);
+        }
+    }
+
+    /**
+     * Update itinerary destination
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateDestination(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'itinerary_destination_id' => 'required|integer',
+                'itinerary_id' => 'required|integer',
+                'visit_time' => 'nullable|string', // Format: HH:MM
+                'note' => 'nullable|string|max:500',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data tidak valid',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $itineraryDestinationId = $request->input('itinerary_destination_id');
+            $itineraryId = $request->input('itinerary_id');
+            $visitTime = $request->input('visit_time');
+            $note = $request->input('note');
+
+            $result = $this->itineraryService->updateDestination(
+                $itineraryDestinationId,
+                $itineraryId,
+                $visitTime,
+                $note
+            );
+
+            if (!$result) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Gagal memperbarui destinasi'
+                ], 400);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Destinasi berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating destination: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat memperbarui destinasi'
+            ], 500);
+        }
+    }
+
+    /**
      * Remove a destination from an itinerary
      *
      * @param Request $request
@@ -226,14 +309,12 @@ class ItineraryController extends Controller
      */
     public function removeDestinationFromItinerary(Request $request)
     {
-        // Validate the request data
         $validated = $request->validate([
             'itinerary_id' => 'required|integer|exists:itineraries,id',
             'destination_id' => 'required|integer|exists:itinerary_destinations,id',
         ]);
 
         try {
-            // Process the destination through the service
             $result = $this->itineraryService->removeDestinationFromItinerary($validated);
 
             return response()->json([

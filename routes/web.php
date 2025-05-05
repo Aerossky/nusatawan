@@ -59,6 +59,13 @@ Route::name('user.')->group(function () {
         Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
         Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
         Route::post('/hapus-destinasi', [ItineraryController::class, 'removeDestinationFromItinerary'])->name('destination.remove');
+
+        Route::get('/destinasi/{id}/detail', [ItineraryController::class, 'getDestinationDetails'])
+            ->name('destination.detail');
+
+        // Route untuk update destinasi
+        Route::post('/destinasi/update', [ItineraryController::class, 'updateDestination'])
+            ->name('destination.update');
     });
 
     // Destination submission routes
