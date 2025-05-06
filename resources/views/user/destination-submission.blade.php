@@ -623,6 +623,5 @@
 @push('scripts')
     <!-- Script Leaflet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-
     @vite(['resources/js/pages/destination-submission/map.js', 'resources/js/pages/destination-submission/index.js'])
 @endpush
