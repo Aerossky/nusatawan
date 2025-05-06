@@ -51,7 +51,7 @@
             <div class="swiper mySwiper w-full">
                 <div class="swiper-wrapper">
                     @foreach ($favoriteDestinations as $destination)
-                        <div class="swiper-slide w-auto max-w-xs">
+                        <div class="swiper-slide">
                             <div class="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md">
                                 <!-- Card Image -->
                                 <div class="relative h-52 overflow-hidden">
@@ -116,7 +116,6 @@
                         </div>
                     @endforeach
                 </div>
-
             </div>
         </div>
         <!-- Pagination terintegrasi dengan swiper -->
@@ -170,7 +169,7 @@
         </x-section>
     </div>
 
-    {{-- Floating CTA Button for Mobile - NEW ELEMENT --}}
+    {{-- Tombol CTA untuk smartphone --}}
     <div class="md:hidden fixed bottom-6 right-6 z-50 group">
         <!-- Main Button -->
         <a href="{{ route('user.destination-submission.create') }}"
@@ -259,7 +258,7 @@
         </section>
     </x-section>
 
-    {{-- Faq Section --}}
+    {{-- Section FAQ --}}
     <div class="bg-gradient-to-b from-blue-50 to-white py-12 rounded-lg">
         {{-- Faq Section --}}
         <x-section class="bg-gradient-to-b from-blue-50 to-white py-12 rounded-lg">
@@ -400,7 +399,7 @@
         </x-section>
     </div>
 
-    {{-- Popup CTA - NEW ELEMENT --}}
+    {{-- Pop Up CTA --}}
     <div id="ctaPopup" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4">
             <div class="flex justify-between items-center mb-4">
