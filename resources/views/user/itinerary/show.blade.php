@@ -27,7 +27,15 @@
                 </div>
                 <span
                     class="px-2 py-1 text-xs font-semibold rounded-full {{ $itinerary->status == 'ongoing' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                    {{ $itinerary->status == 'ongoing' ? 'Sedang Berlangsung' : 'Selesai' }}
+
+                    {{ $itinerary->status == 'draft'
+                        ? 'Rencana'
+                        : ($itinerary->status == 'ongoing'
+                            ? 'Sedang Berlangsung'
+                            : ($itinerary->status == 'complete'
+                                ? 'Selesai'
+                                : 'Status Tidak Diketahui')) }}
+
                 </span>
             </div>
             <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
@@ -54,7 +62,7 @@
                         </button>
                     </div>
                     <div>
-                        <a href=""
+                        <a href="{{ route('user.itinerary.edit', $itinerary) }}"
                             class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -125,7 +133,7 @@
                                     {{ \Carbon\Carbon::parse($dateKey)->format('d M Y') }}
                                 </div>
                                 {{-- tombol tambah destinasi --}}
-                                @if (count($destinations) > 0)
+                                @if (count($destinations) > 0 && $itinerary->status != 'complete')
                                     <button data-modal-target="destinasi-modal" data-modal-toggle="destinasi-modal"
                                         data-date="{{ $dateKey }}"
                                         class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 add-destination-btn">
@@ -202,21 +210,29 @@
                                 </li>
                             @endforeach
                         @else
-                            <li class="p-4 hover:bg-gray-50">
-                                <div class="flex justify-center">
-                                    <button data-modal-target="destinasi-modal" data-modal-toggle="destinasi-modal"
-                                        data-date="{{ $dateKey }}"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 add-destination-btn">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        Tambah Destinasi
-                                    </button>
-                                </div>
-                            </li>
+                            @if ($itinerary->status != 'complete')
+                                <li class="p-4 hover:bg-gray-50">
+                                    <div class="flex justify-center">
+                                        <button data-modal-target="destinasi-modal" data-modal-toggle="destinasi-modal"
+                                            data-date="{{ $dateKey }}"
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 add-destination-btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Tambah Destinasi
+                                        </button>
+                                    </div>
+                                </li>
+                            @else
+                                <li class="p-4 hover:bg-gray-50">
+                                    <div class="flex justify-center">
+                                        <span class="text-sm text-gray-500">Tidak ada destinasi untuk tanggal ini</span>
+                                    </div>
+                                </li>
+                            @endif
                         @endif
                     @endforeach
                 </ul>

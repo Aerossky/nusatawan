@@ -144,7 +144,13 @@
                             </div>
                             <span
                                 class="px-3 py-1 text-xs font-semibold rounded-full {{ $itinerary->status == 'ongoing' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                                {{ $itinerary->status == 'ongoing' ? 'Sedang Berlangsung' : 'Selesai' }}
+                                {{ $itinerary->status == 'draft'
+                                    ? 'Rencana'
+                                    : ($itinerary->status == 'ongoing'
+                                        ? 'Sedang Berlangsung'
+                                        : ($itinerary->status == 'complete'
+                                            ? 'Selesai'
+                                            : 'Status Tidak Diketahui')) }}
                             </span>
                         </div>
 
