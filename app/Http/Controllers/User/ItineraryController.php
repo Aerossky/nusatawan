@@ -87,6 +87,7 @@ class ItineraryController extends Controller
             'title' => 'required|string|max:255',
             'startDate' => 'required|date|after_or_equal:today',
             'endDate' => 'required|date|after_or_equal:startDate',
+            'status' => 'required|in:draft,ongoing,complete',
         ]);
 
         $itinerary = $this->itineraryService->createItinerary($data);
@@ -95,6 +96,12 @@ class ItineraryController extends Controller
             ->with('success', 'Rencana perjalanan berhasil dibuat.');
     }
 
+    /**
+     * Display the form for editing an existing itinerary
+     *
+     * @param Itinerary $itinerary
+     * @return \Illuminate\View\View
+     */
     public function edit(Itinerary $itinerary)
     {
         // get itinerary details
@@ -102,6 +109,29 @@ class ItineraryController extends Controller
 
         // get itinerary destinations
         return view('user.itinerary.edit', compact('itinerary'));
+    }
+
+    /**
+     * Update the specified itinerary
+     *
+     * @param Request $request
+     * @param Itinerary $itinerary
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, Itinerary $itinerary)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+            'status' => 'required|in:draft,ongoing,complete',
+        ]);
+
+
+        $this->itineraryService->updateItinerary($itinerary->id, $data);
+
+        return redirect()->route('user.itinerary.index')
+            ->with('success', 'Rencana perjalanan berhasil diperbarui.');
     }
 
     /**

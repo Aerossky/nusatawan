@@ -20,8 +20,9 @@
                 <p class="mt-1 max-w-2xl text-sm text-gray-500">Silakan isi informasi dasar rencana perjalanan Anda.</p>
             </div>
 
-            <form action="{{ route('user.itinerary.store') }}" method="POST" class="p-6">
+            <form action="{{ route('user.itinerary.update', $itinerary) }}" method="POST" class="p-6">
                 @csrf
+                @method('PATCH')
 
                 <div class="space-y-6">
                     <!-- Judul Perjalanan -->
@@ -63,7 +64,7 @@
                         <select name="status" id="status"
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                             <option value="draft" {{ old('status', $itinerary->status) == 'draft' ? 'selected' : '' }}>
-                                Draft</option>
+                                Rencana</option>
                             <option value="ongoing" {{ old('status', $itinerary->status) == 'ongoing' ? 'selected' : '' }}>
                                 Sedang Berlangsung
                             </option>

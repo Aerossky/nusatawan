@@ -49,6 +49,7 @@ Route::name('user.')->group(function () {
 
     // Itinerary routes
     Route::prefix('rencana-perjalanan')->as('itinerary.')->group(function () {
+        Route::patch('/{itinerary}', [ItineraryController::class, 'update'])->name('update');
         Route::get('/', [ItineraryController::class, 'index'])->name('index');
         Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
         Route::post('/', [ItineraryController::class, 'store'])->name('store');

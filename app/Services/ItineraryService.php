@@ -191,6 +191,36 @@ class ItineraryService
     }
 
     /**
+     * Update an existing itinerary
+     *
+     * @param array $data Data containing:
+     *                   - 'id': ID of the itinerary to update
+     *                   - Other columns to update
+     * @return \App\Models\Itinerary The updated itinerary
+     * @throws \Exception If the operation fails
+     */
+    public function updateItinerary(int $id, array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Find the itinerary
+            $itinerary = Itinerary::findOrFail($id);
+
+            // Update the itinerary
+            $itinerary->update($data);
+
+            DB::commit();
+
+            return $itinerary;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update itinerary: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
      * Update a destination within an itinerary
      *
      * @param array $data Data containing:
