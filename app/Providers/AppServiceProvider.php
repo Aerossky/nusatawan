@@ -3,23 +3,21 @@
 namespace App\Providers;
 
 use App\Models\DestinationSubmission;
-use App\Models\Review;
 use App\Services\CategoryService;
 use App\Services\DashboardService;
 use App\Services\Destination\DestinationGeoService;
 use App\Services\Destination\DestinationImageService;
 use App\Services\Destination\DestinationQueryService;
 use App\Services\Destination\DestinationService;
-// use App\Services\DestinationService;
 use App\Services\ItineraryService;
 use App\Services\LikeService;
 use App\Services\ProfileService;
 use App\Services\ReviewService;
+use App\Services\StatsService;
 use App\Services\UserService;
 use App\Services\WeatherService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $services = [
             DashboardService::class,
             UserService::class,
-            // DestinationService::class,
+            StatsService::class,
             CategoryService::class,
             DestinationSubmission::class,
             ItineraryService::class,
