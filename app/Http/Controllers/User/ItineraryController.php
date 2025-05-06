@@ -92,7 +92,7 @@ class ItineraryController extends Controller
 
         $itinerary = $this->itineraryService->createItinerary($data);
 
-        return redirect()->route('itineraries.show', $itinerary->id)
+        return redirect()->route('user.itinerary.index', $itinerary->id)
             ->with('success', 'Rencana perjalanan berhasil dibuat.');
     }
 

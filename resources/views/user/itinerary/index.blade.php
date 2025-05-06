@@ -2,6 +2,13 @@
 @section('title', 'Rencana Perjalanan')
 @section('content')
     <div class="mt-[70px]"></div>
+
+
+    {{-- Toast Notification System --}}
+    @if (session('success'))
+        <x-ui.toast type="success" message="{{ session('success') }}" />
+    @endif
+
     <!-- Hero Section Baru -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 py-6 mb-8 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +50,8 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Berlangsung</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ isset($ongoing_count) ? $ongoing_count : 0 }}</p>
+                        <p class="text-2xl font-bold text-gray-800">
+                            {{ $itineraries->where('status', 'ongoing')->count() ?? 0 }}</p>
                     </div>
                 </div>
             </div>
@@ -58,7 +66,8 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Selesai</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ isset($completed_count) ? $completed_count : 0 }}</p>
+                        <p class="text-2xl font-bold text-gray-800">
+                            {{ $itineraries->where('status', 'complete')->count() ?? 0 }}</p>
                     </div>
                 </div>
             </div>
@@ -84,36 +93,58 @@
         </div>
 
         <!-- Filter dan Pencarian -->
-        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="relative flex-1 group transition-all duration-300">
-                <input type="text" id="search" name="search" placeholder="Cari rencana perjalanan..."
-                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-300"
-                        viewBox="0 0 20 20" fill="currentColor">
+
+        <div class="mb-6 flex flex-wrap items-center gap-4">
+            <form action="{{ route('user.itinerary.index') }}" method="GET"
+                class="w-full flex flex-wrap items-center gap-4">
+                <!-- Search Input -->
+                <div class="relative flex-1 min-w-[250px]">
+                    <input type="text" id="search" name="search" placeholder="Cari rencana perjalanan..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Status Dropdown -->
+                <div class="relative min-w-[140px]">
+                    <select id="status" name="status"
+                        class="appearance-none w-full bg-white pl-3 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Semua Status</option>
+                        <option value="draft">Rencana</option>
+                        <option value="ongoing">Sedang Berlangsung</option>
+                        <option value="complete">Selesai</option>
+                    </select>
+                </div>
+
+                <!-- Sort Dropdown -->
+                <div class="relative min-w-[140px]">
+                    <select id="sort" name="sort"
+                        class="appearance-none w-full bg-white pl-3 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="newest">Terbaru</option>
+                        <option value="oldest">Terlama</option>
+                        <option value="title_asc">Judul (A-Z)</option>
+                        <option value="title_desc">Judul (Z-A)</option>
+                    </select>
+                </div>
+
+                <!-- Search Button -->
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
+                        fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                             clip-rule="evenodd" />
                     </svg>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <select id="status" name="status"
-                    class="block pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg shadow-sm">
-                    <option value="">Semua Status</option>
-                    <option value="ongoing">Sedang Berlangsung</option>
-                    <option value="upcoming">Akan Datang</option>
-                    <option value="complete">Selesai</option>
-                </select>
-                <select id="sort" name="sort"
-                    class="block pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg shadow-sm">
-                    <option value="newest">Terbaru</option>
-                    <option value="oldest">Terlama</option>
-                    <option value="title_asc">Judul (A-Z)</option>
-                    <option value="title_desc">Judul (Z-A)</option>
-                </select>
-            </div>
+                    Cari
+                </button>
+            </form>
         </div>
 
         <!-- Daftar Rencana Perjalanan -->
@@ -122,12 +153,13 @@
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
                     @if (isset($itinerary->cover_image))
-                        <div class="h-40 bg-cover bg-center" style="background-image: url('{{ $itinerary->cover_image }}')">
+                        <div class="h-40 bg-cover bg-center"
+                            style="background-image: url('{{ $itinerary->cover_image }}')">
                         </div>
                     @else
                         <div class="h-24 bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white opacity-75" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white opacity-75"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
@@ -212,7 +244,7 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Belum Ada Rencana Perjalanan</h3>
                         <p class="text-gray-500 mb-6">Mulai buat rencana perjalanan Anda sekarang untuk menjelajahi
                             destinasi wisata menarik!</p>
-                        <a href=""
+                        <a href="{{ route('user.itinerary.create') }}"
                             class="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-lg shadow-md text-white bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -234,4 +266,5 @@
             </div>
         @endif
     </div>
+
 @endsection
