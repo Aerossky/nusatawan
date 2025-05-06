@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Destination;
 use App\Models\User;
-use App\Services\DestinationService;
+use App\Services\Destination\DestinationService;
 use App\Services\DestinationSubmissionService;
 use App\Services\LikeService;
 use App\Services\ProfileService;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
