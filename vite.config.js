@@ -12,6 +12,8 @@ export default defineConfig({
                 'resources/js/like.js',
                 // share
                 'resources/js/share.js',
+                // Itinerary User
+                'resources/js/location-search.js',
                 // Destination Submission Admin
                 'resources/js/pages/create-destination/editor.js',
                 'resources/js/pages/create-destination/image-preview.js',

@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Destination;
 use App\Models\DestinationImage;
-use App\Services\DestinationService;
+use App\Services\Destination\DestinationImageService;
+use App\Services\Destination\DestinationService;
 use App\Services\ReviewService;
 use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
     protected $destinationService;
+    protected $destinationImageService;
     protected $reviewService;
 
     /**
@@ -21,9 +23,10 @@ class DestinationController extends Controller
      * @param DestinationService $destinationService
      * @param ReviewService $reviewService
      */
-    public function __construct(DestinationService $destinationService, ReviewService $reviewService)
+    public function __construct(DestinationService $destinationService, DestinationImageService $destinationImageService, ReviewService $reviewService)
     {
         $this->destinationService = $destinationService;
+        $this->destinationImageService = $destinationImageService;
         $this->reviewService = $reviewService;
     }
 
@@ -138,7 +141,7 @@ class DestinationController extends Controller
      */
     public function destroyImage(Destination $destination, DestinationImage $image)
     {
-        $deleted = $this->destinationService->deleteImage($destination, $image);
+        $deleted = $this->destinationImageService->deleteImage($destination, $image);
 
         if (!$deleted) {
             return back()->with('error', 'Gagal menghapus gambar.');

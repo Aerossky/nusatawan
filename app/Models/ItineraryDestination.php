@@ -13,12 +13,10 @@ class ItineraryDestination extends Model
         'itinerary_id',
         'destination_id',
         'visit_date_time',
-        'order_index'
+        'order_index',
+        'note'
     ];
 
-    protected $dates = [
-        'visit_date_time'
-    ];
 
     // Relasi dengan Itinerary
     public function itinerary()

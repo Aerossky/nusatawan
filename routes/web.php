@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\FavoriteController;
+use App\Http\Controllers\User\ItineraryController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReviewController;
 use App\Models\User;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(2));
+Auth::login(User::find(3));
 
 // Auth::logout();
 
@@ -41,13 +42,33 @@ Route::name('user.')->group(function () {
     Route::match(['get', 'post'], 'destinasi', [DestinationController::class, 'index'])
         ->name('destinations.index');
 
-    // Jika kamu masih butuh detail berdasarkan slug
     Route::resource('destinasi', DestinationController::class)
         ->only(['show']) // hanya `show` karena `index` sudah kamu override
         ->parameters(['destinasi' => 'destination:slug'])
         ->names(['show' => 'destinations.show']);
 
+    // Itinerary routes
+    Route::prefix('rencana-perjalanan')->as('itinerary.')->group(function () {
+        Route::patch('/{itinerary}', [ItineraryController::class, 'update'])->name('update');
+        Route::get('/', [ItineraryController::class, 'index'])->name('index');
+        Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
+        Route::post('/', [ItineraryController::class, 'store'])->name('store');
+        Route::get('/{itinerary}/ubah', [ItineraryController::class, 'edit'])->name('edit');
 
+        // itinerary destination routes
+        Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
+        Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
+        Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
+        Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
+        Route::post('/hapus-destinasi', [ItineraryController::class, 'removeDestinationFromItinerary'])->name('destination.remove');
+
+        Route::get('/destinasi/{id}/detail', [ItineraryController::class, 'getDestinationDetails'])
+            ->name('destination.detail');
+
+        // Route untuk update destinasi
+        Route::post('/destinasi/update', [ItineraryController::class, 'updateDestination'])
+            ->name('destination.update');
+    });
 
     // Destination submission routes
     Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('itinerary_destinations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('itinerary_id')->constrained('itineraries')->onDelete('cascade');
-            $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
-            $table->dateTime('visitDateTime');
-            $table->integer('orderIndex');
+            $table->foreignId('destination_id')->nullable()->constrained('destinations')->onDelete('cascade');
+            $table->dateTime('visit_date_time');
+            $table->integer('order_index');
             $table->text('note')->nullable();
             $table->timestamps();
         });
