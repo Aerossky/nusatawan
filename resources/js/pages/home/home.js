@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const swiper = new Swiper('.mySwiper', {
         slidesPerView: 'auto',
         spaceBetween: 20,
+        // Mencegah scroll berlebihan ke kanan
+        slidesOffsetAfter: 0,
         pagination: {
             el: '.swiper-pagination',
             clickable: true,

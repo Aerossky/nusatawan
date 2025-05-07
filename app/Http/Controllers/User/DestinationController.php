@@ -7,13 +7,11 @@ use App\Models\Category;
 use App\Models\Destination;
 use App\Services\CategoryService;
 use App\Services\Destination\DestinationService;
-// use App\Services\DestinationService;
 use App\Services\LikeService;
 use App\Services\ReviewService;
 use App\Services\WeatherService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DestinationController extends Controller
 {

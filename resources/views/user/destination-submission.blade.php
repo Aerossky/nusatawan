@@ -515,15 +515,15 @@
                                     </h4>
                                     <div class="grid grid-cols-3 gap-2">
                                         <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded overflow-hidden">
-                                            <img src="/assets/images/example-destination-1.jpg"
+                                            <img src="{{ asset('images/destinations/foto_ideal_1.jpg') }}"
                                                 alt="Contoh foto destinasi yang baik" class="object-cover w-full h-full">
                                         </div>
                                         <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded overflow-hidden">
-                                            <img src="/assets/images/example-destination-2.jpg"
+                                            <img src="{{ asset('images/destinations/foto_ideal_2.jpg') }}"
                                                 alt="Contoh foto destinasi yang baik" class="object-cover w-full h-full">
                                         </div>
                                         <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded overflow-hidden">
-                                            <img src="/assets/images/example-destination-3.jpg"
+                                            <img src="{{ asset('images/destinations/foto_ideal_3.jpg') }}"
                                                 alt="Contoh foto destinasi yang baik" class="object-cover w-full h-full">
                                         </div>
                                     </div>

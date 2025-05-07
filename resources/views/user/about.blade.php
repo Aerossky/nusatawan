@@ -156,7 +156,7 @@
         </div>
 
         <!-- Tentang Pengembang -->
-        <div class="mb-16">
+        <div class="mb-16" id="">
             <h2 class="text-3xl font-bold text-center mb-10">Tentang <span class="text-primary">Pengembang</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                 <div class="col-span-1">

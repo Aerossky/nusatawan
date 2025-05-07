@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\FavoriteController;
+use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ItineraryController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReviewController;
@@ -23,9 +24,7 @@ Auth::login(User::find(3));
 
 Route::name('user.')->group(function () {
     // Dashboard route
-    Route::get('/', function () {
-        return view('user.home');
-    })->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     // About page
     Route::get('/tentang', function () {

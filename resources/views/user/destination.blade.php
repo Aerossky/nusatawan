@@ -161,11 +161,13 @@
             </div>
 
             {{-- Pagination --}}
-            @if ($destinations->hasPages())
-                <div class="mt-8">
-                    {{ $destinations->links() }}
-                </div>
-            @endif
+            <div class="flex justify-center mt-8">
+                @if ($destinations->hasPages())
+                    <div class="mt-8">
+                        {{ $destinations->links() }}
+                    </div>
+                @endif
+            </div>
         </div>
     </x-section>
 @endsection
