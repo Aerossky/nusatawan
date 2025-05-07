@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
 use App\Http\Controllers\Admin\DestinationSubmissionController as AdminDestinationSubmissionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\DestinationController;
 use App\Http\Controllers\User\DestinationSubmissionController;
 use App\Http\Controllers\User\FavoriteController;
@@ -18,9 +19,18 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH LOGIN
-Auth::login(User::find(3));
+// Auth::login(User::find(3));
 
 // Auth::logout();
+
+// Auth
+Route::name('auth.')->group(function () {
+    // Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    // Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+    // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
 Route::name('user.')->group(function () {
     // Dashboard route
