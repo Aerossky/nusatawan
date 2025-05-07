@@ -23,12 +23,12 @@
 
                 <div class="mt-4 flex flex-wrap justify-center gap-4 sm:mt-6">
                     <a class="inline-block rounded border border-indigo-400 bg-primary px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
-                        href="#">
+                        href="{{ route('user.destinations.index') }}">
                         Jelajahi Sekarang
                     </a>
 
                     <a class="inline-block rounded border border-gray-300 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
-                        href="#">
+                        href="{{ route('user.about') }}">
                         Pelajari Lebih Lanjut
                     </a>
                 </div>
