@@ -5,16 +5,18 @@
     {{-- Search Box Section --}}
     <div class="relative">
         {{-- Background Gambar --}}
-        <div class="w-full h-64 bg-cover bg-center" style="background-image: url('{{ asset('images/hero.png') }}');"></div>
+        <div class="w-full h-48 sm:h-56 md:h-64 bg-cover bg-center"
+            style="background-image: url('{{ asset('images/hero.png') }}');"></div>
 
-        {{-- Filter --}}
+        {{-- Filter - OPTIMIZED FOR TABLET --}}
         <div
-            class="absolute left-1/2 transform -translate-x-1/2 -bottom-48 md:-bottom-12 bg-white shadow-lg rounded-lg p-6 w-11/12 md:w-3/4 lg:w-2/3">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold text-gray-800">Cari Destinasi</h2>
-                <a href="{{ route('user.destinations.index') }}" class="text-blue-600 hover:text-blue-800 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+            class="absolute left-1/2 transform -translate-x-1/2 -bottom-64 sm:-bottom-52 md:-bottom-24 lg:-bottom-16 bg-white shadow-lg rounded-lg p-4 sm:p-6 w-[90%] sm:w-11/12 md:w-3/4 lg:w-2/3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 sm:mb-4">
+                <h2 class="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Cari Destinasi</h2>
+                <a href="{{ route('user.destinations.index') }}"
+                    class="text-blue-600 hover:text-blue-800 flex items-center text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                     </svg>
                     Lihat Semua Destinasi
@@ -22,63 +24,68 @@
             </div>
 
             <form id="destination-search-form" method="POST" action="{{ route('user.destinations.index') }}"
-                class="flex flex-col md:flex-row md:items-center gap-4">
+                class="flex flex-col gap-2 mt-2 sm:mt-0">
                 @csrf {{-- CSRF token untuk keamanan --}}
 
-                {{-- Input Pencarian dengan Autocomplete --}}
-                <div class="flex-grow min-w-[240px] relative">
-                    <label for="search-input" class="text-sm font-medium text-gray-700 mb-1 block">Destinasi</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
+                    {{-- Input Pencarian dengan Autocomplete --}}
                     <div class="relative">
-                        <input type="text" id="search-input" name="q"
-                            placeholder="Cari destinasi, kota, atau provinsi..."
-                            class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300"
-                            value="{{ request('q') }}" autocomplete="off">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <div id="search-results"
-                            class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-50 hidden">
+                        <label for="search-input"
+                            class="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">Destinasi</label>
+                        <div class="relative">
+                            <input type="text" id="search-input" name="q"
+                                placeholder="Cari destinasi, kota, atau provinsi..."
+                                class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300"
+                                value="{{ request('q') }}" autocomplete="off">
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <div id="search-results"
+                                class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-50 hidden">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {{-- Dropdown Kategori --}}
-                <div class="md:flex-1 min-w-[150px]">
-                    <label for="category-select" class="text-sm font-medium text-gray-700 mb-1 block">Kategori</label>
-                    <select id="category-select" name="category"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300 bg-white">
-                        <option value="">Semua Kategori</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}"
-                                {{ request('category') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
+                    {{-- Dropdown Kategori --}}
+                    <div>
+                        <label for="category-select"
+                            class="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">Kategori</label>
+                        <select id="category-select" name="category"
+                            class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300 bg-white">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}"
+                                    {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Dropdown Rating --}}
+                    <div>
+                        <label for="sort_by" class="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">Urutkan
+                            Berdasarkan</label>
+                        <select id="sort_by" name="sort_by"
+                            class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300 bg-white">
+                            <option value="likes_desc" {{ request('sort_by') == 'likes_desc' ? 'selected' : '' }}>
+                                Paling Banyak Disukai
                             </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- Dropdown Rating --}}
-                <div class="md:flex-1 min-w-[150px]">
-                    <label for="sort_by" class="text-sm font-medium text-gray-700 mb-1 block">Urutkan Berdasarkan</label>
-                    <select id="sort_by" name="sort_by"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300 bg-white">
-                        <option value="likes_desc" {{ request('sort_by') == 'likes_desc' ? 'selected' : '' }}>
-                            Paling Banyak Disukai
-                        </option>
-                        <option value="newest" {{ request('sort_by', 'newest') == 'newest' ? 'selected' : '' }}>
-                            Terbaru Ditambahkan
-                        </option>
-                        <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>
-                            Rating Tertinggi
-                        </option>
-                        <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>
-                            Rating Terendah
-                        </option>
-                    </select>
+                            <option value="newest" {{ request('sort_by', 'newest') == 'newest' ? 'selected' : '' }}>
+                                Terbaru Ditambahkan
+                            </option>
+                            <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>
+                                Rating Tertinggi
+                            </option>
+                            <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>
+                                Rating Terendah
+                            </option>
+                        </select>
+                    </div>
                 </div>
 
                 {{-- Hidden fields untuk koordinat dan nama lokasi --}}
@@ -88,9 +95,9 @@
                 <input type="hidden" id="search-id" name="search_id"> {{-- ID pencarian yang unik --}}
 
                 {{-- Tombol Cari --}}
-                <div class="md:self-end mt-4 md:mt-0">
+                <div class="flex justify-end mt-2 sm:mt-3">
                     <button type="button" id="search-button"
-                        class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-all duration-300 font-medium">
+                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-all duration-300 font-medium text-sm">
                         Cari Destinasi
                     </button>
                 </div>
@@ -98,14 +105,15 @@
         </div>
     </div>
 
-    <div class="mt-[200px] md:mt-10"></div>
+    {{-- Fixed spacing for different screen sizes --}}
+    <div class="mt-[270px] sm:mt-[220px] md:mt-[140px] lg:mt-[100px]"></div>
 
     {{-- Card Section --}}
     <x-section>
-        <div class="bg-gray-100 p-6">
-            <div class="flex justify-between items-center mb-6">
+        <div class="bg-gray-100 p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold">Jelajahi Destinasi Menarik</h2>
+                    <h2 class="text-xl sm:text-2xl font-bold">Jelajahi Destinasi Menarik</h2>
                     <p class="text-gray-600 text-sm">Menampilkan
                         {{ $destinations->firstItem() ?? '0' }}-{{ $destinations->lastItem() ?? '0' }} dari total
                         {{ $destinations->total() ?? '0' }} destinasi</p>
@@ -113,7 +121,7 @@
 
                 @if (request()->has('q') || request()->has('category') || request()->has('rating'))
                     <a href="{{ route('user.destinations.index') }}"
-                        class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-4 rounded-md flex items-center text-sm transition-all duration-200">
+                        class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-4 rounded-md flex items-center text-sm transition-all duration-200 mt-3 sm:mt-0 w-max">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -124,23 +132,23 @@
                 @endif
             </div>
 
-            <div class="mt-12"></div>
+            <div class="mt-6 sm:mt-8"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {{-- Kondisi ketika tidak ada destinasi --}}
                 @if ($destinations->isEmpty())
-                    <div class="col-span-1 md:col-span-2 lg:col-span-3">
-                        <div class="bg-white rounded-lg shadow-sm p-8 text-center">
+                    <div class="col-span-1 sm:col-span-2 lg:col-span-3">
+                        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 text-center">
                             <div class="flex justify-center mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 sm:h-16 w-12 sm:w-16 text-gray-300"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Tidak ada destinasi ditemukan</h3>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Tidak ada destinasi ditemukan</h3>
                             <p class="text-gray-600 mb-6">Tidak ada destinasi yang sesuai dengan filter pencarian Anda.</p>
-                            <div class="flex justify-center space-x-4">
+                            <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
                                 <button id="reset-filter-btn"
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md transition-all duration-300">
                                     Lihat Semua Destinasi
@@ -163,7 +171,7 @@
             {{-- Pagination --}}
             <div class="flex justify-center mt-8">
                 @if ($destinations->hasPages())
-                    <div class="mt-8">
+                    <div class="mt-6 sm:mt-8">
                         {{ $destinations->links() }}
                     </div>
                 @endif
@@ -438,7 +446,7 @@
                 // Create toast element
                 const toast = document.createElement('div');
                 toast.className =
-                    'fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded-md shadow-lg z-50 transition-opacity duration-300 toast-message';
+                    'fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-md shadow-lg z-50 transition-opacity duration-300 toast-message text-sm';
 
                 // Set style based on type
                 if (type === 'error') {
