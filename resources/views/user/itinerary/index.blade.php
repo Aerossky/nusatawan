@@ -2,13 +2,6 @@
 @section('title', 'Rencana Perjalanan')
 @section('content')
     <div class="mt-[70px]"></div>
-
-
-    {{-- Toast Notification System --}}
-    @if (session('success'))
-        <x-ui.toast type="success" message="{{ session('success') }}" />
-    @endif
-
     <!-- Hero Section Baru -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 py-6 mb-8 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +27,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Total Rencana</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $itineraries->count() ?? 0 }}</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ $itineraryStats['total'] ?? 0 }}</p>
                     </div>
                 </div>
             </div>
@@ -51,7 +44,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Berlangsung</p>
                         <p class="text-2xl font-bold text-gray-800">
-                            {{ $itineraries->where('status', 'ongoing')->count() ?? 0 }}</p>
+                            {{ $itineraryStats['ongoing'] ?? 0 }}</p>
                     </div>
                 </div>
             </div>
@@ -67,7 +60,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Selesai</p>
                         <p class="text-2xl font-bold text-gray-800">
-                            {{ $itineraries->where('status', 'complete')->count() ?? 0 }}</p>
+                            {{ $itineraryStats['completed'] ?? 0 }}</p>
                     </div>
                 </div>
             </div>
@@ -136,8 +129,7 @@
                 <!-- Search Button -->
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
-                        fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                             clip-rule="evenodd" />

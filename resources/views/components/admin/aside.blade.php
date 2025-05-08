@@ -21,7 +21,6 @@
             </li>
 
             <!-- User (misal untuk super admin saja) -->
-            {{-- @if (auth()->user()->is_super_admin) --}}
             <li>
                 <a href="{{ route('admin.users.index') }}"
                     class="flex items-center p-2 rounded-lg transition group
@@ -34,7 +33,6 @@
                     <span class="ms-3">Pengguna</span>
                 </a>
             </li>
-            {{-- @endif --}}
 
             <!-- Destinasi -->
             <li>
@@ -54,8 +52,8 @@
             <li>
                 <a href="{{ route('admin.destination-submission.index') }}"
                     class="flex items-center p-2 rounded-lg transition group
-                    {{ request()->routeIs('admin.submissions.*') ? 'bg-gray-100 text-blue-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.submissions.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
+                    {{ request()->routeIs('admin.destination-submission.*') ? 'bg-gray-100 text-blue-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.destination-submission.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path
                             d="M7.13173 20.7371C4.07023 19.0275 2 15.7555 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 15.7555 19.9298 19.0275 16.8683 20.7371L15.9724 18.9457C18.3788 17.5664 20 14.9725 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 14.9725 5.62119 17.5664 8.02763 18.9457L7.13173 20.7371ZM8.92427 17.1528C7.17271 16.105 6 14.1894 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 14.1894 16.8273 16.105 15.0757 17.1528L14.1772 15.3561C15.2744 14.6429 16 13.4062 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 13.4062 8.72559 14.6429 9.82279 15.3561L8.92427 17.1528ZM12 16L15 22H9L12 16Z">
@@ -68,7 +66,8 @@
             {{-- Kategori --}}
             <li>
                 <a href="{{ route('admin.categories.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.categories.*') ? 'bg-gray-100' : '' }}">
+                    class="flex items-center p-2 rounded-lg transition group
+                    {{ request()->routeIs('admin.categories.*') ? 'bg-gray-100 text-blue-600' : 'text-gray-900 hover:bg-gray-100' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin.categories.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -78,24 +77,6 @@
                     <span class="flex-1 ms-3 whitespace-nowrap">Kategori</span>
                 </a>
             </li>
-
-
-
-            <!-- Pengaturan -->
-            <li>
-                <a href=""
-                    class="flex items-center p-2 rounded-lg transition group
-                    {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 text-blue-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.settings.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-900' }}"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M8.68637 4.00008L11.293 1.39348C11.6835 1.00295 12.3167 1.00295 12.7072 1.39348L15.3138 4.00008H19.0001C19.5524 4.00008 20.0001 4.4478 20.0001 5.00008V8.68637L22.6067 11.293C22.9972 11.6835 22.9972 12.3167 22.6067 12.7072L20.0001 15.3138V19.0001C20.0001 19.5524 19.5524 20.0001 19.0001 20.0001H15.3138L12.7072 22.6067C12.3167 22.9972 11.6835 22.9972 11.293 22.6067L8.68637 20.0001H5.00008C4.4478 20.0001 4.00008 19.5524 4.00008 19.0001V15.3138L1.39348 12.7072C1.00295 12.3167 1.00295 11.6835 1.39348 11.293L4.00008 8.68637V5.00008C4.00008 4.4478 4.4478 4.00008 5.00008 4.00008H8.68637ZM6.00008 6.00008V9.5148L3.5148 12.0001L6.00008 14.4854V18.0001H9.5148L12.0001 20.4854L14.4854 18.0001H18.0001V14.4854L20.4854 12.0001L18.0001 9.5148V6.00008H14.4854L12.0001 3.5148L9.5148 6.00008H6.00008ZM12.0001 16.0001C9.79094 16.0001 8.00008 14.2092 8.00008 12.0001C8.00008 9.79094 9.79094 8.00008 12.0001 8.00008C14.2092 8.00008 16.0001 9.79094 16.0001 12.0001C16.0001 14.2092 14.2092 16.0001 12.0001 16.0001ZM12.0001 14.0001C13.1047 14.0001 14.0001 13.1047 14.0001 12.0001C14.0001 10.8955 13.1047 10.0001 12.0001 10.0001C10.8955 10.0001 10.0001 10.8955 10.0001 12.0001C10.0001 13.1047 10.8955 14.0001 12.0001 14.0001Z">
-                        </path>
-                    </svg>
-                    <span class="ms-3">Pengaturan</span>
-                </a>
-            </li>
-
         </ul>
     </div>
 </aside>

@@ -44,7 +44,7 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Favorit</a>
                             </li>
                             <li>
-                                <form method="POST" action="">
+                                <form method="POST" action="{{ route('auth.logout') }}">
                                     @csrf
                                     <button type="submit"
                                         class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Keluar</button>
@@ -55,7 +55,7 @@
                 </div>
             @else
                 <!-- Register Button -->
-                <a href="{{ route('register') }}"
+                <a href="{{ route('auth.register') }}" id="register-button"
                     class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 md:px-5 md:py-2.5 text-center transition-all duration-300">
                     Daftar
                 </a>
@@ -115,7 +115,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         const navbar = document.getElementById('navbar');
         const brandText = document.getElementById('brand-text');
-        const navLinks = document.querySelectorAll('ul li a'); // Ambil semua link di dalam ul
+        const navLinks = document.querySelectorAll('#navbar-sticky ul li a'); // Only target main nav links
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const currentPage = navbar.getAttribute('data-page');
         const navbarMenu = document.getElementById('navbar-sticky');
@@ -128,24 +128,59 @@
                 e.stopPropagation();
                 userDropdown.classList.toggle('hidden');
 
-                // Position dropdown correctly on mobile
-                if (window.innerWidth < 768) {
-                    // Reset any previous positioning
+                // Pastikan dropdown tidak terpotong oleh viewport
+                if (userDropdown) {
+                    // Reset styling terlebih dahulu
+                    userDropdown.style.maxHeight = '';
+                    userDropdown.style.overflowY = '';
+                    userDropdown.style.top = '';
+                    userDropdown.style.bottom = '';
                     userDropdown.style.left = '';
                     userDropdown.style.right = '';
 
-                    // Calculate position to keep dropdown within screen
+                    // Posisikan dropdown dengan tepat
                     const buttonRect = userMenuButton.getBoundingClientRect();
-                    const dropdownWidth = userDropdown.offsetWidth;
+                    const dropdownHeight = userDropdown.scrollHeight;
+                    const viewportHeight = window.innerHeight;
+                    const viewportWidth = window.innerWidth;
 
-                    // Check if dropdown would overflow on right side
-                    if (buttonRect.right - dropdownWidth < 0) {
-                        userDropdown.style.left = '0';
-                        userDropdown.style.right = 'auto';
+                    // Cek jika dropdown akan keluar dari bawah viewport
+                    if (buttonRect.bottom + dropdownHeight > viewportHeight) {
+                        // Tampilin di atas button
+                        userDropdown.style.bottom = (viewportHeight - buttonRect.top) + 'px';
+                        userDropdown.style.top = 'auto';
                     } else {
-                        // Position dropdown to align with right edge of button
+                        // Tampilin di bawah button (default)
+                        userDropdown.style.top = buttonRect.bottom + 'px';
+                        userDropdown.style.bottom = 'auto';
+                    }
+
+                    // Horizontal positioning
+                    if (window.innerWidth < 768) {
+                        // Mobile: cek posisi horizontal
+                        const rightEdge = viewportWidth - buttonRect.right;
+                        const leftEdge = buttonRect.left;
+
+                        if (rightEdge < leftEdge) {
+                            // Lebih banyak ruang di kiri
+                            userDropdown.style.left = '0';
+                            userDropdown.style.right = 'auto';
+                        } else {
+                            // Lebih banyak ruang di kanan
+                            userDropdown.style.right = '0';
+                            userDropdown.style.left = 'auto';
+                        }
+                    } else {
+                        // Desktop: align dengan kanan button
                         userDropdown.style.right = '0';
                         userDropdown.style.left = 'auto';
+                    }
+
+                    // Terapkan max-height jika dropdown terlalu tinggi
+                    const maxAllowedHeight = viewportHeight - 20; // beri margin 20px
+                    if (dropdownHeight > maxAllowedHeight) {
+                        userDropdown.style.maxHeight = maxAllowedHeight + 'px';
+                        userDropdown.style.overflowY = 'auto';
                     }
                 }
             });
@@ -204,7 +239,7 @@
             });
         }
 
-        // Menambahkan event listeners untuk hover
+        // Menambahkan event listeners untuk hover pada menu utama
         navLinks.forEach(link => {
             // Event saat hover masuk
             link.addEventListener('mouseenter', function() {
@@ -244,7 +279,7 @@
             hamburgerMenu.classList.remove('text-white');
             hamburgerMenu.classList.add('text-gray-900');
 
-            // Navigation links - menu aktif putih, lainnya hitam
+            // ONLY update main navigation links - menu aktif putih, lainnya hitam
             navLinks.forEach(link => {
                 const page = link.getAttribute('data-page');
 
@@ -261,6 +296,8 @@
                     link.classList.add('hover:bg-gray-100', 'hover:text-white');
                 }
             });
+
+            // DO NOT modify dropdown menu styles here
         }
 
         // Function to set navbar to transparent style
@@ -277,7 +314,7 @@
             hamburgerMenu.classList.remove('text-gray-900');
             hamburgerMenu.classList.add('text-white');
 
-            // Navigation links - semua putih kecuali yang aktif
+            // ONLY update main navigation links - semua putih kecuali yang aktif
             navLinks.forEach(link => {
                 const page = link.getAttribute('data-page');
 

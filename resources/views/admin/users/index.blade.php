@@ -98,15 +98,15 @@
                                         <div class="flex space-x-2">
                                             <a href="{{ route('admin.users.show', $user) }}"
                                                 class="text-blue-600 hover:text-blue-800">
-                                                <i class="fas fa-eye"></i>
+                                                View
                                             </a>
                                             <a href="{{ route('admin.users.edit', $user) }}"
-                                                class="text-yellow-600 hover:text-yellow-800">
-                                                <i class="fas fa-edit"></i>
+                                                class="text-indigo-600 hover:text-indigo-800">
+                                                Edit
                                             </a>
-                                            <button class="text-red-600 hover:text-red-800 btn-delete"
+                                            <button type="submit" class="text-red-600 hover:text-red-800 btn-delete"
                                                 data-id="{{ $user->id }}" data-name="{{ $user->name }}">
-                                                <i class="fas fa-trash"></i>
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

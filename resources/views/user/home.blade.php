@@ -44,7 +44,7 @@
             <!-- Wrapper untuk membuat tombol "Lihat Semua" turun ke bawah di mobile -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
                 <p class="text-2xl font-bold">Destinasi Yang Wajib Kamu Kunjungi.</p>
-                <a href="#" class="text-primary text-sm font-medium hover:underline mt-2 sm:mt-0">Lihat Semua &gt;</a>
+                <a href="{{ route('user.destinations.index') }}" class="text-primary text-sm font-medium hover:underline mt-2 sm:mt-0">Lihat Semua &gt;</a>
             </div>
 
             <!-- SwiperJS Container yang diperbaiki -->
