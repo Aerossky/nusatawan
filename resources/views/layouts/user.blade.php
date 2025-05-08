@@ -8,6 +8,8 @@
     <title>@yield('title') - Nusatawan</title>
     <!-- Primary Meta Tags -->
     <title>Nusatawan</title>
+    
+    <link rel="icon" href="{{ asset('images/logo/nusatawan-logo.png') }}" type="image/png">
     <meta name="title" content="Nusatawan" />
     <meta name="description"
         content="Nusatawan membantu merencanakan perjalanan wisata di Indonesia dengan informasi destinasi terintegrasi prakiraan cuaca. Temukan tempat wisata favorit dan ketahui kondisi cuaca sebelum berkunjung.">
