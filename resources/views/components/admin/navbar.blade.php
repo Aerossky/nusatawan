@@ -13,8 +13,8 @@
                         </path>
                     </svg>
                 </button>
-                <a href="" class="flex ms-2 md:me-24">
-                    <img src="" class="h-8 me-3" alt="Logo Nusatawan" />
+                <a href="{{ route('admin.dashboard') }}" class="flex ms-2 md:me-24">
+                    <img src="{{ asset('images/logo/nusatawan-logo.png') }}" class="h-12" alt="Logo Nusatawan" />
                 </a>
             </div>
             <div class="flex items-center">
@@ -24,7 +24,9 @@
                             class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
-                            <img class="w-8 h-8 rounded-full" src="" alt="user ">
+                            <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('/images/default-avatar.png') }}"
+                                alt="Foto profil {{ Auth::user()->name }}">
                         </button>
                     </div>
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"
@@ -43,11 +45,12 @@
                         @endauth
                         <ul class="py-1" role="none">
                             <li>
-                                <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                <a href="{{ route('user.home') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     role="menuitem">Halaman Pengunjung</a>
                             </li>
                             <li>
-                                <form action="" method="POST">
+                                <form action="{{ route('auth.logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full">

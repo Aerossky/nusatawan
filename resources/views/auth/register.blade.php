@@ -55,7 +55,7 @@
             <div
                 class="absolute inset-0 bg-gradient-to-br from-blue-600/60 to-blue-900/60 flex flex-col justify-between p-8">
                 <div>
-                    <img src="{{ asset('images/logo-white.png') }}" alt="Nusatawan Logo" class="h-12">
+                    <img src="{{ asset('images/logo/nusatawan-logo.png') }}" alt="Nusatawan Logo" class="h-20">
                 </div>
                 <div class="text-white mb-10">
                     <h1 class="text-3xl font-bold mb-4">Bergabunglah dengan Nusatawan</h1>
