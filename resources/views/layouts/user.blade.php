@@ -28,6 +28,11 @@
                         ? 'user.itinerary.index'
                         : ''))) }}" />
 
+    {{-- Toast Notification --}}
+    @if (session('success'))
+        <x-ui.toast type="success" message="{{ session('success') }}" />
+    @endif
+
     {{-- Konten Halaman --}}
     <div class="mx-auto">
         @yield('content')
@@ -35,7 +40,6 @@
 
     {{-- Footer User --}}
     <x-user.footer />
-
 
     <!-- SwiperJS JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

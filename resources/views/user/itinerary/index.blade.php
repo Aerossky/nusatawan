@@ -2,13 +2,6 @@
 @section('title', 'Rencana Perjalanan')
 @section('content')
     <div class="mt-[70px]"></div>
-
-
-    {{-- Toast Notification System --}}
-    @if (session('success'))
-        <x-ui.toast type="success" message="{{ session('success') }}" />
-    @endif
-
     <!-- Hero Section Baru -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 py-6 mb-8 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

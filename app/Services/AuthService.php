@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
@@ -36,54 +37,71 @@ class AuthService
         ]);
     }
 
-
     /**
      * Authenticate a user
      *
      * @param array $credentials
-     * @return array
+     * @param bool $remember
+     * @return User
      * @throws ValidationException
      */
-    // public function login(array $credentials): array
-    // {
-    //     if (!Auth::attempt($credentials)) {
-    //         throw ValidationException::withMessages([
-    //             'email' => ['Email atau password salah.'],
-    //         ]);
-    //     }
+    public function login(array $credentials, bool $remember = false): User
+    {
+        if (!Auth::attempt($credentials, $remember)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email atau password salah.'],
+            ]);
+        }
 
-    //     $user = Auth::user();
+        $user = Auth::user();
 
-    //     // Periksa status user
-    //     if ($user->status !== 'active') {
-    //         Auth::logout();
-    //         throw ValidationException::withMessages([
-    //             'email' => ['Akun Anda tidak aktif. Silahkan hubungi admin.'],
-    //         ]);
-    //     }
+        // Periksa status user
+        if ($user->status !== 'active') {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => ['Akun Anda tidak aktif. Silahkan hubungi admin.'],
+            ]);
+        }
 
-    //     $token = $user->createToken('auth_token')->plainTextToken;
+        return $user;
+    }
 
-    //     return [
-    //         'user' => $user,
-    //         'token' => $token
-    //     ];
-    // }
+    /**
+     * Generate API token for a user (if using Sanctum)
+     *
+     * @param User $user
+     * @return string|null
+     */
+    public function generateApiToken(User $user): ?string
+    {
+        // Check if user model has the HasApiTokens trait
+        if (method_exists($user, 'createToken')) {
+            return $user->createToken('auth_token')->plainTextToken;
+        }
+
+        return null;
+    }
 
     /**
      * Logout current user
      *
      * @return bool
      */
-    // public function logout(): bool
-    // {
-    //     // Menghapus token saat ini
-    //     Auth::user()->currentAccessToken()->delete();
+    public function logout(): bool
+    {
+        // No need to explicitly check for currentAccessToken
+        // Just perform regular logout
+        Auth::logout();
 
-    //     return true;
-    // }
+        return true;
+    }
 
-
+    /**
+     * Upload user profile image
+     *
+     * @param $image
+     * @return string
+     */
     private function uploadImage($image)
     {
         // Generate nama gambar unik & random
@@ -91,6 +109,6 @@ class AuthService
         $path = $image->storeAs('users', $imageName);
 
         // Return path yang dapat diakses oleh public
-        return str_replace('', '', $path);
+        return $path;
     }
 }
