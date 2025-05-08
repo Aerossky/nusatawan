@@ -19,7 +19,7 @@ class IsAdmin
         }
 
         if (!Auth::user()->isAdmin) {
-            return redirect()->route('user.home')->with('error', 'Anda tidak memiliki akses ke halaman admin.');
+            return redirect()->route('admin.dashboard')->with('error', 'Anda tidak memiliki akses ke halaman admin.');
         }
 
         return $next($request);
