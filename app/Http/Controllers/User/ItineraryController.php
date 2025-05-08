@@ -8,7 +8,9 @@ use App\Models\Itinerary;
 use App\Services\Destination\DestinationService;
 use App\Services\Destination\DestinationGeoService;
 use App\Services\ItineraryService;
+use App\Services\StatsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,20 +32,28 @@ class ItineraryController extends Controller
     protected $destinationGeoService;
 
     /**
+     * @var StatsService
+     */
+    protected $statsService;
+
+    /**
      * Constructor
      *
      * @param ItineraryService $itineraryService
      * @param DestinationService $destinationService
      * @param DestinationGeoService $destinationGeoService
+     * @param StatsService $statsService
      */
     public function __construct(
         ItineraryService $itineraryService,
         DestinationService $destinationService,
-        DestinationGeoService $destinationGeoService
+        DestinationGeoService $destinationGeoService,
+        StatsService $statsService
     ) {
         $this->itineraryService = $itineraryService;
         $this->destinationService = $destinationService;
         $this->destinationGeoService = $destinationGeoService;
+        $this->statsService = $statsService;
     }
 
     /**
@@ -61,8 +71,9 @@ class ItineraryController extends Controller
         ];
 
         $itineraries = $this->itineraryService->getAllItineraries($filters);
+        $itineraryStats = $this->statsService->getItineraryStatsByUser(Auth::id());
 
-        return view('user.itinerary.index', compact('itineraries', 'filters'));
+        return view('user.itinerary.index', compact('itineraries', 'itineraryStats', 'filters'));
     }
 
     /**

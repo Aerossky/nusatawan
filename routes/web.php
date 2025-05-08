@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // login manual
-Auth::login(User::find(1));
+// Auth::login(User::find(1));
 
 // Auth routes - with guest middleware
 Route::middleware('guest')->group(function () {
@@ -61,58 +61,54 @@ Route::resource('destinasi', DestinationController::class)
 
 
 // User routes - with auth.user middleware
-Route::middleware('auth.user')->group(function () {
-    Route::name('user.')->group(function () {
-        // Profile Routes
-        Route::prefix('profil')->name('profile.')->group(function () {
-            Route::get('/', [ProfileController::class, 'show'])->name('show');
-            Route::patch('/{user}', [ProfileController::class, 'update'])->name('update');
-        });
+Route::middleware('auth.user')->name('user.')->group(function () {
+    // Profile Routes
+    Route::prefix('profil')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::patch('/{user}', [ProfileController::class, 'update'])->name('update');
+    });
 
-        // Itinerary Routes
-        Route::prefix('rencana-perjalanan')->name('itinerary.')->group(function () {
-            // Main Itinerary Routes
-            Route::get('/', [ItineraryController::class, 'index'])->name('index');
-            Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
-            Route::post('/', [ItineraryController::class, 'store'])->name('store');
-            Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
-            Route::get('/{itinerary}/ubah', [ItineraryController::class, 'edit'])->name('edit');
-            Route::patch('/{itinerary}', [ItineraryController::class, 'update'])->name('update');
+    // Itinerary Routes
+    Route::prefix('rencana-perjalanan')->name('itinerary.')->group(function () {
+        // Main Itinerary Routes
+        Route::get('/', [ItineraryController::class, 'index'])->name('index');
+        Route::get('/tambah-rencana', [ItineraryController::class, 'create'])->name('create');
+        Route::post('/', [ItineraryController::class, 'store'])->name('store');
+        Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
+        Route::get('/{itinerary}/ubah', [ItineraryController::class, 'edit'])->name('edit');
+        Route::patch('/{itinerary}', [ItineraryController::class, 'update'])->name('update');
 
-            // Itinerary Destination Routes
-            Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
-            Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
-            Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
-            Route::post('/hapus-destinasi', [ItineraryController::class, 'removeDestinationFromItinerary'])->name('destination.remove');
-            Route::get('/destinasi/{id}/detail', [ItineraryController::class, 'getDestinationDetails'])->name('destination.detail');
-            Route::post('/destinasi/update', [ItineraryController::class, 'updateDestination'])->name('destination.update');
-        });
+        // Itinerary Destination Routes
+        Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
+        Route::post('/cari-destinasi-nama', [ItineraryController::class, 'searchDestinationsByName'])->name('destination.search.name');
+        Route::post('/tambah-destinasi', [ItineraryController::class, 'addDestinationItinerary'])->name('destination.add');
+        Route::post('/hapus-destinasi', [ItineraryController::class, 'removeDestinationFromItinerary'])->name('destination.remove');
+        Route::get('/destinasi/{id}/detail', [ItineraryController::class, 'getDestinationDetails'])->name('destination.detail');
+        Route::post('/destinasi/update', [ItineraryController::class, 'updateDestination'])->name('destination.update');
+    });
 
-        // Destination Submission Routes
-        Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
-            Route::get('/', [DestinationSubmissionController::class, 'create'])->name('create');
-            Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
-        });
+    // Destination Submission Routes
+    Route::prefix('pengajuan-destinasi')->name('destination-submission.')->group(function () {
+        Route::get('/', [DestinationSubmissionController::class, 'create'])->name('create');
+        Route::post('/', [DestinationSubmissionController::class, 'store'])->name('store');
+    });
 
-        // Favorite Routes
-        Route::prefix('destinasi-favorit')->name('destination-favorite.')->group(function () {
-            Route::get('/', [FavoriteController::class, 'index'])->name('index');
-        });
+    // Favorite Routes
+    Route::prefix('destinasi-favorit')->name('destination-favorite.')->group(function () {
+        Route::get('/', [FavoriteController::class, 'index'])->name('index');
+    });
 
-        // Destination Like/Unlike Routes
-        Route::prefix('destinations/{destination}')->group(function () {
-            Route::post('like', [DestinationController::class, 'like'])->name('destinations.like');
-            Route::delete('unlike', [DestinationController::class, 'unlike'])->name('destinations.unlike');
-        });
+    // Destination & Review Routes
+    Route::group(['prefix' => 'destinasi/{destination}'], function () {
+        // Like/Unlike Routes
+        Route::post('like', [DestinationController::class, 'like'])->name('destinations.like');
+        Route::delete('unlike', [DestinationController::class, 'unlike'])->name('destinations.unlike');
 
         // Review Routes
-        Route::prefix('destinations/{destination}')->group(function () {
-            Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
-        });
+        Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
     });
 });
 
-// Admin routes - with auth.admin middleware
 // Admin routes - with auth.admin middleware
 Route::middleware('auth.admin')->prefix('admin')->name('admin.')->group(function () {
     // Dashboard

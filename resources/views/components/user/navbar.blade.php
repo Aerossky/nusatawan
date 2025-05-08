@@ -55,7 +55,7 @@
                 </div>
             @else
                 <!-- Register Button -->
-                <a href=""
+                <a href="{{ route('auth.register') }}" id="register-button"
                     class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 md:px-5 md:py-2.5 text-center transition-all duration-300">
                     Daftar
                 </a>

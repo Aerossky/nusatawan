@@ -41,7 +41,7 @@ class ItinerarySeeder extends Seeder
                 'slug' => 'trip-yogyakarta',
                 'startDate' => '2024-12-10',
                 'endDate' => '2024-12-15',
-                'status' => 'complete',
+                'status' => 'completed',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
