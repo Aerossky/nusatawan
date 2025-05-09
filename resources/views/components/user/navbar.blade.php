@@ -15,13 +15,20 @@
             @auth
                 <!-- Profile Dropdown (Mobile & Desktop) -->
                 <div class="relative">
+                    <!-- Modifikasi bagian avatar/foto profil -->
                     <button type="button" class="flex text-sm rounded-full focus:ring-4 focus:ring-blue-300 mr-2"
                         id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                         data-dropdown-placement="bottom">
                         <span class="sr-only">Buka menu pengguna</span>
-                        <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
-                            src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('/images/default-avatar.png') }}"
-                            alt="Foto profil {{ Auth::user()->name }}">
+                        @if (Auth::user()->image)
+                            <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                src="{{ asset('storage/' . Auth::user()->image) }}"
+                                alt="Foto profil {{ Auth::user()->name }}">
+                        @else
+                            <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random&color=fff&bold=true&size=100"
+                                alt="Inisial {{ Auth::user()->name }}">
+                        @endif
                     </button>
                     <!-- Dropdown menu -->
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-lg absolute right-0 w-44"

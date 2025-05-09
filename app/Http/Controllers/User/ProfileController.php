@@ -48,13 +48,24 @@ class ProfileController extends Controller
 
     public function update(User $user, Request $request)
     {
+        $messages = [
+            'name.max' => 'Nama maksimal 255 karakter.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 255 karakter.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Gambar harus berformat: jpeg, png, jpg, gif.',
+            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ];
+
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:8|confirmed',
             'password_confirmation' => 'nullable',
-        ]);
+        ], $messages);
 
         $user = $this->profileService->updateProfile($user, $validatedData);
 

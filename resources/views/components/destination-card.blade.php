@@ -95,24 +95,45 @@
             </a>
 
             {{-- Like Button --}}
-            <button
-                class="like-button flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
-                data-destination-id="{{ $data->id }}"
-                data-is-liked="{{ $data->is_liked_by_user ? 'true' : 'false' }}"
-                data-likes-count="{{ $data->likes_count }}"
-                data-like-url="{{ route('user.destinations.like', $data) }}">
-                <svg class="{{ $data->is_liked_by_user ? 'text-red-500 fill-red-500' : 'text-gray-400' }} h-5 w-5 transition-colors like-icon"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
-                    fill="{{ $data->is_liked_by_user ? 'currentColor' : 'none' }}">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                </svg>
+            @auth
+                <div class="flex items-center">
+                    <button
+                        class="like-button flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
+                        data-destination-id="{{ $data->id }}"
+                        data-is-liked="{{ $data->is_liked_by_user ? 'true' : 'false' }}"
+                        data-likes-count="{{ $data->likes_count }}"
+                        data-like-url="{{ route('user.destinations.like', $data) }}">
+                        <svg class="{{ $data->is_liked_by_user ? 'text-red-500 fill-red-500' : 'text-gray-400' }} h-5 w-5 transition-colors like-icon"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"
+                            fill="{{ $data->is_liked_by_user ? 'currentColor' : 'none' }}">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
 
-                @if ($data->likes_count > 0)
-                    <span class="text-xs font-medium ml-1 text-gray-500 likes-count">{{ $data->likes_count }}</span>
-                @endif
-            </button>
+                        @if ($data->likes_count > 0)
+                            <span
+                                class="text-xs font-medium ml-1 text-gray-500 likes-count">{{ $data->likes_count }}</span>
+                        @endif
+                    </button>
+                </div>
+            @else
+                {{-- Tombol Like untuk pengguna yang belum login (disabled) --}}
+                <div class="flex items-center">
+                    <button
+                        class="flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 bg-gray-100 cursor-not-allowed"
+                        onclick="showLoginAlert()" title="Silakan login untuk menyukai">
+                        <svg class="text-gray-400 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="1.5" fill="none">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
 
+                        @if ($data->likes_count > 0)
+                            <span class="text-xs font-medium ml-1 text-gray-500">{{ $data->likes_count }}</span>
+                        @endif
+                    </button>
+                </div>
+            @endauth
             <!-- Share Button-->
             <button
                 class="share-button ml-2 flex items-center justify-center h-9 w-9 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"

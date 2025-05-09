@@ -11,8 +11,14 @@
                 <div class="mb-4 md:mb-0 md:mr-8">
                     <label for="photoInput" class="relative cursor-pointer block">
                         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
-                            <img id="profileImage" src="{{ asset('storage/' . $profile->image) }}" alt="Pengguna"
-                                class="w-full h-full object-cover">
+                            @if (Auth::user()->image)
+                                <img class="w-full h-full object-cover" src="{{ asset('storage/' . $profile->image) }}"
+                                    alt="Foto profil {{ Auth::user()->name }}">
+                            @else
+                                <img class="w-full h-full object-cover"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random&color=fff&bold=true&size=100"
+                                    alt="Inisial {{ Auth::user()->name }}">
+                            @endif
                         </div>
                     </label>
                 </div>
@@ -90,8 +96,15 @@
                                         <div class="flex items-center gap-6">
                                             <div
                                                 class="bg-gray-100 rounded-full w-24 h-24 overflow-hidden border-2 border-white shadow">
-                                                <img id="current-profile" src="{{ asset('storage/' . $profile->image) }}"
-                                                    alt="pengguna" class="w-full h-full object-cover">
+                                                @if (Auth::user()->image)
+                                                    <img class="w-full h-full object-cover"
+                                                        src="{{ asset('storage/' . $profile->image) }}"
+                                                        alt="Foto profil {{ Auth::user()->name }}">
+                                                @else
+                                                    <img class="w-full h-full object-cover"
+                                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random&color=fff&bold=true&size=100"
+                                                        alt="Inisial {{ Auth::user()->name }}">
+                                                @endif
                                             </div>
                                             <div class="flex-1">
                                                 <input type="file" id="image" name="image" accept="image/*"

@@ -10,7 +10,6 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <link rel="icon" href="{{ asset('images/icon/icon512_rounded.png') }}">
 
-    {{-- <link rel="icon" href="{{ asset('images/logo/nusatawan-logo.png') }}" type="image/png"> --}}
     <meta name="title" content="Nusatawan" />
     <meta name="description"
         content="Nusatawan membantu merencanakan perjalanan wisata di Indonesia dengan informasi destinasi terintegrasi prakiraan cuaca. Temukan tempat wisata favorit dan ketahui kondisi cuaca sebelum berkunjung.">
@@ -19,7 +18,6 @@
     <meta name="author" content="Nusatawan">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesia">
-
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -50,30 +48,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        .bg-primary {
-            background-color: #3B82F6;
-        }
-
-        .text-primary {
-            color: #3B82F6;
-        }
-
-        .hover\:bg-primary-dark:hover {
-            background-color: #2563EB;
-        }
-
-        .focus\:border-primary:focus {
-            border-color: #3B82F6;
-        }
-
-        .focus\:ring-primary:focus {
-            --tw-ring-color: #3B82F6;
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -82,6 +56,10 @@
             to {
                 opacity: 1;
             }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -162,7 +140,7 @@
                                 </svg>
                             </div>
                             <input type="text" id="name" name="name" required
-                                class="pl-10 w-full px-4 py-2.5 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                class="pl-10 w-full px-4 py-2.5 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Masukkan nama lengkap" value="{{ old('name') }}">
                         </div>
                         @error('name')
@@ -182,7 +160,7 @@
                                 </svg>
                             </div>
                             <input type="email" id="email" name="email" required
-                                class="pl-10 w-full px-4 py-2.5 border @error('email') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                class="pl-10 w-full px-4 py-2.5 border @error('email') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="contoh@email.com" value="{{ old('email') }}">
                         </div>
                         @error('email')
@@ -202,7 +180,7 @@
                                 </svg>
                             </div>
                             <input type="password" id="password" name="password" required
-                                class="pl-10 w-full px-4 py-2.5 border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                class="pl-10 w-full px-4 py-2.5 border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Minimal 8 karakter">
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 <button type="button" id="togglePassword"
@@ -235,7 +213,7 @@
                                 </svg>
                             </div>
                             <input type="password" id="password_confirmation" name="password_confirmation" required
-                                class="pl-10 w-full px-4 py-2.5 border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                class="pl-10 w-full px-4 py-2.5 border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Masukkan lagi kata sandi Anda">
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 <button type="button" id="toggleConfirmPassword"
@@ -269,7 +247,7 @@
                                     </div>
                                     <div class="flex-grow">
                                         <label for="image"
-                                            class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-dark focus-within:outline-none">
+                                            class="relative cursor-pointer bg-white rounded-md font-medium text-blue-500 hover:text-blue-700 focus-within:outline-none">
                                             <span>Unggah foto</span>
                                             <input id="image" name="image" type="file" class="sr-only"
                                                 accept="image/*">
@@ -278,8 +256,8 @@
                                     </div>
                                 </div>
                                 <div id="preview-container" class="hidden mt-3">
-                                    <img id="preview" class="h-32 w-32 object-cover rounded-lg"
-                                        src="{{ asset('images/logo/nusatawan-logo.png') }}" alt="Preview">
+                                    <img id="preview" class="h-32 w-32 object-cover rounded-lg" src="#"
+                                        alt="Preview">
                                 </div>
                             </div>
                         </div>
@@ -290,7 +268,7 @@
 
                     <!-- Tombol Daftar -->
                     <button type="submit"
-                        class="w-full bg-primary text-white py-3 px-4 rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition duration-300 font-medium">
+                        class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 font-medium">
                         Daftar Sekarang
                     </button>
 
@@ -298,7 +276,7 @@
                     <p class="text-center text-gray-600 mt-6">
                         Sudah punya akun?
                         <a href="{{ route('auth.login') }}"
-                            class="text-primary font-semibold hover:underline">Masuk</a>
+                            class="text-blue-500 font-semibold hover:underline">Masuk</a>
                     </p>
                 </form>
             </div>
@@ -309,26 +287,25 @@
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-
-            // Change the eye icon
-            this.innerHTML = type === 'password' ?
-                '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>' :
-                '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>';
+            togglePasswordVisibility(passwordInput, this);
         });
 
         // Toggle confirm password visibility
         document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password_confirmation');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+            togglePasswordVisibility(passwordInput, this);
+        });
+
+        // Shared function for toggling password fields
+        function togglePasswordVisibility(inputElement, buttonElement) {
+            const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputElement.setAttribute('type', type);
 
             // Change the eye icon
-            this.innerHTML = type === 'password' ?
+            buttonElement.innerHTML = type === 'password' ?
                 '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>' :
                 '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>';
-        });
+        }
 
         // Show image preview
         document.getElementById('image').addEventListener('change', function(e) {
