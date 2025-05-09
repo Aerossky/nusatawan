@@ -29,7 +29,7 @@ class StatsService
      *
      * @return int
      */
-    public function getTotalDestinations(): int
+    public function  getTotalDestinations(): int
     {
         return Destination::count();
     }
