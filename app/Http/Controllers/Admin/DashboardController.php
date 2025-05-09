@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\DashboardService;
+use App\Services\statsService;
 
 class DashboardController extends Controller
 {
-    protected $dashboardService;
+    protected $statsService;
 
-    public function __construct(DashboardService $dashboardService)
+    public function __construct(StatsService $statsService)
     {
-        $this->dashboardService = $dashboardService;
+        $this->statsService = $statsService;
     }
 
     public function index()
     {
-        $totalUsers = $this->dashboardService->getTotalUsers();
-        $totalDestinations = $this->dashboardService->getTotalDestinations();
-        $totalCategories = $this->dashboardService->getTotalCategories();
-        $totalReviews = $this->dashboardService->getTotalReviews();
-        $userGrowth = $this->dashboardService->getUserGrowth();
-        $destinationByCategory = $this->dashboardService->getDestinationByCategory();
-        $popularDestinations = $this->dashboardService->getPopularDestinations();
-        $systemNotifications = $this->dashboardService->getSystemNotifications();
+        $totalUsers = $this->statsService->getTotalUsers();
+        $totalDestinations = $this->statsService->getTotalDestinations();
+        $totalCategories = $this->statsService->getTotalCategories();
+        $totalReviews = $this->statsService->getTotalReviews();
+        $userGrowth = $this->statsService->getUserGrowth();
+        $destinationByCategory = $this->statsService->getDestinationByCategory();
+        $popularDestinations = $this->statsService->getPopularDestinations();
+        $systemNotifications = $this->statsService->getSystemNotifications();
 
 
         return view('admin.dashboard', [
