@@ -5,6 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Nusatawan</title>
+
+    {{-- manifest --}}
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="icon" href="{{ asset('images/icon/icon512_rounded.png') }}">
+
+    {{-- <link rel="icon" href="{{ asset('images/logo/nusatawan-logo.png') }}" type="image/png"> --}}
+    <meta name="title" content="Nusatawan" />
+    <meta name="description"
+        content="Nusatawan membantu merencanakan perjalanan wisata di Indonesia dengan informasi destinasi terintegrasi prakiraan cuaca. Temukan tempat wisata favorit dan ketahui kondisi cuaca sebelum berkunjung.">
+    <meta name="keywords"
+        content="wisata Indonesia, prakiraan cuaca wisata, destinasi wisata, perencanaan perjalanan, informasi wisata, cuaca destinasi wisata, pariwisata Indonesia">
+    <meta name="author" content="Nusatawan">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Indonesia">
+
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.nusatawan.com/">
+    <meta property="og:title" content="Nusatawan - Informasi Wisata & Prakiraan Cuaca Indonesia">
+    <meta property="og:description"
+        content="Rencanakan perjalanan wisata Anda dengan informasi destinasi dan prakiraan cuaca terintegrasi di seluruh Indonesia.">
+    <meta property="og:image" content="{{ asset('images/logo/nusatawan-logo.png') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.nusatawan.com/">
+    <meta property="twitter:title" content="Nusatawan - Informasi Wisata & Prakiraan Cuaca Indonesia">
+    <meta property="twitter:description"
+        content="Rencanakan perjalanan wisata Anda dengan informasi destinasi dan prakiraan cuaca terintegrasi di seluruh Indonesia.">
+    <meta property="twitter:image" content="{{ asset('images/logo/nusatawan-logo.png') }}">
+
+    <!-- Tambahan Meta untuk Mobile -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nusatawan">
+
+    <!-- Metatags Tambahan untuk SEO -->
+    <meta name="geo.region" content="ID">
+    <meta name="geo.placename" content="Indonesia">
+    <link rel="canonical" href="https://www.nusatawan.com/">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .bg-primary {
@@ -70,7 +113,7 @@
             <div class="w-full max-w-md mx-auto">
                 <!-- Logo untuk tampilan mobile -->
                 <div class="flex justify-center mb-6 md:hidden">
-                    <img src="{{ asset('images/logo.png') }}" alt="Nusatawan Logo" class="h-12">
+                    <img src="{{ asset('images/logo/nusatawan-logo.png') }}" alt="Nusatawan Logo" class="h-12">
                 </div>
 
                 <!-- Header -->
@@ -235,8 +278,8 @@
                                     </div>
                                 </div>
                                 <div id="preview-container" class="hidden mt-3">
-                                    <img id="preview" class="h-32 w-32 object-cover rounded-lg" src="#"
-                                        alt="Preview">
+                                    <img id="preview" class="h-32 w-32 object-cover rounded-lg"
+                                        src="{{ asset('images/logo/nusatawan-logo.png') }}" alt="Preview">
                                 </div>
                             </div>
                         </div>
