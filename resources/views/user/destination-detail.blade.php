@@ -516,6 +516,7 @@
 
 
             <!-- Form Komentar -->
+            <!-- Form Komentar -->
             <div id="review-form" class="mb-8 bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-5 flex items-center text-gray-800 border-b pb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20"
@@ -530,142 +531,177 @@
                 {{-- Pesan --}}
                 <div id="message-container" class="mb-4"></div>
 
-                <form action="{{ route('user.reviews.store', $destination) }}" method="POST">
-                    @csrf
-
-                    <div class="space-y-6">
-                        <!-- Rating Section with Card Design -->
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-100">
-                            <label class="block text-gray-700 mb-3 font-medium flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500"
-                                    viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                                Bagaimana Kualitas Konten? <span class="text-red-500 ml-1">*</span>
-                            </label>
-
-                            <div x-data="{
-                                rating: {{ $userReview ? $userReview->rating : 0 }},
-                                hoverRating: 0,
-                                ratings: [
-                                    { value: 1, label: 'Buruk', color: 'text-red-500' },
-                                    { value: 2, label: 'Kurang', color: 'text-orange-500' },
-                                    { value: 3, label: 'Cukup', color: 'text-yellow-500' },
-                                    { value: 4, label: 'Bagus', color: 'text-lime-500' },
-                                    { value: 5, label: 'Sangat Bagus', color: 'text-green-500' }
-                                ],
-                                rate(val) {
-                                    this.rating = val;
-                                },
-                                currentLabel() {
-                                    let label = '';
-                                    let value = this.hoverRating || this.rating;
-
-                                    if (value > 0) {
-                                        label = this.ratings.find(r => r.value === value)?.label || '';
-                                    }
-
-                                    return value ? `${value}.0 - ${label}` : 'Pilih rating';
-                                },
-                                getColor() {
-                                    let value = this.hoverRating || this.rating;
-                                    if (value > 0) {
-                                        return this.ratings.find(r => r.value === value)?.color || 'text-gray-500';
-                                    }
-                                    return 'text-gray-500';
-                                }
-                            }">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <!-- Stars Selection -->
-                                    <div class="flex items-center">
-                                        <template x-for="(star, index) in 5" :key="index">
-                                            <button type="button" @click="rate(star)" @mouseover="hoverRating = star"
-                                                @mouseleave="hoverRating = 0"
-                                                class="focus:outline-none p-1 transition-transform duration-200"
-                                                :class="{ 'scale-110': hoverRating === star || rating === star }">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-9 w-9 transition-colors duration-200"
-                                                    :class="(hoverRating >= star) ? 'text-yellow-400' : (rating >= star ?
-                                                        'text-yellow-400' : 'text-gray-300')"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path
-                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                            </button>
-                                        </template>
-                                    </div>
-
-                                    <!-- Rating Label -->
-                                    <div class="flex items-center justify-between sm:justify-end gap-3">
-                                        <span
-                                            class="font-medium text-sm px-3 py-1 rounded-full transition-colors duration-200"
-                                            :class="getColor()">
-                                            <span x-text="currentLabel()"></span>
-                                        </span>
-                                        <input type="hidden" name="rating" x-model="rating">
-                                    </div>
-                                </div>
-
-                                <!-- Rating Selection Helper Text -->
-                                <div class="mt-3 text-xs text-gray-500" x-show="rating === 0">
-                                    <p>Klik bintang untuk memberikan rating</p>
-                                </div>
-
-                                <!-- Selected Rating Confirmation -->
-                                <div class="mt-3 text-xs flex items-center" x-show="rating > 0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-500 mr-1"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>Rating Anda: <span class="font-semibold" x-text="rating + '.0'"></span> - Terima
-                                        kasih atas penilaian Anda!</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Comment Section -->
-                        <div>
-                            <label for="comment" class="block text-gray-700 mb-2 font-medium flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                                </svg>
-                                Bagikan pengalaman Anda: <span class="text-red-500 ml-1">*</span>
-                            </label>
-                            <textarea id="comment" name="comment" rows="4"
-                                class="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-                                placeholder="Ceritakan pengalaman kunjungan Anda ke destinasi ini...">{{ $userReview ? $userReview->comment : '' }}</textarea>
-                            <p class="mt-2 text-xs text-gray-500">Ulasan Anda akan membantu wisatawan lain merencanakan
-                                perjalanan mereka.</p>
-                        </div>
-
-                        <!-- Submit Section -->
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                            <button type="submit"
-                                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                @guest
+                    {{-- Tampilan untuk user yang belum login --}}
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-blue-500 mb-3" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Login untuk Memberikan Ulasan</h3>
+                        <p class="text-gray-600 mb-4">Anda perlu login terlebih dahulu untuk dapat memberikan ulasan dan
+                            rating.</p>
+                        <div class="flex justify-center space-x-3">
+                            <a href="{{ route('auth.login') }}"
+                                class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition duration-200 flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                 </svg>
-                                {{ $userReview ? 'Ubah Ulasan & Rating' : 'Kirim Ulasan & Rating' }}
-                            </button>
-
-                            <div class="flex items-center text-sm text-gray-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-400" fill="none"
+                                Login
+                            </a>
+                            <a href="{{ route('auth.register') }}"
+                                class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-6 rounded-lg transition duration-200 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                 </svg>
-                                {{ $userReview ? 'Ulasan Anda terakhir diperbarui: ' . $userReview->updated_at->format('d M Y') : 'Ulasan akan ditampilkan setelah moderasi' }}
-                            </div>
+                                Daftar
+                            </a>
                         </div>
                     </div>
-                </form>
+                @else
+                    {{-- Form untuk user yang sudah login --}}
+                    <form action="{{ route('user.reviews.store', $destination) }}" method="POST">
+                        @csrf
+
+                        <div class="space-y-6">
+                            <!-- Rating Section with Card Design -->
+                            <div class="bg-gray-50 rounded-lg p-5 border border-gray-100">
+                                <label class="block text-gray-700 mb-3 font-medium flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    Bagaimana Kualitas Konten? <span class="text-red-500 ml-1">*</span>
+                                </label>
+
+                                <div x-data="{
+                                    rating: {{ $userReview ? $userReview->rating : 0 }},
+                                    hoverRating: 0,
+                                    ratings: [
+                                        { value: 1, label: 'Buruk', color: 'text-red-500' },
+                                        { value: 2, label: 'Kurang', color: 'text-orange-500' },
+                                        { value: 3, label: 'Cukup', color: 'text-yellow-500' },
+                                        { value: 4, label: 'Bagus', color: 'text-lime-500' },
+                                        { value: 5, label: 'Sangat Bagus', color: 'text-green-500' }
+                                    ],
+                                    rate(val) {
+                                        this.rating = val;
+                                    },
+                                    currentLabel() {
+                                        let label = '';
+                                        let value = this.hoverRating || this.rating;
+                                
+                                        if (value > 0) {
+                                            label = this.ratings.find(r => r.value === value)?.label || '';
+                                        }
+                                
+                                        return value ? `${value}.0 - ${label}` : 'Pilih rating';
+                                    },
+                                    getColor() {
+                                        let value = this.hoverRating || this.rating;
+                                        if (value > 0) {
+                                            return this.ratings.find(r => r.value === value)?.color || 'text-gray-500';
+                                        }
+                                        return 'text-gray-500';
+                                    }
+                                }">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <!-- Stars Selection -->
+                                        <div class="flex items-center">
+                                            <template x-for="(star, index) in 5" :key="index">
+                                                <button type="button" @click="rate(star)" @mouseover="hoverRating = star"
+                                                    @mouseleave="hoverRating = 0"
+                                                    class="focus:outline-none p-1 transition-transform duration-200"
+                                                    :class="{ 'scale-110': hoverRating === star || rating === star }">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-9 w-9 transition-colors duration-200"
+                                                        :class="(hoverRating >= star) ? 'text-yellow-400' : (rating >= star ?
+                                                            'text-yellow-400' : 'text-gray-300')"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                </button>
+                                            </template>
+                                        </div>
+
+                                        <!-- Rating Label -->
+                                        <div class="flex items-center justify-between sm:justify-end gap-3">
+                                            <span
+                                                class="font-medium text-sm px-3 py-1 rounded-full transition-colors duration-200"
+                                                :class="getColor()">
+                                                <span x-text="currentLabel()"></span>
+                                            </span>
+                                            <input type="hidden" name="rating" x-model="rating">
+                                        </div>
+                                    </div>
+
+                                    <!-- Rating Selection Helper Text -->
+                                    <div class="mt-3 text-xs text-gray-500" x-show="rating === 0">
+                                        <p>Klik bintang untuk memberikan rating</p>
+                                    </div>
+
+                                    <!-- Selected Rating Confirmation -->
+                                    <div class="mt-3 text-xs flex items-center" x-show="rating > 0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-500 mr-1"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Rating Anda: <span class="font-semibold" x-text="rating + '.0'"></span> - Terima
+                                            kasih atas penilaian Anda!</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Comment Section -->
+                            <div>
+                                <label for="comment" class="block text-gray-700 mb-2 font-medium flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                    </svg>
+                                    Bagikan pengalaman Anda: <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <textarea id="comment" name="comment" rows="4"
+                                    class="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                                    placeholder="Ceritakan pengalaman kunjungan Anda ke destinasi ini...">{{ $userReview ? $userReview->comment : '' }}</textarea>
+                                <p class="mt-2 text-xs text-gray-500">Ulasan Anda akan membantu wisatawan lain merencanakan
+                                    perjalanan mereka.</p>
+                            </div>
+
+                            <!-- Submit Section -->
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                                <button type="submit"
+                                    class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                    {{ $userReview ? 'Ubah Ulasan & Rating' : 'Kirim Ulasan & Rating' }}
+                                </button>
+
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-gray-400" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {{ $userReview ? 'Ulasan Anda terakhir diperbarui: ' . $userReview->updated_at->format('d M Y') : 'Ulasan akan ditampilkan setelah moderasi' }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                @endguest
             </div>
 
             <!-- Komentar yang ada -->
