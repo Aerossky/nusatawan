@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class StatsServiceTest extends TestCase
@@ -182,30 +181,5 @@ class StatsServiceTest extends TestCase
                 'destination_id' => $destination->id
             ]);
         }
-    }
-
-    private function setupItineraryTestData(User $user): void
-    {
-        Category::factory()->count(3)->create();
-        Destination::factory()->count(5)->create();
-
-        Itinerary::factory()->count(2)->create([
-            'user_id' => $user->id,
-            'status' => 'draft'
-        ]);
-
-        Itinerary::factory()->count(3)->create([
-            'user_id' => $user->id,
-            'status' => 'ongoing'
-        ]);
-
-        Itinerary::factory()->count(4)->create([
-            'user_id' => $user->id,
-            'status' => 'complete'
-        ]);
-
-        Itinerary::factory()->count(5)->create([
-            'user_id' => User::factory()->create()->id
-        ]);
     }
 }
