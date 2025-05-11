@@ -2,17 +2,26 @@
 
 namespace Tests\Feature\Destination;
 
+use App\Models\Category;
 use App\Models\Destination;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserCanSeeWeatherInformationOnDestinationDetailTest extends TestCase
 {
+    use RefreshDatabase;
 
-    // access destination detail page
     public function test_user_can_see_weather_information_on_destination_detail()
     {
+        // create user
+        User::factory()->create([
+            'name' => 'Test User',
+        ]);
+        // create category
+        Category::factory()->create([
+            'name' => 'Wisata'
+        ]);
         // create destination
         $destination = Destination::factory()->create([
             'place_name' => 'Test Destination',

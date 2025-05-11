@@ -76,7 +76,7 @@ class UserCanSubmitDestinationTest extends TestCase
         $this->assertDatabaseHas('destination_submissions', [
             'place_name' => $submissionData['place_name'],
             'created_by' => $this->user->id,
-            'status' => 'pending' 
+            'status' => 'pending'
         ]);
     }
 }
