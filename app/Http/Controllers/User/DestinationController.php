@@ -170,8 +170,12 @@ class DestinationController extends Controller
             ]);
         }
 
-        // Untuk request non-AJAX (fallback)
-        return redirect()->back();
+        // Untuk request non-AJAX
+        if ($isLiked) {
+            return redirect()->back()->with('success', 'Destinasi berhasil disukai!');
+        } else {
+            return redirect()->back()->with('success', 'Destinasi berhasil dihapus dari daftar suka!');
+        }
     }
 
     private function getFiltersFromRequest(Request $request): array
