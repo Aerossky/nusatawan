@@ -253,7 +253,7 @@ function addMarker(lat, lng) {
 function cleanText(text) {
     if (!text) return '';
     // Hapus semua karakter non-latin dan non-spasi
-    return text.replace(/[^\w\s.,;:!?"'()\-]/g, '').trim();
+    return text.replace(/[^\w\s.,;:!?"'()-]/g, '').trim();
 }
 
 // Fungsi untuk mengubah format lokasi ke bahasa Indonesia
@@ -327,7 +327,7 @@ function reverseGeocode(lat, lng) {
 
 // Fungsi untuk mengisi field lokasi
 function fillLocationFields(data) {
-    if (!data || !data.address) return;
+    if (!data.address) return;
 
     // Coba ekstrak wilayah administratif dari hasil reverse geocoding
     const administrativeArea = cleanText(

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\DestinationSubmission;
 use App\Services\CategoryService;
-use App\Services\DashboardService;
 use App\Services\Destination\DestinationGeoService;
 use App\Services\Destination\DestinationImageService;
 use App\Services\Destination\DestinationQueryService;
@@ -27,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $services = [
-            DashboardService::class,
             UserService::class,
             StatsService::class,
             CategoryService::class,
