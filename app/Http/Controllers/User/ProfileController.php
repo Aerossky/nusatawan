@@ -9,6 +9,7 @@ use App\Services\DestinationSubmissionService;
 use App\Services\LikeService;
 use App\Services\ProfileService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -48,6 +49,11 @@ class ProfileController extends Controller
 
     public function update(User $user, Request $request)
     {
+        // cek apakah user yang sedang login adalah user yang sedang diupdate
+        if ($user->id !== Auth::user()->id) {
+
+            abort(403, 'Unauthorized action.');
+        }
         $messages = [
             'name.max' => 'Nama maksimal 255 karakter.',
             'email.email' => 'Format email tidak valid.',
