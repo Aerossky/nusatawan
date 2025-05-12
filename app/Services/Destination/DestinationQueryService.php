@@ -5,6 +5,8 @@ namespace App\Services\Destination;
 use App\Models\Destination;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DestinationQueryService
 {
@@ -16,6 +18,7 @@ class DestinationQueryService
      *
      * @return Builder
      */
+
     public function buildBaseQuery(): Builder
     {
         $query = Destination::query()
@@ -25,10 +28,20 @@ class DestinationQueryService
         if (Auth::check()) {
             $userId = Auth::id();
 
-            $query->withExists([
-                'likedByUsers as is_liked_by_user' => function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
-                }
+            Log::info('Building Base Query', [
+                'user_id' => $userId,
+                'is_authenticated' => true
+            ]);
+
+            $query->leftJoin('liked_destinations', function ($join) use ($userId) {
+                $join->on('destinations.id', '=', 'liked_destinations.destination_id')
+                    ->where('liked_destinations.user_id', $userId);
+            })
+                ->addSelect(DB::raw('CASE WHEN liked_destinations.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked_by_user'));
+
+            Log::info('Query SQL', [
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
             ]);
         }
 
