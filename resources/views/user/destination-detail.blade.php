@@ -88,10 +88,17 @@
                     <div class="flex items-start">
                         {{-- foto penulis --}}
                         <div class="flex-shrink-0 mr-4 mb-3 sm:mb-0">
-                            <img src="{{ asset('storage/' . $destination->user['image']) }}"
-                                alt="penulis $destination->user['name']"
-                                class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
+                            @if ($destination->user['image'])
+                                <img src="{{ asset('storage/' . $destination->user['image']) }}"
+                                    alt="penulis $destination->user['name']"
+                                    class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
+                            @else
+                                <img class="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode($destination->user['name']) }}&background=random&color=fff&bold=true&size=100"
+                                    alt="penulis $destination->user['name']">
+                            @endif
                         </div>
+
                         {{-- informasi penulis --}}
                         <div>
                             <div class="flex flex-wrap items-center">
@@ -516,7 +523,6 @@
 
 
             <!-- Form Komentar -->
-            <!-- Form Komentar -->
             <div id="review-form" class="mb-8 bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-5 flex items-center text-gray-800 border-b pb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20"
@@ -718,9 +724,16 @@
                         <div class="flex items-start mb-3">
                             <div class="flex-shrink-0 mr-3">
                                 <div class="w-10 h-10 bg-gray-300 rounded-full">
+
                                     {{-- foto pengguna --}}
-                                    <img src="{{ asset('storage/' . $review->user->image) }}" alt="User"
-                                        class="w-full h-full rounded-full object-cover" />
+                                    @if ($review->user->image)
+                                        <img src="{{ asset('storage/' . $review->user->image) }}" alt="User"
+                                            class="w-full h-full rounded-full object-cover" />
+                                    @else
+                                        <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                            src="https://ui-avatars.com/api/?name={{ urlencode($review->user->name) }}&background=random&color=fff&bold=true&size=100"
+                                            alt="Inisial {{ $review->user->name }}">
+                                    @endif
                                 </div>
                             </div>
                             <div>
