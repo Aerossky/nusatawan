@@ -15,7 +15,7 @@ class UserCanSeeWeatherInformationOnDestinationDetailTest extends TestCase
     public function test_user_can_see_weather_information_on_destination_detail()
     {
         // create user
-        User::factory()->create([
+         User::factory()->create([
             'name' => 'Test User',
         ]);
         // create category
