@@ -32,52 +32,112 @@ class DestinationGeoService
      */
     public function getNearbyDestinations(array $filters = []): LengthAwarePaginator
     {
-        // Get coordinates from filters
+        // Log input filters untuk debugging
+        Log::info('Input filters:', $filters);
+
+        // Ambil nilai dari filters
         $lat = $filters['lat'] ?? null;
         $lng = $filters['lng'] ?? null;
         $excludeId = $filters['exclude_id'] ?? null;
         $perPage = $filters['per_page'] ?? self::DEFAULT_PER_PAGE;
+        $categoryId = $filters['category_id'] ?? null;
+        $search = $filters['search'] ?? null;
+        $sortBy = $filters['sort_by'] ?? null;
+        $sort = $filters['sort'] ?? 'distance';
+        $maxDistance = $filters['max_distance'] ?? null;
 
-        // Create base query
+        // Log sort parameters untuk debugging
+        Log::info('Sort parameters:', [
+            'sortBy' => $sortBy,
+            'sort' => $sort
+        ]);
+
+        // Mulai base query
         $baseQuery = $this->queryService->buildBaseQuery();
 
-        // Exclude destination if specified
+        // Filter: Exclude ID
         if ($excludeId) {
             $baseQuery->where('id', '!=', $excludeId);
         }
 
-        // Eager load images
+        // Filter: category_id
+        if ($categoryId) {
+            $baseQuery->where('category_id', $categoryId);
+        }
+
+
+        // Eager load relasi
         $baseQuery->with('images');
 
-        // Create subquery for distance calculation
+        // Convert baseQuery ke subQuery SQL
         $subQuery = $baseQuery->toSql();
 
-        // Create new query with distance calculation using Haversine formula
+        // Hitung jarak pakai Haversine formula
         $query = DB::table(DB::raw("({$subQuery}) as base_destinations"))
             ->mergeBindings($baseQuery->getQuery())
             ->selectRaw("base_destinations.*, (
                 6371 * acos(
-                    cos(radians($lat)) *
+                    cos(radians(?)) *
                     cos(radians(latitude)) *
-                    cos(radians(longitude) - radians($lng)) +
-                    sin(radians($lat)) *
+                    cos(radians(longitude) - radians(?)) +
+                    sin(radians(?)) *
                     sin(radians(latitude))
                 )
-            ) AS distance");
+            ) AS distance", [$lat, $lng, $lat]);
 
-        // Add distance constraint if specified
-        if (isset($filters['max_distance'])) {
-            $maxDistance = $filters['max_distance'];
+        // Filter: Jarak maksimum
+        if ($maxDistance) {
             $query->havingRaw("distance <= ?", [$maxDistance]);
         }
 
-        // Order by distance
-        $query->orderBy('distance', 'asc');
+        // Menerapkan pengurutan berdasarkan sort_by dengan pattern if-elseif-else
+        // untuk menghindari conflict dalam pengurutan
+        if ($sortBy === 'newest') {
+            Log::info('Applied sorting: newest');
+            $query->orderByDesc('created_at');
+        } elseif ($sortBy === 'oldest') {
+            Log::info('Applied sorting: oldest');
+            $query->orderBy('created_at');
+        } elseif ($sortBy === 'rating_desc') {
+            Log::info('Applied sorting: rating_desc');
+            $query->orderByDesc('rating');
+        } elseif ($sortBy === 'rating_asc') {
+            Log::info('Applied sorting: rating_asc');
+            $query->orderBy('rating');
+        } elseif ($sortBy === 'likes_desc') {
+            Log::info('Applied sorting: likes_desc');
+            $query->orderByDesc('likes_count');
+        } elseif ($sortBy === 'likes_asc') {
+            Log::info('Applied sorting: likes_asc');
+            $query->orderBy('likes_count');
+        } elseif ($sortBy === 'a_to_z') {
+            Log::info('Applied sorting: a_to_z');
+            $query->orderBy('name');
+        } elseif ($sortBy === 'z_to_a') {
+            Log::info('Applied sorting: z_to_a');
+            $query->orderByDesc('name');
+        } else {
+            // Default: sort by distance
+            Log::info('Applied default sorting: distance');
+            $query->orderBy('distance');
+        }
 
-        // Paginate results
+        // Secondary sort for consistency when primary sorts have same values
+        if ($sortBy !== null && $sortBy !== 'distance') {
+            $query->orderBy('distance'); // Secondary sort by distance
+        }
+
+        // Paginate
         $paginator = $query->paginate($perPage);
 
-        // Process results to include relationships
+        // Log hasil paginator untuk debugging
+        Log::info('Paginator counts:', [
+            'total' => $paginator->total(),
+            'per_page' => $paginator->perPage(),
+            'current_page' => $paginator->currentPage(),
+        ]);
+
+        // Tambahkan relasi (images) ke hasil
         $this->processNearbyResults($paginator);
 
         return $paginator;
@@ -85,7 +145,7 @@ class DestinationGeoService
 
     /**
      * Mendapatkan daftar destinasi dalam radius tertentu berdasarkan koordinat yang diberikan.
-     * 
+     *
      * @param float $lat Latitude dari lokasi saat ini
      * @param float $lng Longitude dari lokasi saat ini
      * @param float $radiusKm Radius pencarian dalam kilometer (default: 50)
@@ -105,27 +165,35 @@ class DestinationGeoService
      * @param LengthAwarePaginator $paginator
      * @return void
      */
-    private function processNearbyResults(LengthAwarePaginator $paginator): void
+
+    /**
+     * Process results and add related entities
+     */
+    protected function processNearbyResults(LengthAwarePaginator $paginator)
     {
-        if ($paginator->count() > 0) {
-            // Ambil ID dari hasil paginasi
-            $destinationIds = collect($paginator->items())->pluck('id')->toArray();
+        // Kita perlu mengonversi item-item dari stdClass ke model Destination
+        $items = $paginator->items();
+        $destinationIds = array_column($items, 'id');
 
-            // Load destinasi dengan eager loading images
-            $destinationsWithImages = Destination::with('images')
-                ->whereIn('id', $destinationIds)
-                ->get()
-                ->keyBy('id');
+        // Ambil destinasi dengan eager loading
+        $destinations = \App\Models\Destination::with(['images', 'category'])
+            ->whereIn('id', $destinationIds)
+            ->get()
+            ->keyBy('id');
 
-            // Ganti item dalam paginasi dengan model yang memiliki relasi
-            $paginator->setCollection(collect($paginator->items())->map(function ($item) use ($destinationsWithImages) {
-                if (isset($destinationsWithImages[$item->id])) {
-                    // Tambahkan properti distance ke model
-                    $destinationsWithImages[$item->id]->distance = $item->distance;
-                    return $destinationsWithImages[$item->id];
-                }
-                return $item;
-            }));
+        // Gunakan collection baru untuk menyimpan hasil yang sudah diproses
+        $processedItems = [];
+
+        foreach ($items as $item) {
+            if (isset($destinations[$item->id])) {
+                $destination = $destinations[$item->id];
+                // Tambahkan jarak ke model
+                $destination->distance = $item->distance;
+                $processedItems[] = $destination;
+            }
         }
+
+        // Ganti items di paginator dengan model yang sudah diproses
+        $paginator->setCollection(collect($processedItems));
     }
 }
