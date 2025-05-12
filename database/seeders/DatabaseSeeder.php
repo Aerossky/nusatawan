@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategorySeeder::class,
             DestinationSeeder::class,
-            DestinationImageSeeder::class,
+            DestinationDataSetSeeder::class,
             ItinerarySeeder::class,
             ItineraryDestinationSeeder::class,
             ReviewSeeder::class,
