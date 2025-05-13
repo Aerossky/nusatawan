@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\DestinationSubmission;
 use App\Services\CategoryService;
 use App\Services\DestinationSubmissionService;
 use Illuminate\Http\Request;

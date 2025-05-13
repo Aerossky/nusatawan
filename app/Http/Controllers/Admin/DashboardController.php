@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\statsService;
+use App\Services\StatsService;
 
 class DashboardController extends Controller
 {

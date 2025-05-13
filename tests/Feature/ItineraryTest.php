@@ -52,25 +52,15 @@ class ItineraryTest extends TestCase
             'category_id' => $this->category->id
         ]);
 
-        // Create itinerary
-        $this->itinerary = Itinerary::factory()->create([
-            'title' => 'Test Itinerary',
-            'startDate' => now()->format('Y-m-d'),
-            'endDate' => now()->addDays(5)->format('Y-m-d'),
-            'status' => 'draft',
-            'user_id' => $this->user->id
-        ]);
+        // Login user for all tests
+        $this->actingAs($this->user);
     }
 
-    public function test_itinerary_crud_operations()
+    /**
+     * Test creating a new itinerary
+     */
+    public function test_create_itinerary()
     {
-        // delete existing itinerary
-        $this->itinerary->delete();
-
-        // Login user
-        $this->actingAs($this->user);
-
-        // Create Itinerary
         $itineraryData = [
             'title' => 'New Test Itinerary',
             'description' => 'This is a description for the new test itinerary',
@@ -82,40 +72,79 @@ class ItineraryTest extends TestCase
         $response = $this->post(route('user.itinerary.store'), $itineraryData);
         $response->assertRedirect();
         $this->assertDatabaseHas('itineraries', ['title' => $itineraryData['title']]);
+    }
 
-        // Show Itinerary
-        $itinerary = Itinerary::where('title', 'New Test Itinerary')->first();
+    /**
+     * Test reading/viewing an itinerary
+     */
+    public function test_read_itinerary()
+    {
+        // First create an itinerary to view
+        $itinerary = Itinerary::factory()->create([
+            'title' => 'Viewable Itinerary',
+            'startDate' => now()->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'status' => 'draft',
+            'user_id' => $this->user->id
+        ]);
+
+        // Test viewing the itinerary
         $response = $this->get(route('user.itinerary.show', $itinerary));
         $response->assertStatus(200);
+    }
 
-        // Edit Itinerary
+    /**
+     * Test accessing edit form for an itinerary
+     */
+    public function test_access_edit_itinerary_form()
+    {
+        // First create an itinerary to edit
+        $itinerary = Itinerary::factory()->create([
+            'title' => 'Editable Itinerary',
+            'startDate' => now()->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'status' => 'draft',
+            'user_id' => $this->user->id
+        ]);
+
+        // Test accessing edit form
         $response = $this->get(route('user.itinerary.edit', $itinerary));
         $response->assertStatus(200);
+    }
 
-        // Update Itinerary
+    /**
+     * Test updating an itinerary
+     */
+    public function test_update_itinerary()
+    {
+        // First create an itinerary to update
+        $itinerary = Itinerary::factory()->create([
+            'title' => 'Original Itinerary',
+            'startDate' => now()->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'status' => 'draft',
+            'user_id' => $this->user->id
+        ]);
+
+        // Update data
         $updateData = [
-            'title' => 'Updated Test Itinerary',
+            'title' => 'Updated Itinerary Title',
             'description' => 'This is an updated description',
             'startDate' => now()->format('Y-m-d'),
             'endDate' => now()->addDays(7)->format('Y-m-d'),
-            'status' => $itinerary->status, // Make sure to include status
+            'status' => $itinerary->status,
         ];
 
-        // Add debugging to see what's happening
+        // Perform update
         $response = $this->patch(route('user.itinerary.update', $itinerary), $updateData);
-
-        // Check if there are validation errors
-        if ($response->exception) {
-            dd($response->exception->getMessage());
-        }
 
         $response->assertRedirect();
 
-        // Refresh the model from database
+        // Refresh from database
         $itinerary->refresh();
 
-        // Alternative verification
-        $this->assertEquals('Updated Test Itinerary', $itinerary->title);
+        // Verify update was successful
+        $this->assertEquals('Updated Itinerary Title', $itinerary->title);
         $this->assertDatabaseHas('itineraries', ['title' => $updateData['title']]);
     }
 }

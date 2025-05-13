@@ -84,8 +84,8 @@ class DestinationSubmissionController extends Controller
         try {
             $this->destinationSubmissionService->deleteSubmission($destinationSubmission);
 
-            return redirect()->route('admin.destination-submissions.index')
-                ->with('success', 'Destination submission successfully deleted');
+            return redirect()->route('admin.destination-submission.index')
+                ->with('success', 'Destinasi berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting destination submission: ' . $e->getMessage());
 
