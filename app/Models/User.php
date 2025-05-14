@@ -72,4 +72,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(DestinationSubmission::class);
     }
+
+    // relasi dengan destination
+    public function destinations()
+    {
+        return $this->hasMany(Destination::class, 'created_by');
+    }
 }

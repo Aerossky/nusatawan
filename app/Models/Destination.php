@@ -15,18 +15,18 @@ class Destination extends Model
 
     // Kolom yang dapat diisi
     protected $fillable = [
-        'created_by',
-        'category_id',
-        'place_name',
-        'description',
-        'administrative_area',
-        'province',
-        'rating',
-        'rating_count',
-        'time_minutes',
-        'best_visit_time',
-        'latitude',
-        'longitude'
+            'created_by',
+            'category_id',
+            'place_name',
+            'description',
+            'administrative_area',
+            'province',
+            'rating',
+            'rating_count',
+            'time_minutes',
+            'best_visit_time',
+            'latitude',
+            'longitude'
     ];
 
     public function sluggable(): array
