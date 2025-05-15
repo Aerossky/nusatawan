@@ -355,4 +355,33 @@ class ItineraryService
             return false;
         }
     }
+
+    /**
+     * Delete an itinerary and its associated destinations
+     *
+     * @param int $id The ID of the itinerary to delete
+     * @return bool True if the deletion was successful, false otherwise
+     */
+    public function deleteItinerary($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Find the itinerary
+            $itinerary = Itinerary::where('user_id', Auth::id())->findOrFail($id);
+
+            // Delete associated destinations
+            $itinerary->itineraryDestinations()->delete();
+
+            // Delete the itinerary
+            $itinerary->delete();
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting itinerary: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

@@ -144,6 +144,19 @@ class ItineraryController extends Controller
         return redirect()->route('user.itinerary.index')
             ->with('success', 'Rencana perjalanan berhasil diperbarui.');
     }
+    /**
+     * Remove the specified itinerary
+     *
+     * @param Itinerary $itinerary
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Itinerary $itinerary)
+    {
+        $this->itineraryService->deleteItinerary($itinerary->id);
+
+        return redirect()->route('user.itinerary.index')
+            ->with('success', 'Rencana perjalanan berhasil dihapus.');
+    }
 
     /**
      * Display the specified itinerary Details With destinations

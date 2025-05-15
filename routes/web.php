@@ -77,6 +77,7 @@ Route::middleware('auth.user')->name('user.')->group(function () {
         Route::get('/{itinerary}', [ItineraryController::class, 'show'])->name('show');
         Route::get('/{itinerary}/ubah', [ItineraryController::class, 'edit'])->name('edit');
         Route::patch('/{itinerary}', [ItineraryController::class, 'update'])->name('update');
+        Route::delete('/{itinerary}', [ItineraryController::class, 'destroy'])->name('destroy');
 
         // Itinerary Destination Routes
         Route::post('/cari-destinasi-koordinat', [ItineraryController::class, 'searchDestinationsByCoordinates'])->name('destination.search.coordinates');
