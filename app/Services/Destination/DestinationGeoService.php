@@ -3,9 +3,7 @@
 namespace App\Services\Destination;
 
 use App\Models\Destination;
-use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -159,29 +157,6 @@ class DestinationGeoService
             ->with('images')
             ->get();
     }
-
-    // public function addLikedInfoToResults($results)
-    // {
-    //     if (Auth::check()) {
-    //         $userId = Auth::id();
-    //         $destinationIds = $results->pluck('id')->toArray();
-
-    //         if (!empty($destinationIds)) {
-    //             // Gunakan model relationship untuk mengambil liked destinations
-    //             $likedDestinations = User::find($userId)->likedDestinations()
-    //                 ->whereIn('destinations.id', $destinationIds)
-    //                 ->pluck('destinations.id')
-    //                 ->toArray();
-
-    //             // Terapkan ke hasil paginate
-    //             foreach ($results as $destination) {
-    //                 $destination->is_liked_by_user = in_array($destination->id, $likedDestinations);
-    //             }
-    //         }
-    //     }
-
-    //     return $results;
-    // }
 
     /**
      * Memproses hasil query untuk menyertakan relasi
