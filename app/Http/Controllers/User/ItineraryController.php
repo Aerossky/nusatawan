@@ -37,7 +37,7 @@ class ItineraryController extends Controller
     protected $statsService;
 
     /**
-     * Constructor
+     * Konstruktor
      *
      * @param ItineraryService $itineraryService
      * @param DestinationService $destinationService
@@ -57,7 +57,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Display a listing of itineraries
+     * Menampilkan daftar rencana perjalanan
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -77,7 +77,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Show the form for creating a new itinerary
+     * Menampilkan formulir untuk membuat rencana perjalanan baru
      *
      * @return \Illuminate\View\View
      */
@@ -87,7 +87,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Store a newly created itinerary
+     * Menyimpan rencana perjalanan yang baru dibuat
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -108,7 +108,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Display the form for editing an existing itinerary
+     * Menampilkan formulir untuk mengedit rencana perjalanan yang ada
      *
      * @param Itinerary $itinerary
      * @return \Illuminate\View\View
@@ -123,7 +123,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Update the specified itinerary
+     * Memperbarui rencana perjalanan yang ditentukan
      *
      * @param Request $request
      * @param Itinerary $itinerary
@@ -145,7 +145,7 @@ class ItineraryController extends Controller
             ->with('success', 'Rencana perjalanan berhasil diperbarui.');
     }
     /**
-     * Remove the specified itinerary
+     * Menghapus rencana perjalanan yang ditentukan
      *
      * @param Itinerary $itinerary
      * @return \Illuminate\Http\RedirectResponse
@@ -159,7 +159,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Display the specified itinerary Details With destinations
+     * Menampilkan detail rencana perjalanan tertentu dengan destinasinya
      *
      * @param Itinerary $itinerary
      * @return \Illuminate\View\View
@@ -172,7 +172,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Search destinations by geographic coordinates (latitude and longitude)
+     * Mencari destinasi berdasarkan koordinat geografis (latitude dan longitude)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -207,7 +207,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Search destinations by name, administrative area, or province
+     * Mencari destinasi berdasarkan nama, area administratif, atau provinsi
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -241,7 +241,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Add a destination to an itinerary
+     * Menambahkan destinasi ke rencana perjalanan
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -274,7 +274,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Get itinerary destination details
+     * Mendapatkan detail destinasi rencana perjalanan
      *
      * @param int $itineraryDestinationId
      * @return \Illuminate\Http\JsonResponse
@@ -308,7 +308,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Update itinerary destination
+     * Memperbarui destinasi rencana perjalanan
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -365,7 +365,7 @@ class ItineraryController extends Controller
     }
 
     /**
-     * Remove a destination from an itinerary
+     * Menghapus destinasi dari rencana perjalanan
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

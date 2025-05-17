@@ -38,6 +38,7 @@ class HomeController extends Controller
             'sort_by' => 'likes_count',
             'per_page' => 8,
         ]);
+        // Mengambil total destinasi dan total pengguna
         $totalDestinationStats = $this->statsService->getTotalDestinations();
         $totalUsersStats = $this->statsService->getTotalUsers();
 
