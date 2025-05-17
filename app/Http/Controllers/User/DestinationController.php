@@ -85,7 +85,7 @@ class DestinationController extends Controller
 
         $categories = $this->categoryService->getAllCategories();
 
-        // This ensures the paginator appends all query parameters to pagination links
+        // memastikan bahwa pagination tidak mengganggu filter
         $destinations->appends($request->except('page'));
 
         return view('user.destination', compact('destinations', 'categories'));

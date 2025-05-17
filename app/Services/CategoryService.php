@@ -42,17 +42,6 @@ class CategoryService
     }
 
     /**
-     * Mendapatkan detail kategori tunggal dengan jumlah destinasi.
-     *
-     * @param  Category  $category  Objek kategori
-     * @return Category  Kategori dengan hitungan destinasi
-     */
-    public function getCategory(Category $category)
-    {
-        return Category::withCount('destinations')->findOrFail($category->id);
-    }
-
-    /**
      * Membuat kategori baru di dalam database.
      *
      * @param  array  $data  Data kategori yang akan disimpan
