@@ -255,8 +255,8 @@
                     <p class="text-gray-700 italic mb-4">"Website ini sangat membantu saya merencanakan perjalanan ke Danau
                         Toba. Informasi prakiraan cuaca yang akurat membuat perjalanan saya lancar tanpa kendala hujan!"</p>
                     <div class="flex items-center">
-                        <img src="{{ asset('images/testimonial1.jpg') }}" alt="Testimoni 1"
-                            class="w-10 h-10 rounded-full mr-3">
+                        <img src="https://ui-avatars.com/api/?name=budi-santoso&background=random&color=fff&bold=true&size=100"
+                            alt="Testimoni 1" class="w-10 h-10 rounded-full mr-3">
                         <div>
                             <h4 class="font-semibold">Budi Santoso</h4>
                             <p class="text-sm text-gray-500">Traveler dari Jakarta</p>
@@ -277,15 +277,8 @@
                                 </path>
                             </svg>
                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.
-                                                                                <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                                                                                <path d="
-                                    M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371
-                                    1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54
-                                    1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8
-                                    2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98
-                                    8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
                                 </path>
                             </svg>
                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
@@ -303,11 +296,11 @@
                     <p class="text-gray-700 italic mb-4">"Informasi di situs ini sangat detail dan membantu saya memutuskan
                         kapan waktu terbaik mengunjungi Raja Ampat. Sangat direkomendasikan!"</p>
                     <div class="flex items-center">
-                        <img src="{{ asset('images/testimonial2.jpg') }}" alt="Testimoni 2"
-                            class="w-10 h-10 rounded-full mr-3">
+                        <img src="https://ui-avatars.com/api/?name=william&background=random&color=fff&bold=true&size=100"
+                            alt="Testimoni 2" class="w-10 h-10 rounded-full mr-3">
                         <div>
-                            <h4 class="font-semibold">Siti Rahma</h4>
-                            <p class="text-sm text-gray-500">Travel Blogger</p>
+                            <h4 class="font-semibold">William</h4>
+                            <p class="text-sm text-gray-500">Traveler dari Bandung</p>
                         </div>
                     </div>
                 </div>
@@ -341,15 +334,15 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-gray-700 italic mb-4">"Sebagai tour guide, saya selalu merekomendasikan website ini
-                        kepada klien saya untuk mendapatkan informasi terbaik sebelum berkunjung ke berbagai destinasi di
+                    <p class="text-gray-700 italic mb-4">"Sebagai pengunjung pertama kali ke Indonesia, saya selalu
+                        mengecek website ini untuk mendapatkan informasi terbaik sebelum berkunjung ke berbagai destinasi di
                         Indonesia."</p>
                     <div class="flex items-center">
-                        <img src="{{ asset('images/testimonial3.jpg') }}" alt="Testimoni 3"
-                            class="w-10 h-10 rounded-full mr-3">
+                        <img src="https://ui-avatars.com/api/?name=andi-wijaya&background=random&color=fff&bold=true&size=100"
+                            alt="Testimoni 3" class="w-10 h-10 rounded-full mr-3">
                         <div>
                             <h4 class="font-semibold">Andi Wijaya</h4>
-                            <p class="text-sm text-gray-500">Tour Guide</p>
+                            <p class="text-sm text-gray-500">Traveler dari Surabaya</p>
                         </div>
                     </div>
                 </div>
