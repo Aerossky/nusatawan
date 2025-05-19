@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         // Regular users
         $users = [
             [
-                'name' => 'Budi Santoso',
+                'name' => 'Risky',
                 'email' => 'budi@example.com',
                 'password' => Hash::make('password123'),
                 'status' => 'active',
