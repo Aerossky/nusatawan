@@ -186,6 +186,7 @@
                                     d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
                                     clip-rule="evenodd" />
                             </svg>
+                            {{-- Disini --}}
                             <span>{{ $itinerary->destinations_count ?? 0 }} Destinasi</span>
                         </div>
 
@@ -196,7 +197,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                {{ \Carbon\Carbon::parse($itinerary->endDate)->diffInDays(\Carbon\Carbon::parse($itinerary->startDate)) + 1 }}
+                                {{ \Carbon\Carbon::parse($itinerary->startDate)->diffInDays(\Carbon\Carbon::parse($itinerary->endDate)) + 1 }}
                                 hari
                             </div>
                             <div class="flex space-x-2">
@@ -218,7 +219,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
-                                    Edit
+                                    Ubah
                                 </a>
                                 <form action="{{ route('user.itinerary.destroy', $itinerary) }}" method="POST"
                                     class="inline"

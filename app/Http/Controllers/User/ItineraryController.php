@@ -73,6 +73,14 @@ class ItineraryController extends Controller
         $itineraries = $this->itineraryService->getAllItineraries($filters);
         $itineraryStats = $this->statsService->getItineraryStatsByUser(Auth::id());
 
+        // Get destination counts for each itinerary
+        $destinationTotals = $this->statsService->getDestinationCountPerItinerary($itineraries->pluck('id'));
+
+        // Attach destination counts to each itinerary object
+        foreach ($itineraries as $itinerary) {
+            $itinerary->destinations_count = $destinationTotals[$itinerary->id] ?? 0;
+        }
+
         return view('user.itinerary.index', compact('itineraries', 'itineraryStats', 'filters'));
     }
 
