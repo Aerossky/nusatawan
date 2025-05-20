@@ -52,7 +52,7 @@ class DestinationDataSetSeeder extends Seeder
                     'slug' => Str::slug($record['Place_Name']),
                     'description' => $record['Description'],
                     'administrative_area' => $record['City'],
-                    'province' => 'DKI Jakarta',
+                    'province' => '',
                     'rating' => $rating,
                     'rating_count' => $rating_count,
                     'time_minutes' => intval($record['Time_Minutes']),
@@ -74,7 +74,7 @@ class DestinationDataSetSeeder extends Seeder
                         'slug' => Str::slug($record['Place_Name']),
                         'description' => $record['Description'],
                         'administrative_area' => $record['City'],
-                        'province' => 'DKI Jakarta',
+                        'province' => '',
                         'rating' => 4.50, // Nilai default yang aman
                         'rating_count' => 100, // Nilai default yang aman
                         'time_minutes' => intval($record['Time_Minutes']),

@@ -169,7 +169,7 @@ class DestinationController extends Controller
             'longitude'           => 'required|numeric|between:-180,180',
             'description'         => 'required|string',
             'image.*'             => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'primary_image_index' => 'required|integer|min:0',
+            'primary_image_index' => 'integer|min:0',
         ]);
     }
 }

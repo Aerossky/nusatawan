@@ -162,8 +162,26 @@ class DestinationService
             $this->imageService->processImages($destination, $data['image'], $data['primary_image_index'] ?? 0, false);
         }
 
+        // Pilih primary image
         if (isset($data['primary_image_index'])) {
+            // Jika primary_image_index disediakan, gunakan itu
             $this->imageService->updatePrimaryImage($destination, $data['primary_image_index']);
+        } else if (isset($data['image'])) {
+            // Jika tidak ada primary_image_index tapi ada gambar, pilih primary image secara acak
+            // Ambil semua gambar yang dimiliki destinasi ini
+            $images = $destination->images;
+
+            // Pastikan ada gambar untuk dipilih
+            if ($images->count() > 0) {
+                // Pilih index acak
+                $randomIndex = rand(0, $images->count() - 1);
+
+                // Set semua gambar menjadi non-primary
+                $destination->images()->update(['is_primary' => false]);
+
+                // Set gambar yang dipilih secara acak menjadi primary
+                $images[$randomIndex]->update(['is_primary' => true]);
+            }
         }
 
         return $destination;

@@ -152,6 +152,7 @@ class DestinationGeoService
      */
     public function getNearbyDestinationRaws(float $lat, float $lng, float $radiusKm = 50)
     {
+        // Hitung jarak pakai Haversine formula
         return Destination::select('*')
             ->whereRaw("(6371 * acos(cos(radians($lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($lng)) + sin(radians($lat)) * sin(radians(latitude)))) < ?", [$radiusKm])
             ->with('images')
