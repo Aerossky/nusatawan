@@ -72,16 +72,19 @@
                             Berdasarkan</label>
                         <select id="sort_by" name="sort_by"
                             class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:border-blue-300 bg-white">
-                            <option value="likes_desc" {{ request('sort_by') == 'likes_desc' ? 'selected' : '' }}>
+                            <option value="likes_desc"
+                                {{ request('sort_by', 'likes_desc') == 'likes_desc' ? 'selected' : '' }}>
                                 Paling Banyak Disukai
                             </option>
-                            <option value="newest" {{ request('sort_by', 'newest') == 'newest' ? 'selected' : '' }}>
+                            <option value="newest" {{ request('sort_by', 'likes_desc') == 'newest' ? 'selected' : '' }}>
                                 Terbaru Ditambahkan
                             </option>
-                            <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>
+                            <option value="rating_desc"
+                                {{ request('sort_by', 'likes_desc') == 'rating_desc' ? 'selected' : '' }}>
                                 Rating Tertinggi
                             </option>
-                            <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>
+                            <option value="rating_asc"
+                                {{ request('sort_by', 'likes_desc') == 'rating_asc' ? 'selected' : '' }}>
                                 Rating Terendah
                             </option>
                         </select>
