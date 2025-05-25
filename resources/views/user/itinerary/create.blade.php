@@ -56,22 +56,8 @@
                             @enderror
                         </div>
                     </div>
-
-                    <!-- Status -->
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select name="status" id="status"
-                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                            <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Rencana</option>
-                            <option value="ongoing" {{ old('status') == 'ongoing' ? 'selected' : '' }}>Sedang Berlangsung
-                            </option>
-                            <option value="complete" {{ old('status') == 'complete' ? 'selected' : '' }}>Selesai</option>
-                        </select>
-
-                        @error('status')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    {{-- hidden input status --}}
+                    <input type="hidden" name="status" value="draft">
                 </div>
 
                 <div class="mt-8 flex justify-end">

@@ -10,6 +10,12 @@
                 Kembali
             </x-button>
         </div>
+        {{-- Alert --}}
+        @if (session('success'))
+            <x-ui.alert type="success" :message="session('success')" />
+        @elseif (session('error'))
+            <x-ui.alert type="error" :message="session('error')" />
+        @endif
         <div class="space-y-6">
             {{-- Detail User --}}
             <div class="bg-white p-6 rounded-xl shadow">
@@ -42,8 +48,9 @@
                                 </div>
 
                                 <div class="my-auto">
-                                    <form action="" method="POST"
-                                        onsubmit="return confirm('Yakin mau hapus review ini?')">
+                                    <form
+                                        action="{{ route('admin.destinations.reviews.destroy', [$review->destination, $review]) }}"
+                                        method="POST" onsubmit="return confirm('Yakin mau hapus review ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 text-base  hover:underline">

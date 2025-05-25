@@ -134,4 +134,27 @@ class StatsService
             'completed' => $itineraries->where('status', 'complete')->count(),
         ];
     }
+
+
+    /**
+     * Get the number of destinations for each itinerary
+     *
+     * @param array $itineraryIds List of itinerary IDs
+     * @return array Key-value pair where the key is the itinerary ID and value is the number of destinations
+     */
+    public function getDestinationCountPerItinerary($itineraryIds): array
+    {
+        $result = [];
+
+        foreach ($itineraryIds as $id) {
+            $itinerary = Itinerary::find($id);
+            if ($itinerary) {
+                $result[$id] = $itinerary->itineraryDestinations()->count();
+            } else {
+                $result[$id] = 0;
+            }
+        }
+
+        return $result;
+    }
 }

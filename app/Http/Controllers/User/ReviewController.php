@@ -64,8 +64,7 @@ class ReviewController extends Controller
     {
         $this->reviewService->destroyReview($destination, $review);
 
-        return redirect()
-            ->route('admin.destinations.edit', $destination)
+        return back()
             ->with('success', 'Review berhasil dihapus');
     }
 }

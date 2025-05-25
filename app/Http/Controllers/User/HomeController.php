@@ -35,9 +35,10 @@ class HomeController extends Controller
     public function index()
     {
         $favoriteDestinations = $this->destinationService->getDestinationsList([
-            'sort_by' => 'likes_count',
+            'sort_by' => 'likes_desc',
             'per_page' => 8,
         ]);
+        // Mengambil total destinasi dan total pengguna
         $totalDestinationStats = $this->statsService->getTotalDestinations();
         $totalUsersStats = $this->statsService->getTotalUsers();
 

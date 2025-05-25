@@ -24,9 +24,15 @@
                             class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
-                            <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
-                                src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('/images/default-avatar.png') }}"
-                                alt="Foto profil {{ Auth::user()->name }}">
+                            @if (Auth::user()->image)
+                                <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                    src="{{ asset('storage/' . Auth::user()->image) }}"
+                                    alt="Foto profil {{ Auth::user()->name }}">
+                            @else
+                                <img class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random&color=fff&bold=true&size=100"
+                                    alt="Inisial {{ Auth::user()->name }}">
+                            @endif
                         </button>
                     </div>
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"

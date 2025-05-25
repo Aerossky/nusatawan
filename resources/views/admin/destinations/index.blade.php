@@ -137,10 +137,6 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex space-x-2">
-                                        <a href="{{ route('admin.destinations.show', $destination) }}"
-                                            class="text-blue-600 hover:text-blue-800">
-                                            View
-                                        </a>
                                         <a href="{{ route('admin.destinations.edit', $destination) }}"
                                             class="text-indigo-600 hover:text-indigo-800">
                                             Edit

@@ -59,7 +59,7 @@ class DestinationSubmissionController extends Controller
 
             $submission = $this->destinationSubmissionService->createSubmission($data, $images);
 
-            return redirect()->route('destination-submissions.show', $submission)
+            return redirect()->route('user.destinations.index', $submission)
                 ->with('success', 'Pengajuan destinasi berhasil dibuat.');
         } catch (\Exception $e) {
             Log::error('Form submission error: ' . $e->getMessage());

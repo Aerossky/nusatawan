@@ -25,7 +25,9 @@
     <div class="container mx-auto max-w-full">
         <!-- Gambar Header dengan Overlay - Full Width -->
         <div class="relative mb-4 w-full">
-            <img src="{{ asset($destination->primaryImage ? 'storage/' . $destination->primaryImage->url : 'images/auth.png') }}"
+            <img src="{{ $destination->primaryImage
+                ? asset('storage/' . $destination->primaryImage->url)
+                : asset('images/categories/' . $destination->category->name . '.jpg') }}"
                 alt="{{ $destination->place_name }}" class="w-full h-[300px] md:h-[500px] lg:h-[600px] max-h-96 object-cover">
 
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -602,11 +604,11 @@
                                     currentLabel() {
                                         let label = '';
                                         let value = this.hoverRating || this.rating;
-                                
+
                                         if (value > 0) {
                                             label = this.ratings.find(r => r.value === value)?.label || '';
                                         }
-                                
+
                                         return value ? `${value}.0 - ${label}` : 'Pilih rating';
                                     },
                                     getColor() {

@@ -20,6 +20,17 @@
             </div>
         </div>
 
+        @if ($errors->any())
+            <div class="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-100" role="alert">
+                <ul class="list-disc pl-5 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                
+            </div>
+        @endif
+
         {{-- Alert --}}
         @if (session('success'))
             <x-ui.alert type="success" :message="session('success')" />

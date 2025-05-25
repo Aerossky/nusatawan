@@ -25,9 +25,19 @@
             <!-- Kolom 3: Teknologi -->
             <div>
                 <h3 class="text-lg font-semibold">Teknologi</h3>
-                <p class="mt-2 flex justify-center md:justify-start items-center">
-                    🚀 <span class="ml-2 font-semibold">Laravel, MySQL, OpenWeatherMap API</span>
-                </p>
+                <div class="mt-2 flex flex-col space-y-2 md:space-y-3">
+                    <!-- Baris teknologi pertama -->
+                    <div class="flex flex-wrap items-center">
+                        <span class="text-xl mr-2">🚀</span>
+                        <span class="font-semibold">Laravel, MySQL</span>
+                    </div>
+
+                    <!-- Baris teknologi kedua -->
+                    <div class="flex flex-wrap items-center">
+                        <span class="text-xl mr-2">🗺️</span>
+                        <span class="font-semibold">OpenWeatherMap, OpenStreetMap, Nominatim, Leaflet</span>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -32,27 +32,30 @@ class DestinationDataSetSeeder extends Seeder
                 continue;
             }
 
-            // Ubah ini untuk tidak menyertakan slug
-            $category = Category::firstOrCreate(
-                ['name' => trim($record['Category'])]
-                // Hapus parameter slug
-            );
+            // Buat kategori jika belum ada
+            $category = Category::firstOrCreate([
+                'name' => trim($record['Category'])
+            ]);
 
-            // Konversi rating ke skala 0-5
-            $rating = min(5.0, floatval($record['Rating']) / 10);
+            // Konversi dan batasi nilai rating agar sesuai dengan schema (max 9.99)
+            $rawRating = floatval($record['Rating']);
+            $rating = min(9.99, $rawRating / 10); // Misal dari skala 0–100 -> jadi 0–10
+            if ($rating < 0) $rating = 0;
 
-            // Pastikan rating_count dalam batas yang sesuai
-            $rating_count = min(9999.99, floatval($record['Rating_Count']));
+            // Batasi rating_count sesuai kapasitas
+            $rawCount = floatval($record['Rating_Count']);
+            $rating_count = min(999999, $rawCount);
+            if ($rating_count < 0) $rating_count = 0;
 
             try {
                 Destination::create([
-                    'created_by' => 1, // Ganti dengan ID user sesuai project kamu
+                    'created_by' => 1,
                     'category_id' => $category->id,
                     'place_name' => $record['Place_Name'],
                     'slug' => Str::slug($record['Place_Name']),
                     'description' => $record['Description'],
                     'administrative_area' => $record['City'],
-                    'province' => 'DKI Jakarta',
+                    'province' => '',
                     'rating' => $rating,
                     'rating_count' => $rating_count,
                     'time_minutes' => intval($record['Time_Minutes']),
@@ -65,7 +68,7 @@ class DestinationDataSetSeeder extends Seeder
             } catch (QueryException $e) {
                 $this->command->error("Error adding {$record['Place_Name']}: {$e->getMessage()}");
 
-                // Jika masih error, coba dengan nilai default
+                // Coba lagi dengan nilai default yang aman
                 try {
                     Destination::create([
                         'created_by' => 1,
@@ -74,9 +77,9 @@ class DestinationDataSetSeeder extends Seeder
                         'slug' => Str::slug($record['Place_Name']),
                         'description' => $record['Description'],
                         'administrative_area' => $record['City'],
-                        'province' => 'DKI Jakarta',
-                        'rating' => 4.50, // Nilai default yang aman
-                        'rating_count' => 100, // Nilai default yang aman
+                        'province' => '',
+                        'rating' => 4.5, // default aman
+                        'rating_count' => 100,
                         'time_minutes' => intval($record['Time_Minutes']),
                         'best_visit_time' => null,
                         'latitude' => floatval($record['Lat']) / 10000000,
