@@ -117,8 +117,9 @@ class ReviewService
      */
     public function getDestinationRating(int $destinationId): float
     {
-        return Destination::where('id', $destinationId)
-            ->avg('rating') ?? 0;
+        return Review::where('destination_id', $destinationId)->avg('rating') ?? 0.0;
+        // return Destination::where('id', $destinationId)
+        //     ->avg('rating') ?? 0;
     }
 
     /**
