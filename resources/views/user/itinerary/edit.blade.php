@@ -99,8 +99,8 @@
                             <option value="ongoing" {{ old('status', $itinerary->status) == 'ongoing' ? 'selected' : '' }}>
                                 Sedang Berlangsung
                             </option>
-                            <option value="complete"
-                                {{ old('status', $itinerary->status) == 'complete' ? 'selected' : '' }}>
+                            <option value="completed"
+                                {{ old('status', $itinerary->status) == 'completed' ? 'selected' : '' }}>
                                 Selesai
                             </option>
                         </select>
