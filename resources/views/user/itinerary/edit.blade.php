@@ -1,5 +1,34 @@
 @extends('layouts.user')
 @section('title', 'Buat Rencana Perjalanan')
+@push('styles')
+    <style>
+        /* iOS Date Input Fix - Letakkan di head atau sebelum closing body */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: auto;
+            height: auto;
+            color: transparent;
+            background: transparent;
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        input[type="date"]::-webkit-datetime-edit {
+            padding: 0;
+        }
+
+        /* Pastikan touch target cukup besar untuk iOS */
+        @media screen and (-webkit-min-device-pixel-ratio: 2) {
+            input[type="date"] {
+                min-height: 44px;
+            }
+        }
+    </style>
+@endpush
 @section('content')
     <div class="mt-[70px]"></div>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,7 +70,8 @@
                         <div>
                             <label for="startDate" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
                             <input type="date" name="startDate" id="startDate"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full px-3 py-3 text-base rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 min-h-[44px] appearance-none"
+                                style="-webkit-appearance: none; -moz-appearance: none; touch-action: manipulation; position: relative;"
                                 value="{{ old('startDate', $itinerary->startDate) }}" required>
                             @error('startDate')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -50,7 +80,8 @@
                         <div>
                             <label for="endDate" class="block text-sm font-medium text-gray-700">Tanggal Selesai</label>
                             <input type="date" name="endDate" id="endDate"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full px-3 py-3 text-base rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 min-h-[44px] appearance-none"
+                                style="-webkit-appearance: none; -moz-appearance: none; touch-action: manipulation; position: relative;"
                                 value="{{ old('endDate', $itinerary->endDate) }}" required>
                             @error('endDate')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -68,8 +99,8 @@
                             <option value="ongoing" {{ old('status', $itinerary->status) == 'ongoing' ? 'selected' : '' }}>
                                 Sedang Berlangsung
                             </option>
-                            <option value="complete"
-                                {{ old('status', $itinerary->status) == 'complete' ? 'selected' : '' }}>
+                            <option value="completed"
+                                {{ old('status', $itinerary->status) == 'completed' ? 'selected' : '' }}>
                                 Selesai
                             </option>
                         </select>

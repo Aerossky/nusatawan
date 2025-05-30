@@ -219,6 +219,7 @@
 
             // Current search data
             let selectedLocation = null;
+            let userSelectedFromAutocomplete = false; // NEW: Track if user selected from dropdown
 
             // If we have saved location data, restore it
             const savedLocationName = "{{ request('location_name') }}";
@@ -229,6 +230,7 @@
                     lat: latInput.value,
                     lon: lngInput.value
                 };
+                userSelectedFromAutocomplete = true; // Mark as selected since we have coordinates
             }
 
             // Setup autocomplete
@@ -268,6 +270,9 @@
 
                 searchInput.addEventListener('input', function() {
                     clearTimeout(timeout);
+
+                    // NEW: Reset selection flag when user types
+                    userSelectedFromAutocomplete = false;
 
                     // Reset selected location when user types
                     if (selectedLocation && this.value !== selectedLocation.formatted_name) {
@@ -334,6 +339,9 @@
                     item.textContent = displayName;
 
                     item.addEventListener('click', function() {
+                        // NEW: Mark that user selected from autocomplete
+                        userSelectedFromAutocomplete = true;
+
                         // Store the selected location data
                         selectedLocation = {
                             ...result,
@@ -348,6 +356,9 @@
                         latInput.value = parseFloat(result.lat);
                         lngInput.value = parseFloat(result.lon);
                         locationNameInput.value = displayName;
+
+                        // Generate new search ID for autocomplete selection
+                        searchIdInput.value = 'auto_' + generateSearchId();
                     });
 
                     container.appendChild(item);
@@ -361,6 +372,7 @@
              */
             function resetLocationData() {
                 selectedLocation = null;
+                userSelectedFromAutocomplete = false; // NEW: Reset flag
                 latInput.value = '';
                 lngInput.value = '';
                 locationNameInput.value = '';
@@ -385,7 +397,7 @@
             }
 
             /**
-             * Perform search with all filters
+             * Perform search with all filters - MODIFIED VERSION
              */
             function performSearch() {
                 const query = searchInput.value.trim();
@@ -398,44 +410,43 @@
                     return;
                 }
 
-                // If we have a selected location, just submit the form
+                // NEW LOGIC: Check if user selected from autocomplete
+                if (userSelectedFromAutocomplete && selectedLocation) {
+                    // User selected from autocomplete - submit with coordinates
+                    console.log('Submitting with autocomplete selection:', selectedLocation.formatted_name);
+                    searchIdInput.value = 'auto_' + generateSearchId();
+                    searchForm.submit();
+                    return;
+                }
+
+                // NEW LOGIC: User didn't select from autocomplete
+                if (query.length > 0 && !userSelectedFromAutocomplete) {
+                    // User typed something but didn't select from dropdown
+                    // Submit as manual search WITHOUT coordinates
+                    console.log('Submitting manual search without coordinates:', query);
+
+                    // Clear any existing coordinates to ensure manual search
+                    latInput.value = '';
+                    lngInput.value = '';
+                    locationNameInput.value = '';
+
+                    // Set search ID for manual search
+                    searchIdInput.value = 'manual_' + generateSearchId();
+
+                    // Submit the form
+                    searchForm.submit();
+                    return;
+                }
+
+                // ORIGINAL LOGIC: Fallback for other cases
+                // If we have a selected location (from previous search), just submit the form
                 if (selectedLocation) {
                     searchForm.submit();
                     return;
                 }
 
-                // If query but no coordinates, try to get coordinates first
-                if (query.length > 0 && !latInput.value && !lngInput.value) {
-                    // Show loading indicator
-                    showToast('Mencari lokasi...', 'info');
-
-                    // Try getting location data from Nominatim first
-                    fetch(
-                            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=id&limit=1&accept-language=id`
-                        )
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data && data.length > 0) {
-                                // Store location data
-                                const location = data[0];
-                                const displayName = formatLocationName(location.display_name);
-
-                                latInput.value = parseFloat(location.lat);
-                                lngInput.value = parseFloat(location.lon);
-                                locationNameInput.value = displayName;
-                            }
-                            // Submit the form
-                            searchForm.submit();
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
-                            // Submit anyway
-                            searchForm.submit();
-                        });
-                } else {
-                    // If we already have coordinates or no query, submit the form directly
-                    searchForm.submit();
-                }
+                // If we already have coordinates or no query, submit the form directly
+                searchForm.submit();
             }
 
             /**

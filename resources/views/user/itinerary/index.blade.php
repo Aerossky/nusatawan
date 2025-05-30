@@ -173,7 +173,7 @@
                                     ? 'Rencana'
                                     : ($itinerary->status == 'ongoing'
                                         ? 'Sedang Berlangsung'
-                                        : ($itinerary->status == 'complete'
+                                        : ($itinerary->status == 'completed'
                                             ? 'Selesai'
                                             : 'Status Tidak Diketahui')) }}
                             </span>

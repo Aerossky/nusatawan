@@ -13,11 +13,14 @@
             <div>
                 <h3 class="text-lg font-semibold">Navigasi</h3>
                 <ul class="mt-2 space-y-2">
-                    <li><a href="#" class="hover:underline block">Beranda</a></li>
-                    <li><a href="#" class="hover:underline block">Destinasi Wisata</a></li>
-                    <li><a href="#" class="hover:underline block">Rencana Perjalanan</a></li>
-                    <li><a href="#" class="hover:underline block">Kontribusi Wisata</a></li>
-                    <li><a href="#" class="hover:underline block">Tentang Kami</a></li>
+                    <li><a href="{{ route('user.home') }}" class="hover:underline block">Beranda</a></li>
+                    <li><a href="{{ route('user.destinations.index') }}" class="hover:underline block">Destinasi
+                            Wisata</a></li>
+                    <li><a href="{{ route('user.itinerary.index') }}" class="hover:underline block">Rencana
+                            Perjalanan</a></li>
+                    <li><a href="{{ route('user.destination-submission.create') }}"
+                            class="hover:underline block">Kontribusi Wisata</a></li>
+                    <li><a href="{{ route('user.about') }}" class="hover:underline block">Tentang Kami</a></li>
                     <li><a href="#" class="hover:underline block">Hubungi Kami</a></li>
                 </ul>
             </div>

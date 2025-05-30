@@ -106,7 +106,7 @@ class ItineraryController extends Controller
             'title' => 'required|string|max:255',
             'startDate' => 'required|date|after_or_equal:today',
             'endDate' => 'required|date|after_or_equal:startDate',
-            'status' => 'required|in:draft,ongoing,complete',
+            'status' => 'required|in:draft,ongoing,completed',
         ]);
 
         $itinerary = $this->itineraryService->createItinerary($data);
@@ -143,7 +143,7 @@ class ItineraryController extends Controller
             'title' => 'required|string|max:255',
             'startDate' => 'required|date',
             'endDate' => 'required|date',
-            'status' => 'required|in:draft,ongoing,complete',
+            'status' => 'required|in:draft,ongoing,completed',
         ]);
 
 
