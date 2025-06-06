@@ -1,9 +1,9 @@
-name: Build and Deploy to FTP
+name: Build and Deploy Laravel Vite Assets to FTP
 
 on:
   push:
     branches:
-      - main  # atau ganti dengan branch kamu
+      - main  # ganti kalau kamu pakai branch lain
 
 jobs:
   deploy:
@@ -21,13 +21,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
+      - name: Build Vite assets
         run: npm run build
 
-      - name: Deploy to FTP
+      - name: Deploy build assets to FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist
+          local-dir: ./public/build
