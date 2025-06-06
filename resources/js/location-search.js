@@ -224,47 +224,125 @@ class LocationSearch {
             });
         }
 
-        // Display database results SECOND (after Nominatim)
-        if (hasDbResults) {
-            const dbHeader = document.createElement('div');
-            dbHeader.className = 'p-2 bg-blue-50 text-blue-700 text-xs font-medium';
-            dbHeader.textContent = 'Destinasi Tersedia';
-            this.resultsContainer.appendChild(dbHeader);
-
-            this.dbSearchResults.forEach(result => {
-                const item = document.createElement('div');
-                item.className = 'p-3 hover:bg-gray-100 cursor-pointer text-sm border-b border-gray-100 last:border-0';
-
-                // Format display name
-                const displayName = result.place_name || 'Unnamed Destination';
-
-                // Create main content
-                const nameEl = document.createElement('div');
-                nameEl.className = 'font-medium text-blue-700';
-                nameEl.textContent = displayName;
-
-                // Create location info
-                const locationEl = document.createElement('div');
-                locationEl.className = 'text-xs text-gray-500 mt-1';
-                locationEl.textContent = `${result.administrative_area || ''}, ${result.province || ''}`;
-
-                // Add badge for database result
-                const badge = document.createElement('span');
-                badge.className = 'inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full ml-2';
-                badge.textContent = 'DB';
-                nameEl.appendChild(badge);
-
-                item.appendChild(nameEl);
-                item.appendChild(locationEl);
-
-                item.addEventListener('click', () => {
-                    this.handleDatabaseLocationSelect(result);
-                });
-
-                this.resultsContainer.appendChild(item);
-            });
+        function getBaseUrl() {
+            // Priority order:
+            // 1. window.appConfig.baseUrl (dari Laravel blade)
+            // 2. meta tag app-url
+            // 3. window.location.origin (current domain)
+            return window.appConfig?.baseUrl ||
+                document.querySelector('meta[name="app-url"]')?.getAttribute('content') ||
+                window.location.origin;
         }
+
+        // Fungsi untuk membuat URL destinasi
+        function createDestinationUrl(slug) {
+            const baseUrl = getBaseUrl();
+
+            // Jika ada route helper dari Laravel
+            if (window.appConfig?.routes?.destinasi) {
+                return window.appConfig.routes.destinasi.replace('{slug}', slug);
+            }
+
+            // Fallback ke URL manual
+            return `${baseUrl}/destinasi/${slug}`;
+        }
+
+    if (hasDbResults) {
+        const dbHeader = document.createElement('div');
+        dbHeader.className = 'p-2 bg-blue-50 text-blue-700 text-xs font-medium';
+        dbHeader.textContent = 'Destinasi Tersedia';
+        this.resultsContainer.appendChild(dbHeader);
+
+        this.dbSearchResults.forEach(result => {
+            const item = document.createElement('div');
+            item.className = 'p-3 hover:bg-gray-100 cursor-pointer text-sm border-b border-gray-100 last:border-0';
+
+            // Format display name
+            const displayName = result.place_name || 'Unnamed Destination';
+
+            // Create main content
+            const nameEl = document.createElement('div');
+            nameEl.className = 'font-medium text-blue-700';
+            nameEl.textContent = displayName;
+
+            // Create location info
+            const locationEl = document.createElement('div');
+            locationEl.className = 'text-xs text-gray-500 mt-1';
+            locationEl.textContent = `${result.administrative_area || ''}, ${result.province || ''}`;
+
+            // Add badge for database result
+            const badge = document.createElement('span');
+            badge.className = 'inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full ml-2';
+            badge.textContent = 'Destinasi Tersedia';
+            nameEl.appendChild(badge);
+
+            // Create link container
+            const linkContainer = document.createElement('div');
+            linkContainer.className = 'mt-2 flex gap-2 flex-wrap';
+
+            // Add "Google Maps" link using coordinates with place name
+            const mapsLink = document.createElement('a');
+            if (result.latitude && result.longitude) {
+                const searchQuery = `${displayName} ${result.administrative_area || ''}`;
+                mapsLink.href = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}/@${result.latitude},${result.longitude},17z`;
+            } else {
+                mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName + ' ' + (result.administrative_area || ''))}`;
+            }
+            mapsLink.target = '_blank';
+            mapsLink.className = 'text-red-600 hover:text-red-800 text-xs underline';
+            mapsLink.textContent = '🗺️ Maps';
+            mapsLink.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Add "Street View" link using coordinates
+            const streetViewLink = document.createElement('a');
+            if (result.latitude && result.longitude) {
+                streetViewLink.href = `https://www.google.com/maps/@${result.latitude},${result.longitude},3a,75y,90t/data=!3m6!1e1!3m4!1s0x0:0x0!2e0!7i13312!8i6656`;
+            } else {
+                streetViewLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName)}`;
+            }
+            streetViewLink.target = '_blank';
+            streetViewLink.className = 'text-blue-600 hover:text-blue-800 text-xs underline';
+            streetViewLink.textContent = '📸 Street View';
+            streetViewLink.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Add "Detail Destinasi" link - IMPROVED VERSION
+            const detailLink = document.createElement('a');
+            try {
+                detailLink.href = createDestinationUrl(result.slug);
+            } catch (error) {
+                console.warn('Error creating destination URL:', error);
+                // Fallback to relative URL
+                detailLink.href = `/destinasi/${result.slug}`;
+            }
+            detailLink.target = '_blank';
+            detailLink.className = 'text-green-600 hover:text-green-800 text-xs underline';
+            detailLink.textContent = '📍 Detail Destinasi';
+            detailLink.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            linkContainer.appendChild(mapsLink);
+            linkContainer.appendChild(streetViewLink);
+            linkContainer.appendChild(detailLink);
+
+            item.appendChild(nameEl);
+            item.appendChild(locationEl);
+            item.appendChild(linkContainer);
+
+            item.addEventListener('click', () => {
+                this.handleDatabaseLocationSelect(result);
+            });
+
+            this.resultsContainer.appendChild(item);
+        });
     }
+}
+
+
 
     /**
      * Handle selection of a location from Nominatim

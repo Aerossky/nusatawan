@@ -128,11 +128,28 @@ class ItineraryService
                 return false;
             }
 
-            // Update visit_date_time with the new time (keeping the date part)
+            // Validasi waktu duplikat jika ada perubahan waktu
             if ($visitTime) {
                 $currentVisitDateTime = Carbon::parse($itineraryDestination->visit_date_time);
                 $date = $currentVisitDateTime->format('Y-m-d');
-                $itineraryDestination->visit_date_time = $date . 'T' . $visitTime;
+                $newDateTime = $date . 'T' . $visitTime;
+
+                // Cek apakah waktu baru berbeda dengan waktu sekarang
+                if ($newDateTime !== $itineraryDestination->visit_date_time) {
+                    // Cek apakah ada destinasi lain dengan waktu yang sama
+                    $duplicateDestination = ItineraryDestination::where('itinerary_id', $itineraryId)
+                        ->where('id', '!=', $itineraryDestinationId)
+                        ->whereRaw("TIME(visit_date_time) = ?", [$visitTime])
+                        ->first();
+
+                    if ($duplicateDestination) {
+                        DB::rollBack();
+                        return false; // Return false jika ada duplikat waktu
+                    }
+
+                    // Update visit_date_time dengan waktu baru
+                    $itineraryDestination->visit_date_time = $newDateTime;
+                }
             }
 
             // Update note
@@ -212,22 +229,22 @@ class ItineraryService
             } else {
                 $orderIndex = $data['order_index'];
             }
+
             // Create the itinerary destination link
             $itineraryDestination = ItineraryDestination::create([
                 'itinerary_id' => $itinerary->id,
                 'destination_id' => $destinationId,
-                'visit_date_time' => $data['visit_date_time'] ?? null,
+                'visit_date_time' => $data['visit_date_time'], // Required field
                 'order_index' => $orderIndex,
                 'note' => $data['note'] ?? null,
             ]);
-
 
             DB::commit();
 
             return [
                 'itinerary_destination_id' => $itineraryDestination->id,
                 'destination_id' => $destinationId,
-                'order_index' => 1
+                'order_index' => $orderIndex
             ];
         } catch (\Exception $e) {
             DB::rollBack();
