@@ -105,7 +105,7 @@
                 </div>
 
                 <!-- Status Dropdown -->
-                <div class="relative min-w-[140px]">
+                <div class="relative min-w-[140px] w-full sm:w-auto">
                     <select id="status" name="status"
                         class="appearance-none w-full bg-white pl-3 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Semua Status</option>
@@ -116,7 +116,7 @@
                 </div>
 
                 <!-- Sort Dropdown -->
-                <div class="relative min-w-[140px]">
+                <div class="relative min-w-[140px] w-full sm:w-auto">
                     <select id="sort" name="sort"
                         class="appearance-none w-full bg-white pl-3 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="newest">Terbaru</option>
@@ -128,7 +128,7 @@
 
                 <!-- Search Button -->
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center justify-center">
+                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
@@ -211,15 +211,6 @@
                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
                                     Lihat
-                                </a>
-                                <a href="{{ route('user.itinerary.edit', $itinerary) }}"
-                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Ubah
                                 </a>
                                 <form action="{{ route('user.itinerary.destroy', $itinerary) }}" method="POST"
                                     class="inline"

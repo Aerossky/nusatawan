@@ -54,7 +54,7 @@
                             <path
                                 d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
-                        Edit Rencana
+                        Ubah Rencana
                     </a>
                 </div>
             </div>
@@ -799,18 +799,90 @@
                     nameElement.className = 'font-medium text-blue-600';
                     nameElement.textContent = destination.place_name || 'Unnamed Destination';
 
+                    // Add badge for database result
+                    const badge = document.createElement('span');
+                    badge.className =
+                        'inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full ml-2';
+                    badge.textContent = 'Destinasi Tersedia';
+                    nameElement.appendChild(badge);
+
                     // Location
                     const locationElement = document.createElement('div');
                     locationElement.className = 'text-xs text-gray-500 mt-1';
                     locationElement.textContent =
                         `${destination.administrative_area || ''}, ${destination.province || ''}`;
 
+                    // Create link container
+                    const linkContainer = document.createElement('div');
+                    linkContainer.className = 'mt-2 flex gap-2 flex-wrap';
+
+                    // Add "Google Maps" link using coordinates with place name
+                    const mapsLink = document.createElement('a');
+                    if (destination.latitude && destination.longitude) {
+                        const searchQuery =
+                            `${destination.place_name || 'Unnamed Destination'} ${destination.administrative_area || ''}`;
+                        mapsLink.href =
+                            `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}/@${destination.latitude},${destination.longitude},17z`;
+                    } else {
+                        mapsLink.href =
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((destination.place_name || 'Unnamed Destination') + ' ' + (destination.administrative_area || ''))}`;
+                    }
+                    mapsLink.target = '_blank';
+                    mapsLink.className = 'text-red-600 hover:text-red-800 text-xs underline';
+                    mapsLink.textContent = '🗺️ Maps';
+                    mapsLink.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+
+                    // Add "Street View" link using coordinates
+                    const streetViewLink = document.createElement('a');
+                    if (destination.latitude && destination.longitude) {
+                        streetViewLink.href =
+                            `https://www.google.com/maps/@${destination.latitude},${destination.longitude},3a,75y,90t/data=!3m6!1e1!3m4!1s0x0:0x0!2e0!7i13312!8i6656`;
+                    } else {
+                        streetViewLink.href =
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination.place_name || 'Unnamed Destination')}`;
+                    }
+                    streetViewLink.target = '_blank';
+                    streetViewLink.className = 'text-blue-600 hover:text-blue-800 text-xs underline';
+                    streetViewLink.textContent = '📸 Street View';
+                    streetViewLink.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+
+                    // Add "Detail Destinasi" link - IMPROVED VERSION
+                    const detailLink = document.createElement('a');
+                    try {
+                        detailLink.href = createDestinationUrl(destination.slug);
+                    } catch (error) {
+                        console.warn('Error creating destination URL:', error);
+                        // Fallback to relative URL
+                        detailLink.href = `/destinasi/${destination.slug}`;
+                    }
+                    detailLink.target = '_blank';
+                    detailLink.className = 'text-green-600 hover:text-green-800 text-xs underline';
+                    detailLink.textContent = '📍 Detail Destinasi';
+                    detailLink.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+
+                    // Add links to container
+                    linkContainer.appendChild(mapsLink);
+                    linkContainer.appendChild(streetViewLink);
+                    linkContainer.appendChild(detailLink);
+
                     // Append elements to card
                     card.appendChild(nameElement);
                     card.appendChild(locationElement);
+                    card.appendChild(linkContainer);
 
-                    // Add click event to select this destination
-                    card.addEventListener('click', () => this.selectDestination(destination));
+                    // Add click event to select this destination (but only if not clicking on links)
+                    card.addEventListener('click', (e) => {
+                        // Check if the clicked element is not a link
+                        if (!e.target.closest('a')) {
+                            this.selectDestination(destination);
+                        }
+                    });
 
                     cardsContainer.appendChild(card);
                 });
